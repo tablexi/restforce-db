@@ -9,11 +9,11 @@ describe Restforce::DB::Models::Salesforce do
   describe "#find", :vcr do
 
     it "finds existing records in Salesforce" do
-      model.find(id).must_be_instance_of Restforce::DB::Instances::Salesforce
+      expect(model.find(id)).to_be_instance_of Restforce::DB::Instances::Salesforce
     end
 
     it "returns nil when no matching record exists" do
-      model.find("a001a000001E1vFAKE").must_be_nil
+      expect(model.find("a001a000001E1vFAKE")).to_be_nil
     end
   end
 end

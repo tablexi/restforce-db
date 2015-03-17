@@ -1,5 +1,6 @@
 require "cgi"
 require "minitest/autorun"
+require "minitest/spec/expect"
 require "minitest-vcr"
 require "yaml"
 require "webmock"

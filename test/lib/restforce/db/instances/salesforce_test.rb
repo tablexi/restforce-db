@@ -20,11 +20,11 @@ describe Restforce::DB::Instances::Salesforce do
     end
 
     it "updates the local record with the passed attributes" do
-      instance.record.Example_Field__c.must_equal text
+      expect(instance.record.Example_Field__c).to_equal text
     end
 
     it "updates the record in Salesforce with the passed attributes" do
-      model.find(id).record.Example_Field__c.must_equal text
+      expect(model.find(id).record.Example_Field__c).to_equal text
     end
   end
 
@@ -37,7 +37,7 @@ describe Restforce::DB::Instances::Salesforce do
     end
 
     it "updates the record with the attributes from the copied object" do
-      instance.record.Example_Field__c.must_equal text
+      expect(instance.record.Example_Field__c).to_equal text
     end
   end
 end

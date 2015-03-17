@@ -14,18 +14,18 @@ describe Restforce::DB do
   end
 
   it "configures the Restforce::DB" do
-    Restforce::DB.configuration.username.must_equal Secrets["client"]["username"]
-    Restforce::DB.configuration.password.must_equal Secrets["client"]["password"]
-    Restforce::DB.configuration.security_token.must_equal Secrets["client"]["security_token"]
-    Restforce::DB.configuration.client_id.must_equal Secrets["client"]["client_id"]
-    Restforce::DB.configuration.client_secret.must_equal Secrets["client"]["client_secret"]
-    Restforce::DB.configuration.host.must_equal Secrets["client"]["host"]
+    expect(Restforce::DB.configuration.username).to_equal Secrets["client"]["username"]
+    expect(Restforce::DB.configuration.password).to_equal Secrets["client"]["password"]
+    expect(Restforce::DB.configuration.security_token).to_equal Secrets["client"]["security_token"]
+    expect(Restforce::DB.configuration.client_id).to_equal Secrets["client"]["client_id"]
+    expect(Restforce::DB.configuration.client_secret).to_equal Secrets["client"]["client_secret"]
+    expect(Restforce::DB.configuration.host).to_equal Secrets["client"]["host"]
   end
 
   describe "accessing Salesforce", :vcr do
 
     it "uses the configured credentials" do
-      Restforce::DB.client.authenticate!.access_token.wont_be_nil
+      expect(Restforce::DB.client.authenticate!.access_token).to_not_be_nil
     end
 
   end
