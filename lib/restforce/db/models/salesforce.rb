@@ -7,10 +7,10 @@ module Restforce
       class Salesforce < Base
 
         def find(id)
-          Instances::Salesforce.new(
-            DB.client.query("select #{lookups} from #{@model} where Id = '#{id}'").first,
-            @mappings,
-          )
+          record = DB.client.query("select #{lookups} from #{@model} where Id = '#{id}'").first
+          return unless record
+
+          Instances::Salesforce.new(record, @mappings)
         end
 
         private

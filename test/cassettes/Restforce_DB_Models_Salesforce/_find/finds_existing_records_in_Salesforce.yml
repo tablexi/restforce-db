@@ -1,0 +1,123 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://<host>/services/oauth2/token
+    body:
+      encoding: US-ASCII
+      string: grant_type=password&client_id=<client_id>&client_secret=<client_secret>&username=<username>&password=<password><security_token>
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 17 Mar 2015 18:29:54 GMT
+      Set-Cookie:
+      - BrowserId=qeeTsMHpSqe0KKdfx4kM6g;Path=/;Domain=.salesforce.com;Expires=Sat,
+        16-May-2015 18:29:54 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache, no-store
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1426616994932","token_type":"Bearer","instance_url":"https://<host>","signature":"0IHT1HMPdNZ133zhSz3Y7HeZuDqRwuw0+b5+/YMBBLE=","access_token":"00D1a000000H3O9!AQ4AQBFd3oqpDO.7.Xcxso.goiRaetayUacefPmDpnmt8PamElbwequE5PNhXF16HhJY.W21KtDWD8mnv5vFKKt9refJWu.h"}'
+    http_version: 
+  recorded_at: Tue, 17 Mar 2015 18:29:55 GMT
+- request:
+    method: post
+    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c
+    body:
+      encoding: UTF-8
+      string: '{"Name":"Sample object"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Content-Type:
+      - application/json
+      Authorization:
+      - OAuth 00D1a000000H3O9!AQ4AQBFd3oqpDO.7.Xcxso.goiRaetayUacefPmDpnmt8PamElbwequE5PNhXF16HhJY.W21KtDWD8mnv5vFKKt9refJWu.h
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Tue, 17 Mar 2015 18:29:56 GMT
+      Set-Cookie:
+      - BrowserId=3DBbwlHPR22ctl0s5La3vA;Path=/;Domain=.salesforce.com;Expires=Sat,
+        16-May-2015 18:29:56 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=37/15000
+      Location:
+      - "/services/data/v26.0/sobjects/CustomObject__c/a001a000001E28IAAS"
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"a001a000001E28IAAS","success":true,"errors":[]}'
+    http_version: 
+  recorded_at: Tue, 17 Mar 2015 18:29:56 GMT
+- request:
+    method: get
+    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp%20from%20CustomObject__c%20where%20Id%20=%20%27a001a000001E28IAAS%27
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Authorization:
+      - OAuth 00D1a000000H3O9!AQ4AQBFd3oqpDO.7.Xcxso.goiRaetayUacefPmDpnmt8PamElbwequE5PNhXF16HhJY.W21KtDWD8mnv5vFKKt9refJWu.h
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 17 Mar 2015 18:29:57 GMT
+      Set-Cookie:
+      - BrowserId=3_mze6FaSoCgS0YD8HED3A;Path=/;Domain=.salesforce.com;Expires=Sat,
+        16-May-2015 18:29:57 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=37/15000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/v26.0/sobjects/CustomObject__c/a001a000001E28IAAS"},"Id":"a001a000001E28IAAS","SystemModstamp":"2015-03-17T18:29:56.000+0000"}]}'
+    http_version: 
+  recorded_at: Tue, 17 Mar 2015 18:29:57 GMT
+recorded_with: VCR 2.9.3

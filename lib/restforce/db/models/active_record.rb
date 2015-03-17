@@ -7,10 +7,10 @@ module Restforce
       class ActiveRecord < Base
 
         def find(id)
-          Instances::ActiveRecord.new(
-            @model.find_by(salesforce_id: id),
-            @mappings,
-          )
+          record = @model.find_by(salesforce_id: id)
+          return nil unless record
+
+          Instances::ActiveRecord.new(record, @mappings)
         end
 
       end

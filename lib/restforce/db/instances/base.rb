@@ -6,14 +6,24 @@ module Restforce
 
       class Base
 
+        attr_reader :record
+
         def initialize(record, mappings = {})
           @record = record
           @mappings = mappings
         end
 
+        def update!(attributes)
+          record.update!(attributes)
+        end
+
+        def copy!(record)
+          update! attributes_from(record.attributes)
+        end
+
         def attributes
           @mappings.keys.each_with_object({}) do |attribute, attributes|
-            attributes[attribute] = @record.send(attribute)
+            attributes[attribute] = record.send(attribute)
           end
         end
 
