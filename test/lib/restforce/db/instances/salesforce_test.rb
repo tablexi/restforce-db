@@ -9,11 +9,12 @@ describe Restforce::DB::Instances::Salesforce do
   end
   let(:id) { create!("CustomObject__c") }
   let(:instance) { model.find(id) }
-  let(:text) { "Some new text" }
 
   before { login! }
 
   describe "#update!", :vcr do
+    let(:text) { "Some new text" }
+
     before do
       instance.update!("Example_Field__c" => text)
     end
@@ -24,6 +25,19 @@ describe Restforce::DB::Instances::Salesforce do
 
     it "updates the record in Salesforce with the passed attributes" do
       model.find(id).record.Example_Field__c.must_equal text
+    end
+  end
+
+  describe "#copy!", :vcr do
+    let(:text) { "Copied text" }
+    let(:copy_from) { Struct.new(:attributes).new(example: text) }
+
+    before do
+      instance.copy!(copy_from)
+    end
+
+    it "updates the record with the attributes from the copied object" do
+      instance.record.Example_Field__c.must_equal text
     end
   end
 end
