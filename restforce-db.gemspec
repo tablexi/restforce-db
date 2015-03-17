@@ -10,18 +10,18 @@ Gem::Specification.new do |spec|
   spec.email         = ["andrew@tablexi.com"]
 
   spec.summary       = "Bind your database to Salesforce data"
-  spec.description   = %q(
+  spec.description   = "
     This gem provides two-way bindings between Salesforce records and records
     in an ActiveRecord-compatible database. It leans on the Restforce library
     for Salesforce API interactions, and provides a self-daemonizing binary
-    which keeps records in sync by way of a tight polling loop.
-  )
+    which keeps records in sync by way of a tight polling loop."
+
   spec.homepage      = "https://www.github.com/ahorner/restforce-db"
   spec.license       = "MIT"
 
-  spec.files         = `git ls-files`.split($/)
+  spec.files         = `git ls-files`.split($RS)
   spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.executables   = spec.files.grep(/^exe\//) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_dependency "restforce"
@@ -31,5 +31,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest-spec-expect"
   spec.add_development_dependency "minitest-vcr"
   spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rubocop"
   spec.add_development_dependency "webmock"
 end

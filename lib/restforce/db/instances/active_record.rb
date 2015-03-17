@@ -4,16 +4,14 @@ module Restforce
 
     module Instances
 
+      # Public: Restforce::DB::Instances::ActiveRecord serves as a wrapper for
+      # ActiveRecord::Base-compatible objects, exposing a common API to
+      # reconcile record attributes with Salesforce instances.
       class ActiveRecord < Base
 
-        def update!(attributes)
-          @record.update! attributes
-        end
-
-        def copy!(record)
-          update! attributes_from(record.attributes)
-        end
-
+        # Public: Get the time of the last update to this record.
+        #
+        # Returns a Time-compatible object.
         def last_update
           @record.updated_at
         end

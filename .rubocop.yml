@@ -1,0 +1,39 @@
+require:
+  - ./.rubocop/custom/method_documentation.rb
+
+AllCops:
+  Exclude:
+    - ".bundle/**/*"
+    - "vendor/**/*"
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 20
+
+Style/EmptyLinesAroundBlockBody:
+  Exclude:
+    # These are naturally DSL-y, and so let's be lenient
+    - "test/**/*"
+
+Style/EmptyLinesAroundClassBody:
+  EnforcedStyle: empty_lines
+
+Style/EmptyLinesAroundModuleBody:
+  EnforcedStyle: empty_lines
+
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/TrailingComma:
+  EnforcedStyleForMultiline: comma
+
+Style/TrivialAccessors:
+  ExactNameMatch: true

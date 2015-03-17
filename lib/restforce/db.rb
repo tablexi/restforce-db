@@ -16,16 +16,26 @@ require "restforce/db/model"
 
 module Restforce
 
+  # Public: Restforce::DB exposes basic Restforce client configuration methods
+  # for use by the other classes in this library.
   module DB
 
     class << self
+
       attr_writer :configuration
+
     end
 
+    # Public: Get the current configuration for Restforce::DB.
+    #
+    # Returns a Restforce::DB::Configuration instance.
     def self.configuration
       @configuration ||= Configuration.new
     end
 
+    # Public: Get a Restforce client based on the currently configured settings.
+    #
+    # Returns a Restforce::Data::Client instance.
     def self.client
       @client ||= Restforce.new(
         username:       configuration.username,
@@ -37,10 +47,20 @@ module Restforce
       )
     end
 
+    # Public: Configure Restforce::DB by assigning values to the current
+    # configuration.
+    #
+    # Yields the current configuration.
+    # Returns the current configuration.
     def self.configure
       yield(configuration)
+      configuration
     end
 
+    # Public: Eliminate all customizations to the current Restforce::DB
+    # configuration and client.
+    #
+    # Returns nothing.
     def self.reset
       @configuration = nil
       @client = nil

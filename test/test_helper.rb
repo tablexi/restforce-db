@@ -9,7 +9,7 @@ require "vcr"
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "restforce/db"
 
-Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each {|f| require f}
+Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each { |f| require f }
 
 secrets_file = File.expand_path("../config/secrets.yml", __FILE__)
 Secrets = YAML.load_file(secrets_file)
