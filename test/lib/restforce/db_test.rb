@@ -21,4 +21,13 @@ describe Restforce::DB do
     Restforce::DB.configuration.client_secret.must_equal Secrets["client"]["client_secret"]
     Restforce::DB.configuration.host.must_equal Secrets["client"]["host"]
   end
+
+  describe "accessing Salesforce", :vcr do
+
+    it "uses the configured credentials" do
+      Restforce::DB.client.authenticate!.access_token.wont_be_nil
+    end
+
+  end
+
 end
