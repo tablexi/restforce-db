@@ -2,9 +2,9 @@ module Restforce
 
   module DB
 
-    module Models
+    module RecordTypes
 
-      # Public: Restforce::DB::Models::Salesforce serves as a wrapper for a
+      # Public: Restforce::DB::RecordTypes::Salesforce serves as a wrapper for a
       # single Salesforce object class, allowing for standard record lookups and
       # attribute mappings.
       class Salesforce < Base

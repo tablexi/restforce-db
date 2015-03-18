@@ -2,11 +2,11 @@ module Restforce
 
   module DB
 
-    module Models
+    module RecordTypes
 
-      # Public: Restforce::DB::Models::ActiveRecord serves as a wrapper for a
-      # single ActiveRecord::Base-compatible class, allowing for standard record
-      # lookups and attribute mappings.
+      # Public: Restforce::DB::RecordTypes::ActiveRecord serves as a wrapper for
+      # a single ActiveRecord::Base-compatible class, allowing for standard
+      # record lookups and attribute mappings.
       class ActiveRecord < Base
 
         # Public: Find the instance of this ActiveRecord model corresponding to

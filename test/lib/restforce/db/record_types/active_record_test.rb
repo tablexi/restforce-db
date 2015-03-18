@@ -1,7 +1,7 @@
 require_relative "../../../../test_helper"
 
-describe Restforce::DB::Models::ActiveRecord do
-  let(:model) { Restforce::DB::Models::ActiveRecord.new(CustomObject) }
+describe Restforce::DB::RecordTypes::ActiveRecord do
+  let(:model) { Restforce::DB::RecordTypes::ActiveRecord.new(CustomObject) }
   let(:id) { "a001a000001E1vREAL" }
 
   describe "#find" do

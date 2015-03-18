@@ -2,10 +2,10 @@ module Restforce
 
   module DB
 
-    # Public: Restforce::DB::Model is an abstraction for a two-way binding
+    # Public: Restforce::DB::Record is an abstraction for a two-way binding
     # between an ActiveRecord class and a Salesforce object type. It provides an
     # interface for mapping database columns to Salesforce fields.
-    class Model
+    class Record
 
       # Public: Initialize a Restforce::DB::Model.
       #
@@ -13,8 +13,8 @@ module Restforce
       # salesforce_model - A String name of an object type in Salesforce.
       def initialize(db_model, salesforce_model, **mappings)
         @mapping = Mapping.new(mappings)
-        @database_model = Models::ActiveRecord.new(db_model, @mapping)
-        @salesforce_model = Models::Salesforce.new(salesforce_model, @mapping)
+        @database_model = RecordTypes::ActiveRecord.new(db_model, @mapping)
+        @salesforce_model = RecordTypes::Salesforce.new(salesforce_model, @mapping)
       end
 
       # Public: Append the passed mappings to this model.

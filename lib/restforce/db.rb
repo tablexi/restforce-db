@@ -8,12 +8,12 @@ require "restforce/db/instances/base"
 require "restforce/db/instances/active_record"
 require "restforce/db/instances/salesforce"
 
-require "restforce/db/models/base"
-require "restforce/db/models/active_record"
-require "restforce/db/models/salesforce"
+require "restforce/db/record_types/base"
+require "restforce/db/record_types/active_record"
+require "restforce/db/record_types/salesforce"
 
 require "restforce/db/mapping"
-require "restforce/db/model"
+require "restforce/db/record"
 
 module Restforce
 

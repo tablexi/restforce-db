@@ -1,7 +1,7 @@
 require_relative "../../../../test_helper"
 
-describe Restforce::DB::Models::Salesforce do
-  let(:model) { Restforce::DB::Models::Salesforce.new("CustomObject__c") }
+describe Restforce::DB::RecordTypes::Salesforce do
+  let(:model) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c") }
   let(:id) { create!("CustomObject__c") }
 
   before { login! }
