@@ -25,6 +25,8 @@ describe Restforce::DB do
 
   describe "accessing Salesforce", :vcr do
 
+    after  { clean! }
+
     it "uses the configured credentials" do
       expect(Restforce::DB.client.authenticate!.access_token).to_not_be_nil
     end

@@ -5,6 +5,7 @@ describe Restforce::DB::RecordTypes::Salesforce do
   let(:id) { create!("CustomObject__c") }
 
   before { login! }
+  after  { clean! }
 
   describe "#find", :vcr do
 

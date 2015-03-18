@@ -7,6 +7,7 @@ describe Restforce::DB::Instances::Salesforce do
   let(:instance) { model.find(id) }
 
   before { login! }
+  after  { clean! }
 
   describe "#update!", :vcr do
     let(:text) { "Some new text" }
