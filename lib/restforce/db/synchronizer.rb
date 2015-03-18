@@ -28,7 +28,7 @@ module Restforce
       # Returns nothing.
       def run(_options = {})
         @salesforce_record_type.each do |record|
-          @database_record_type.create!(record)
+          @database_record_type.sync!(record)
         end
       end
 

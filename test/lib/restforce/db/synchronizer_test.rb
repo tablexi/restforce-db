@@ -10,16 +10,15 @@ describe Restforce::DB::Synchronizer do
   let(:synchronizer) { Restforce::DB::Synchronizer.new(database_type, salesforce_type) }
 
   describe "#run", :vcr do
+    let(:attributes) do
+      {
+        "Name" => "Custom object",
+        "Example_Field__c" => "Some sample text",
+      }
+    end
+    let(:salesforce_id) { Salesforce.create! "CustomObject__c", attributes }
 
     describe "given an existing Salesforce record" do
-      let(:attributes) do
-        {
-          "Name" => "Custom object",
-          "Example_Field__c" => "Some sample text",
-        }
-      end
-      let(:salesforce_id) { create! "CustomObject__c", attributes }
-
       before do
         salesforce_id
         synchronizer.run
@@ -31,6 +30,29 @@ describe Restforce::DB::Synchronizer do
         expect(record.name).to_equal attributes["Name"]
         expect(record.example).to_equal attributes["Example_Field__c"]
         expect(record.salesforce_id).to_equal salesforce_id
+      end
+    end
+
+    describe "given a Salesforce record with an existing record in the database" do
+      let(:database_record) do
+        CustomObject.create!(
+          name:          "Some existing name",
+          example:       "Some existing sample text",
+          salesforce_id: salesforce_id,
+        )
+      end
+
+      before do
+        database_record
+        salesforce_id
+        synchronizer.run
+      end
+
+      it "updates the database record" do
+        record = database_record.reload
+
+        expect(record.name).to_equal attributes["Name"]
+        expect(record.example).to_equal attributes["Example_Field__c"]
       end
     end
 

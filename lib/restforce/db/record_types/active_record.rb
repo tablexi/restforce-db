@@ -9,6 +9,23 @@ module Restforce
       # record lookups and attribute mappings.
       class ActiveRecord < Base
 
+        # Public: Synchronize the passed Salesforce record with the database.
+        #
+        # from_record - A Restforce::DB::Instances::Salesforce instance.
+        #
+        # Returns a Restforce::DB::Instances::ActiveRecord instance.
+        # Raises on any validation or database error.
+        def sync!(from_record)
+          if @record_type.exists?(salesforce_id: from_record.id)
+            record = find(from_record.id)
+            record.copy!(from_record)
+
+            record
+          else
+            create!(from_record)
+          end
+        end
+
         # Public: Create an instance of this ActiveRecord model for the passed
         # Salesforce instance.
         #
