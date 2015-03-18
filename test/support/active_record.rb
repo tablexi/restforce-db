@@ -11,7 +11,10 @@ ActiveRecord::Schema.define do
     table.column :name,          :string
     table.column :example,       :string
     table.column :salesforce_id, :string
+    table.timestamps null: false
   end
+
+  add_index :custom_objects, :salesforce_id
 end
 
 class CustomObject < ActiveRecord::Base; end
