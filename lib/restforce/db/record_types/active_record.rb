@@ -9,6 +9,22 @@ module Restforce
       # record lookups and attribute mappings.
       class ActiveRecord < Base
 
+        # Public: Create an instance of this ActiveRecord model for the passed
+        # Salesforce instance.
+        #
+        # from_record - A Restforce::DB::Instances::Salesforce instance.
+        #
+        # Returns a Restforce::DB::Instances::ActiveRecord instance.
+        # Raises on any validation or database error.
+        def create!(from_record)
+          attributes = @mapping.convert(:database, from_record.attributes)
+          record = @record_type.create!(
+            attributes.merge(salesforce_id: from_record.id),
+          )
+
+          Instances::ActiveRecord.new(record, @mapping)
+        end
+
         # Public: Find the instance of this ActiveRecord model corresponding to
         # the passed salesforce_id.
         #
@@ -16,10 +32,10 @@ module Restforce
         #
         # Returns nil or a Restforce::DB::Instances::ActiveRecord instance.
         def find(id)
-          record = @model.find_by(salesforce_id: id)
+          record = @record_type.find_by(salesforce_id: id)
           return nil unless record
 
-          Instances::ActiveRecord.new(record, @mappings)
+          Instances::ActiveRecord.new(record, @mapping)
         end
 
       end

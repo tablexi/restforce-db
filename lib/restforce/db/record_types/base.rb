@@ -10,10 +10,10 @@ module Restforce
 
         # Public: Initialize a new Restforce::DB::RecordTypes::Base.
         #
-        # model   - The name or class of the model.
-        # mapping - An instance of Restforce::DB::Mapping.
-        def initialize(model, mapping = Mapping.new)
-          @model = model
+        # record_type - The name or class of the system record type.
+        # mapping     - An instance of Restforce::DB::Mapping.
+        def initialize(record_type, mapping = Mapping.new)
+          @record_type = record_type
           @mapping = mapping
         end
 

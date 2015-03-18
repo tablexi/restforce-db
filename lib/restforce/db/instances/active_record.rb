@@ -9,6 +9,13 @@ module Restforce
       # reconcile record attributes with Salesforce instances.
       class ActiveRecord < Base
 
+        # Public: Get a common identifier for this record.
+        #
+        # Returns a String.
+        def id
+          @record.salesforce_id
+        end
+
         # Public: Get the time of the last update to this record.
         #
         # Returns a Time-compatible object.

@@ -15,7 +15,10 @@ module Restforce
         #
         # Returns nil or a Restforce::DB::Instances::Salesforce instance.
         def find(id)
-          record = DB.client.query("select #{lookups} from #{@model} where Id = '#{id}'").first
+          record = DB.client.query(
+            "select #{lookups} from #{@record_type} where Id = '#{id}'",
+          ).first
+
           return unless record
 
           Instances::Salesforce.new(record, @mapping)

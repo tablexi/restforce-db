@@ -14,6 +14,13 @@ module Restforce
           SystemModstamp
         ).freeze
 
+        # Public: Get a common identifier for this record.
+        #
+        # Returns a String.
+        def id
+          @record.Id
+        end
+
         # Public: Get the time of the last update to this record.
         #
         # Returns a Time-compatible object.
