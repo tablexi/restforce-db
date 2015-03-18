@@ -1,6 +1,9 @@
 require_relative "../../test_helper"
 
 describe Restforce::DB do
+
+  configure!
+
   let(:secrets) { Secrets["client"] }
 
   before do
@@ -24,8 +27,6 @@ describe Restforce::DB do
   end
 
   describe "accessing Salesforce", :vcr do
-
-    after  { clean! }
 
     it "uses the configured credentials" do
       expect(Restforce::DB.client.authenticate!.access_token).to_not_be_nil

@@ -1,13 +1,13 @@
 require_relative "../../../../test_helper"
 
 describe Restforce::DB::Instances::Salesforce do
+
+  configure!
+
   let(:mapping) { Restforce::DB::Mapping.new(example: "Example_Field__c") }
   let(:model) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c", mapping) }
-  let(:id) { create!("CustomObject__c") }
+  let(:id) { Salesforce.create!("CustomObject__c") }
   let(:instance) { model.find(id) }
-
-  before { login! }
-  after  { clean! }
 
   describe "#update!", :vcr do
     let(:text) { "Some new text" }

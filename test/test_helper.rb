@@ -33,3 +33,15 @@ VCR.configure do |c|
 end
 
 MinitestVcr::Spec.configure!
+
+# :nodoc
+def configure!
+  before do
+    Salesforce.configure!
+  end
+
+  after do
+    DatabaseCleaner.clean
+    Salesforce.clean!
+  end
+end

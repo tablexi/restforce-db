@@ -1,6 +1,9 @@
 require_relative "../../../../test_helper"
 
 describe Restforce::DB::RecordTypes::ActiveRecord do
+
+  configure!
+
   let(:mapping) { Restforce::DB::Mapping.new }
   let(:record_type) { Restforce::DB::RecordTypes::ActiveRecord.new(CustomObject, mapping) }
   let(:salesforce_id) { "a001a000001E1vREAL" }

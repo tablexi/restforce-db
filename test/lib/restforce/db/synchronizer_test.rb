@@ -1,6 +1,9 @@
 require_relative "../../../test_helper"
 
 describe Restforce::DB::Synchronizer do
+
+  configure!
+
   let(:mapping) { Restforce::DB::Mapping.new(name: "Name", example: "Example_Field__c") }
   let(:database_type) { Restforce::DB::RecordTypes::ActiveRecord.new(CustomObject, mapping) }
   let(:salesforce_type) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c", mapping) }
@@ -18,12 +21,9 @@ describe Restforce::DB::Synchronizer do
       let(:salesforce_id) { create! "CustomObject__c", attributes }
 
       before do
-        login!
         salesforce_id
-
         synchronizer.run
       end
-      after { clean! }
 
       it "populates the database with the new record" do
         record = CustomObject.last

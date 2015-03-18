@@ -1,11 +1,11 @@
 require_relative "../../../../test_helper"
 
 describe Restforce::DB::RecordTypes::Salesforce do
-  let(:model) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c") }
-  let(:id) { create!("CustomObject__c") }
 
-  before { login! }
-  after  { clean! }
+  configure!
+
+  let(:model) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c") }
+  let(:id) { Salesforce.create!("CustomObject__c") }
 
   describe "#find", :vcr do
 

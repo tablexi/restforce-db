@@ -1,6 +1,9 @@
 require_relative "../../../test_helper"
 
 describe Restforce::DB::Mapping do
+
+  configure!
+
   let(:mapping) { Restforce::DB::Mapping.new(mappings) }
   let(:mappings) do
     {
