@@ -10,20 +10,11 @@ module Restforce
 
         # Public: Initialize a new Restforce::DB::Models::Base.
         #
-        # model    - The name or class of the model.
-        # mappings - A Hash of mappings between database columns and Salesforce
-        #            fields.
-        def initialize(model, mappings = {})
+        # model   - The name or class of the model.
+        # mapping - An instance of Restforce::DB::Mapping.
+        def initialize(model, mapping = Mapping.new)
           @model = model
-          @mappings = mappings
-        end
-
-        # Public: Append the passed database-to-Salesforce mappings to the
-        # currently configured mappings.
-        #
-        # Returns a Hash.
-        def map(mappings)
-          @mappings.merge!(mappings)
+          @mapping = mapping
         end
 
       end

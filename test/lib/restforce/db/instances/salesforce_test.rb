@@ -1,12 +1,8 @@
 require_relative "../../../../test_helper"
 
 describe Restforce::DB::Instances::Salesforce do
-  let(:model) do
-    Restforce::DB::Models::Salesforce.new(
-      "CustomObject__c",
-      "Example_Field__c" => :example,
-    )
-  end
+  let(:mapping) { Restforce::DB::Mapping.new(example: "Example_Field__c") }
+  let(:model) { Restforce::DB::Models::Salesforce.new("CustomObject__c", mapping) }
   let(:id) { create!("CustomObject__c") }
   let(:instance) { model.find(id) }
 

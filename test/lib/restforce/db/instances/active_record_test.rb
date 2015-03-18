@@ -2,8 +2,8 @@ require_relative "../../../../test_helper"
 
 describe Restforce::DB::Instances::ActiveRecord do
   let(:record) { CustomObject.create! }
-  let(:mappings) { { example: "Example_Field__c" } }
-  let(:instance) { Restforce::DB::Instances::ActiveRecord.new(record, mappings) }
+  let(:mapping) { Restforce::DB::Mapping.new(example: "Example_Field__c") }
+  let(:instance) { Restforce::DB::Instances::ActiveRecord.new(record, mapping) }
 
   describe "#update!" do
     let(:text) { "Some new text" }

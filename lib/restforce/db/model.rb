@@ -12,8 +12,9 @@ module Restforce
       # db_model         - A Class compatible with ActiveRecord::Base.
       # salesforce_model - A String name of an object type in Salesforce.
       def initialize(db_model, salesforce_model, **mappings)
-        @database_model = Models::ActiveRecord.new(db_model, mappings.dup)
-        @salesforce_model = Models::Salesforce.new(salesforce_model, mappings.invert)
+        @mapping = Mapping.new(mappings)
+        @database_model = Models::ActiveRecord.new(db_model, @mapping)
+        @salesforce_model = Models::Salesforce.new(salesforce_model, @mapping)
       end
 
       # Public: Append the passed mappings to this model.
@@ -21,9 +22,8 @@ module Restforce
       # mappings - A Hash of database column names mapped to Salesforce fields.
       #
       # Returns nothing.
-      def map(mappings)
-        @database_model.map mappings.dup
-        @salesforce_model.map mappings.invert
+      def add_mappings(mappings)
+        @mapping.add_mappings mappings
       end
 
     end

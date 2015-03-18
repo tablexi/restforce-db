@@ -12,6 +12,7 @@ require "restforce/db/models/base"
 require "restforce/db/models/active_record"
 require "restforce/db/models/salesforce"
 
+require "restforce/db/mapping"
 require "restforce/db/model"
 
 module Restforce

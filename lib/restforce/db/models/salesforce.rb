@@ -18,7 +18,7 @@ module Restforce
           record = DB.client.query("select #{lookups} from #{@model} where Id = '#{id}'").first
           return unless record
 
-          Instances::Salesforce.new(record, @mappings)
+          Instances::Salesforce.new(record, @mapping)
         end
 
         private
@@ -29,7 +29,7 @@ module Restforce
         #
         # Returns a String.
         def lookups
-          (Instances::Salesforce::INTERNAL_ATTRIBUTES + @mappings.keys).join(", ")
+          (Instances::Salesforce::INTERNAL_ATTRIBUTES + @mapping.salesforce_fields).join(", ")
         end
 
       end

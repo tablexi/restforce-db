@@ -16,6 +16,13 @@ module Restforce
           @record.updated_at
         end
 
+        # Public: Get a description of the expected attribute Hash format.
+        #
+        # Returns a Symbol.
+        def conversion
+          :database
+        end
+
       end
 
     end

@@ -21,6 +21,13 @@ module Restforce
           @record.SystemModstamp
         end
 
+        # Public: Get a description of the expected attribute Hash format.
+        #
+        # Returns a Symbol.
+        def conversion
+          :salesforce
+        end
+
       end
 
     end
