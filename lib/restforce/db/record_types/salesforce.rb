@@ -24,6 +24,16 @@ module Restforce
           Instances::Salesforce.new(record, @mapping)
         end
 
+        # Public: Iterate through all Salesforce records of this type.
+        #
+        # Yields a series of Restforce::DB::Instances::Salesforce instances.
+        # Returns nothing.
+        def each
+          DB.client.query("select #{lookups} from #{@record_type}").each do |record|
+            yield Instances::Salesforce.new(record, @mapping)
+          end
+        end
+
         private
 
         # Internal: Get a String of values to look up when the record is
