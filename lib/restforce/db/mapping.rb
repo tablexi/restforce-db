@@ -45,7 +45,9 @@ module Restforce
         @mappings.keys
       end
 
-      # Public: Build a Hash of attributes in the expected format
+      # Public: Build a normalized Hash of attributes from the appropriate set
+      # of mappings. The keys of the resulting mapping Hash will correspond to
+      # the database column names.
       #
       # in_format - A Symbol reflecting the expected attribute list. Accepted
       #             values are :database and :salesforce.
@@ -53,10 +55,17 @@ module Restforce
       # Yields the attribute name.
       # Returns a Hash.
       def attributes(in_format)
-        attribute_list = send(:"#{in_format}_fields")
+        use_mappings =
+          case in_format
+          when :salesforce
+            @mappings
+          when :database
+            # Generate a mapping of database column names to record attributes.
+            database_fields.zip(database_fields)
+          end
 
-        attribute_list.each_with_object({}) do |attribute, values|
-          values[attribute] = yield(attribute)
+        use_mappings.each_with_object({}) do |(attribute, mapping), values|
+          values[attribute] = yield(mapping)
         end
       end
 
@@ -79,14 +88,14 @@ module Restforce
       #
       # Returns a Hash.
       def convert(to_format, attributes)
-        use_mappings =
-          case to_format
-          when :salesforce then @mappings
-          when :database then @mappings.invert
+        case to_format
+        when :database
+          attributes.dup
+        when :salesforce
+          @mappings.each_with_object({}) do |(attribute, mapping), converted|
+            next unless attributes.key?(attribute)
+            converted[mapping] = attributes[attribute]
           end
-
-        use_mappings.each_with_object({}) do |(attribute, mapping), converted|
-          converted[mapping] = attributes[attribute]
         end
       end
 

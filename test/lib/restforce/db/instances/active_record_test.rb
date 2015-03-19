@@ -26,7 +26,7 @@ describe Restforce::DB::Instances::ActiveRecord do
 
   describe "#copy!" do
     let(:text) { "Copied text" }
-    let(:copy_from) { Struct.new(:attributes).new("Example_Field__c" => text) }
+    let(:copy_from) { Struct.new(:attributes).new(example: text) }
 
     before do
       instance.copy!(copy_from)

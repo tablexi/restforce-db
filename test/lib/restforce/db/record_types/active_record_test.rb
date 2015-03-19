@@ -12,8 +12,8 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
     let(:sync_from) do
       Struct.new(:id, :attributes).new(
         salesforce_id,
-        "Name" => "Some name",
-        "Example_Field__c" => "Some text",
+        name:    "Some name",
+        example: "Some text",
       )
     end
     let(:instance) { record_type.sync!(sync_from).record }
@@ -26,8 +26,8 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
 
       it "creates a new database record from the passed Salesforce record" do
         expect(instance.salesforce_id).to_equal salesforce_id
-        expect(instance.name).to_equal sync_from.attributes["Name"]
-        expect(instance.example).to_equal sync_from.attributes["Example_Field__c"]
+        expect(instance.name).to_equal sync_from.attributes[:name]
+        expect(instance.example).to_equal sync_from.attributes[:example]
       end
     end
 
@@ -44,8 +44,8 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
 
       it "updates the existing database record" do
         expect(instance).to_equal sync_to.reload
-        expect(instance.name).to_equal sync_from.attributes["Name"]
-        expect(instance.example).to_equal sync_from.attributes["Example_Field__c"]
+        expect(instance.name).to_equal sync_from.attributes[:name]
+        expect(instance.example).to_equal sync_from.attributes[:example]
       end
     end
   end
@@ -54,8 +54,8 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
     let(:create_from) do
       Struct.new(:id, :attributes).new(
         salesforce_id,
-        "Name" => "Some name",
-        "Example_Field__c" => "Some text",
+        name:    "Some name",
+        example: "Some text",
       )
     end
     let(:instance) { record_type.create!(create_from).record }
@@ -66,8 +66,8 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
 
     it "creates a record in the database from the passed Salesforce record's attributes" do
       expect(instance.salesforce_id).to_equal salesforce_id
-      expect(instance.name).to_equal create_from.attributes["Name"]
-      expect(instance.example).to_equal create_from.attributes["Example_Field__c"]
+      expect(instance.name).to_equal create_from.attributes[:name]
+      expect(instance.example).to_equal create_from.attributes[:example]
     end
   end
 
