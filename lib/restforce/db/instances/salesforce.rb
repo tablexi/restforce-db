@@ -1,3 +1,5 @@
+require "time"
+
 module Restforce
 
   module DB
@@ -25,10 +27,12 @@ module Restforce
         #
         # Returns a Time-compatible object.
         def last_update
-          @record.SystemModstamp
+          Time.parse(@record.SystemModstamp)
         end
 
-        # Public: Get a description of the expected attribute Hash format.
+        private
+
+        # Internal: Get a description of the expected attribute Hash format.
         #
         # Returns a Symbol.
         def conversion

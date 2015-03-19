@@ -34,7 +34,7 @@ end
 
 MinitestVcr::Spec.configure!
 
-# :nodoc
+# :nodoc:
 def configure!
   before do
     Salesforce.configure!
