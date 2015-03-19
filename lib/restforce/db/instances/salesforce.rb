@@ -6,9 +6,9 @@ module Restforce
 
     module Instances
 
-      # Public: Restforce::DB::Instances::Salesforce serves as a wrapper for
-      # Salesforce objects, exposing a common API to reconcile record attributes
-      # with ActiveRecord instances.
+      # Restforce::DB::Instances::Salesforce serves as a wrapper for Salesforce
+      # objects, exposing a common API to reconcile record attributes with
+      # ActiveRecord instances.
       class Salesforce < Base
 
         INTERNAL_ATTRIBUTES = %w(

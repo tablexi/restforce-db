@@ -4,8 +4,8 @@ module Restforce
 
     module RecordTypes
 
-      # Internal: Restforce::DB::RecordTypes::Base defines common behavior for
-      # the other models defined in the Restforce::DB::RecordTypes namespace.
+      # Restforce::DB::RecordTypes::Base defines common behavior for the other
+      # models defined in the Restforce::DB::RecordTypes namespace.
       class Base
 
         # Public: Initialize a new Restforce::DB::RecordTypes::Base.

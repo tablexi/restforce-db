@@ -18,8 +18,8 @@ require "restforce/db/record"
 
 module Restforce
 
-  # Public: Restforce::DB exposes basic Restforce client configuration methods
-  # for use by the other classes in this library.
+  # Restforce::DB exposes basic Restforce client configuration methods for use
+  # by the other classes in this library.
   module DB
 
     class << self

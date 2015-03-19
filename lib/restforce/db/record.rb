@@ -2,9 +2,9 @@ module Restforce
 
   module DB
 
-    # Public: Restforce::DB::Record is an abstraction for a two-way binding
-    # between an ActiveRecord class and a Salesforce object type. It provides an
-    # interface for mapping database columns to Salesforce fields.
+    # Restforce::DB::Record is an abstraction for a two-way binding between an
+    # ActiveRecord class and a Salesforce object type. It provides an interface
+    # for mapping database columns to Salesforce fields.
     class Record
 
       # Public: Initialize a Restforce::DB::Model.

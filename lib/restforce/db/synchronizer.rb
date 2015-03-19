@@ -2,10 +2,10 @@ module Restforce
 
   module DB
 
-    # Public: Restforce::DB::Synchronizer is responsible for synchronizing the
-    # records in Salesforce with the records in the database. It relies on the
-    # mappings configured in instances of Restforce::DB::RecordTypes::Base to
-    # create and update records with the appropriate values.
+    # Restforce::DB::Synchronizer is responsible for synchronizing the records
+    # in Salesforce with the records in the database. It relies on the mappings
+    # configured in instances of Restforce::DB::RecordTypes::Base to create and
+    # update records with the appropriate values.
     class Synchronizer
 
       # Public: Initialize a new Restforce::DB::Synchronizer.

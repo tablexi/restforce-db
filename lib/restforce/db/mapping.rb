@@ -2,9 +2,9 @@ module Restforce
 
   module DB
 
-    # Internal: Restforce::DB::Mapping captures a set of mappings between
-    # database columns and Salesforce fields, providing utilities to transform
-    # hashes of attributes from one to the other.
+    # Restforce::DB::Mapping captures a set of mappings between database columns
+    # and Salesforce fields, providing utilities to transform hashes of
+    # attributes from one to the other.
     class Mapping
 
       attr_reader :mappings

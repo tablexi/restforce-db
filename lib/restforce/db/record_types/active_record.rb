@@ -4,9 +4,9 @@ module Restforce
 
     module RecordTypes
 
-      # Public: Restforce::DB::RecordTypes::ActiveRecord serves as a wrapper for
-      # a single ActiveRecord::Base-compatible class, allowing for standard
-      # record lookups and attribute mappings.
+      # Restforce::DB::RecordTypes::ActiveRecord serves as a wrapper for a
+      # single ActiveRecord::Base-compatible class, allowing for standard record
+      # lookups and attribute mappings.
       class ActiveRecord < Base
 
         # Public: Synchronize the passed Salesforce record with the database.

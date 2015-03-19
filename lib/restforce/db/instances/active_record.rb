@@ -4,7 +4,7 @@ module Restforce
 
     module Instances
 
-      # Public: Restforce::DB::Instances::ActiveRecord serves as a wrapper for
+      # Restforce::DB::Instances::ActiveRecord serves as a wrapper for
       # ActiveRecord::Base-compatible objects, exposing a common API to
       # reconcile record attributes with Salesforce instances.
       class ActiveRecord < Base

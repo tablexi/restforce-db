@@ -4,8 +4,8 @@ module Restforce
 
     module Instances
 
-      # Internal: Restforce::DB::Instances::Base defines common behavior for the
-      # other models defined in the Restforce::DB::Instances namespace.
+      # Restforce::DB::Instances::Base defines common behavior for the other
+      # models defined in the Restforce::DB::Instances namespace.
       class Base
 
         attr_reader :record
