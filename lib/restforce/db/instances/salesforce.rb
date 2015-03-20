@@ -1,5 +1,3 @@
-require "time"
-
 module Restforce
 
   module DB

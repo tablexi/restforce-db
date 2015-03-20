@@ -9,6 +9,21 @@ module Restforce
       # attribute mappings.
       class Salesforce < Base
 
+        # Public: Create an instance of this Salesforce model for the passed
+        # database record.
+        #
+        # from_record - A Restforce::DB::Instances::ActiveRecord instance.
+        #
+        # Returns a Restforce::DB::Instances::Salesforce instance.
+        # Raises on any error from Salesforce.
+        def create!(from_record)
+          attributes = @mapping.convert(:salesforce, from_record.attributes)
+          record_id = DB.client.create!(@record_type, attributes)
+          from_record.update!(salesforce_id: record_id)
+
+          find(record_id)
+        end
+
         # Public: Find the Salesforce record corresponding to the passed id.
         #
         # id - The id of the record in Salesforce.
@@ -26,10 +41,24 @@ module Restforce
 
         # Public: Iterate through all Salesforce records of this type.
         #
+        # options - A Hash of options which should be applied to the set of
+        #           fetched records. Allowed options are:
+        #           :before - A Time object defining the most recent update
+        #                     timestamp for which records should be returned.
+        #           :after  - A Time object defining the least recent update
+        #                     timestamp for which records should be returned.
+        #
         # Yields a series of Restforce::DB::Instances::Salesforce instances.
         # Returns nothing.
-        def each
-          DB.client.query("select #{lookups} from #{@record_type}").each do |record|
+        def each(options = {})
+          constraints = [
+            ("SystemModstamp <= #{options[:before].utc.iso8601}" if options[:before]),
+            ("SystemModstamp > #{options[:after].utc.iso8601}" if options[:after]),
+          ].compact.join(" ")
+
+          query = "Select #{lookups} from #{@record_type} where #{constraints}"
+
+          DB.client.query(query).each do |record|
             yield Instances::Salesforce.new(record, @mapping)
           end
         end
@@ -43,6 +72,16 @@ module Restforce
         # Returns a String.
         def lookups
           (Instances::Salesforce::INTERNAL_ATTRIBUTES + @mapping.salesforce_fields).join(", ")
+        end
+
+        # Internal: Has this database record already been linked to a Salesforce
+        # record?
+        #
+        # record - A Restforce::DB::Instances::Salesforce instance.
+        #
+        # Returns a Boolean.
+        def synced?(record)
+          record.synced?
         end
 
       end

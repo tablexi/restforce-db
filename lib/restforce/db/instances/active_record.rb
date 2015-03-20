@@ -16,6 +16,13 @@ module Restforce
           @record.salesforce_id
         end
 
+        # Public: Has this record been synced to a Salesforce record?
+        #
+        # Returns a Boolean.
+        def synced?
+          @record.salesforce_id?
+        end
+
         # Public: Get the time of the last update to this record.
         #
         # Returns a Time-compatible object.

@@ -17,6 +17,24 @@ module Restforce
           @mapping = mapping
         end
 
+        # Public: Synchronize the passed record to the record type defined by
+        # this class.
+        #
+        # from_record - A Restforce::DB::Instances::Base instance.
+        #
+        # Returns a Restforce::DB::Instances::Base instance.
+        # Raises on any validation or external error.
+        def sync!(from_record)
+          if synced?(from_record)
+            record = find(from_record.id)
+            record.copy!(from_record)
+
+            record
+          else
+            create!(from_record)
+          end
+        end
+
       end
 
     end

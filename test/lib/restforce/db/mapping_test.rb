@@ -55,25 +55,16 @@ describe Restforce::DB::Mapping do
   end
 
   describe "#convert" do
+    let(:attributes) { { column_one: "some value" } }
 
     it "converts an attribute Hash to a Salesforce-compatible form" do
-      attributes = {
-        column_one: "some value",
-      }
-
       expect(mapping.convert(:salesforce, attributes)).to_equal(
-        "SF_Field_One__c" => "some value",
+        mappings[attributes.keys.first] => attributes.values.first,
       )
     end
 
     it "performs no special conversion for database columns" do
-      attributes = {
-        column_two: "some value",
-      }
-
-      expect(mapping.convert(:database, attributes)).to_equal(
-        column_two: "some value",
-      )
+      expect(mapping.convert(:database, attributes)).to_equal(attributes)
     end
   end
 end

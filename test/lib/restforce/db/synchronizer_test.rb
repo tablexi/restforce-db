@@ -9,14 +9,19 @@ describe Restforce::DB::Synchronizer do
   let(:salesforce_type) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c", mapping) }
   let(:synchronizer) { Restforce::DB::Synchronizer.new(database_type, salesforce_type) }
 
-  describe "#run", :vcr do
+  describe "#run", vcr: { match_requests_on: [:method, VCR.request_matchers.uri_without_param(:q)] } do
     let(:attributes) do
       {
-        "Name" => "Custom object",
-        "Example_Field__c" => "Some sample text",
+        name:    "Custom object",
+        example: "Some sample text",
       }
     end
-    let(:salesforce_id) { Salesforce.create! "CustomObject__c", attributes }
+    let(:salesforce_id) do
+      Salesforce.create!(
+        "CustomObject__c",
+        mapping.convert(:salesforce, attributes),
+      )
+    end
 
     describe "given an existing Salesforce record" do
       before do
@@ -27,9 +32,28 @@ describe Restforce::DB::Synchronizer do
       it "populates the database with the new record" do
         record = CustomObject.last
 
-        expect(record.name).to_equal attributes["Name"]
-        expect(record.example).to_equal attributes["Example_Field__c"]
+        expect(record.name).to_equal attributes[:name]
+        expect(record.example).to_equal attributes[:example]
         expect(record.salesforce_id).to_equal salesforce_id
+      end
+    end
+
+    describe "given an existing database record" do
+      let(:database_record) { CustomObject.create!(attributes) }
+      let(:salesforce_id) { database_record.reload.salesforce_id }
+
+      before do
+        database_record
+        synchronizer.run
+
+        Salesforce.records << ["CustomObject__c", salesforce_id]
+      end
+
+      it "populates Salesforce with the new record" do
+        record = salesforce_type.find(salesforce_id).record
+
+        expect(record.Name).to_equal attributes[:name]
+        expect(record.Example_Field__c).to_equal attributes[:example]
       end
     end
 
@@ -51,8 +75,8 @@ describe Restforce::DB::Synchronizer do
       it "updates the database record" do
         record = database_record.reload
 
-        expect(record.name).to_equal attributes["Name"]
-        expect(record.example).to_equal attributes["Example_Field__c"]
+        expect(record.name).to_equal attributes[:name]
+        expect(record.example).to_equal attributes[:example]
       end
     end
 

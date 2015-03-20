@@ -54,9 +54,9 @@ module Restforce
       #
       # Yields the attribute name.
       # Returns a Hash.
-      def attributes(in_format)
+      def attributes(from_format)
         use_mappings =
-          case in_format
+          case from_format
           when :salesforce
             @mappings
           when :database
@@ -83,7 +83,7 @@ module Restforce
       #   mapping.convert(:salesforce, some_key: "some value")
       #   # => { "Some_Field__c" => "some value" }
       #
-      #   mapping.convert(:database, "Some_Field__c" => "some other value")
+      #   mapping.convert(:database, some_key: "some other value")
       #   # => { some_key: "some other value" }
       #
       # Returns a Hash.

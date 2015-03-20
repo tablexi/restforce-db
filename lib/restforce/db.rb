@@ -1,4 +1,6 @@
+require "time"
 require "restforce"
+
 require "restforce/extensions"
 
 require "restforce/db/version"

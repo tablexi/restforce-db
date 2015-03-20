@@ -47,9 +47,14 @@ module Restforce
         #
         # Returns a Hash.
         def attributes
-          @mapping.attributes(conversion) do |attribute|
-            record.send(attribute)
-          end
+          @mapping.attributes(conversion) { |attribute| record.send(attribute) }
+        end
+
+        # Public: Has this record been synced with Salesforce?
+        #
+        # Returns a Boolean.
+        def synced?
+          true
         end
 
       end

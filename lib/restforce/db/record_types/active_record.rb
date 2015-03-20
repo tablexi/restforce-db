@@ -9,23 +9,6 @@ module Restforce
       # lookups and attribute mappings.
       class ActiveRecord < Base
 
-        # Public: Synchronize the passed Salesforce record with the database.
-        #
-        # from_record - A Restforce::DB::Instances::Salesforce instance.
-        #
-        # Returns a Restforce::DB::Instances::ActiveRecord instance.
-        # Raises on any validation or database error.
-        def sync!(from_record)
-          if @record_type.exists?(salesforce_id: from_record.id)
-            record = find(from_record.id)
-            record.copy!(from_record)
-
-            record
-          else
-            create!(from_record)
-          end
-        end
-
         # Public: Create an instance of this ActiveRecord model for the passed
         # Salesforce instance.
         #
@@ -53,6 +36,39 @@ module Restforce
           return nil unless record
 
           Instances::ActiveRecord.new(record, @mapping)
+        end
+
+        # Public: Iterate through all ActiveRecord records of this type.
+        #
+        # options - A Hash of options which should be applied to the set of
+        #           fetched records. Allowed options are:
+        #           :before - A Time object defining the most recent update
+        #                     timestamp for which records should be returned.
+        #           :after  - A Time object defining the least recent update
+        #                     timestamp for which records should be returned.
+        #
+        # Yields a series of Restforce::DB::Instances::ActiveRecord instances.
+        # Returns nothing.
+        def each(options = {})
+          scope = @record_type
+          scope = scope.where("updated_at > ?", options[:after]) if options[:after]
+          scope = scope.where("updated_at < ?", options[:before]) if options[:before]
+
+          scope.find_each do |record|
+            yield Instances::ActiveRecord.new(record, @mapping)
+          end
+        end
+
+        private
+
+        # Internal: Has this Salesforce record already been linked to a database
+        # record?
+        #
+        # record - A Restforce::DB::Instances::Salesforce instance.
+        #
+        # Returns a Boolean.
+        def synced?(record)
+          @record_type.exists?(salesforce_id: record.id)
         end
 
       end

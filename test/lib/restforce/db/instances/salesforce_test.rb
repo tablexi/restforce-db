@@ -5,9 +5,9 @@ describe Restforce::DB::Instances::Salesforce do
   configure!
 
   let(:mapping) { Restforce::DB::Mapping.new(example: "Example_Field__c") }
-  let(:model) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c", mapping) }
+  let(:record_type) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c", mapping) }
   let(:id) { Salesforce.create!("CustomObject__c") }
-  let(:instance) { model.find(id) }
+  let(:instance) { record_type.find(id) }
 
   describe "#update!", :vcr do
     let(:text) { "Some new text" }
@@ -21,7 +21,7 @@ describe Restforce::DB::Instances::Salesforce do
     end
 
     it "updates the record in Salesforce with the passed attributes" do
-      expect(model.find(id).record.Example_Field__c).to_equal text
+      expect(record_type.find(id).record.Example_Field__c).to_equal text
     end
   end
 
