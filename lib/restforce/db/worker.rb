@@ -71,9 +71,9 @@ module Restforce
           stop
         end
 
-        log "Starting synchronization..."
-
         loop do
+          log "=============================="
+
           runtime = Benchmark.realtime do
             Restforce::DB::RecordType.each do |name, record_type|
               synchronize name, record_type
@@ -131,12 +131,10 @@ module Restforce
       #
       # Returns nothing.
       def log(text, level = :info)
-        text = "[Restforce::DB] #{text}"
         puts text if @verbose
 
         return unless self.class.logger
-
-        self.class.logger.send(level, "#{Time.now.strftime('%FT%T%z')}: #{text}")
+        self.class.logger.send(level, text)
       end
 
       # Internal: Log an error for the worker, outputting the entire error

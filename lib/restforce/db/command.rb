@@ -18,6 +18,7 @@ module Restforce
           verbose: false,
           pid_dir: Rails.root.join("tmp", "pids"),
           config:  Rails.root.join("config", "restforce-db.yml"),
+          logfile: Rails.root.join("log", "restforce-db.log"),
         }
 
         @args = parser.parse!(args)
@@ -55,7 +56,7 @@ module Restforce
         Dir.chdir(Rails.root)
 
         Restforce::DB::Worker.after_fork
-        Restforce::DB::Worker.logger ||= Logger.new(File.join(Rails.root, "log", "restforce-db.log"))
+        Restforce::DB::Worker.logger ||= logger
 
         worker = Restforce::DB::Worker.new(options)
         worker.start
@@ -68,7 +69,7 @@ module Restforce
       # Internal: Get an OptionParser for the Restforce::DB CLI.
       #
       # Returns an OptionParser.
-      def parser
+      def parser # rubocop:disable MethodLength
         @parser ||= OptionParser.new do |opt|
           opt.banner = "Usage: #{File.basename($PROGRAM_NAME)} [options] start|stop|restart|run"
 
@@ -82,11 +83,26 @@ module Restforce
           opt.on("-i N", "--interval N", "Amount of time to wait between synchronizations.") do |n|
             @options[:interval] = n.to_i
           end
+          opt.on("-l FILE ", "--logfile FILE", "The file where logging output should be captured.") do |file|
+            @options[:logfile] = file
+          end
           opt.on("--pid-dir DIR", "The directory in which to store the pidfile.") do |dir|
             @options[:pid_dir] = dir
           end
           opt.on("-v", "--verbose", "Turn on noisy logging.") do
             @options[:verbose] = true
+          end
+        end
+      end
+
+      # Internal: Get a Logger instance to capture output from the sync worker.
+      # Makes the default log formatting a bit more reader-friendly.
+      #
+      # Returns a Logger.
+      def logger
+        @logger ||= Logger.new(@options[:logfile]).tap do |logger|
+          logger.formatter = proc do |severity, datetime, _progname, msg|
+            "#{severity} [#{datetime.strftime('%Y-%m-%d %H:%M:%S')}] #{msg}\n"
           end
         end
       end
