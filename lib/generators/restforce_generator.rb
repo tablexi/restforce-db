@@ -3,7 +3,7 @@ require "rails/generators/base"
 # :nodoc:
 class RestforceGenerator < Rails::Generators::Base
 
-  source_paths << File.join(File.dirname(__FILE__), "templates")
+  source_root File.expand_path("../templates", __FILE__)
 
   # :nodoc:
   def create_config_file

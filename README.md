@@ -1,8 +1,6 @@
 # Restforce::DB
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/restforce/db`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Restforce::DB is an attempt at simplifying data integrations between a Salesforce setup and a Rails application. It provides a background worker which continuously polls for updated records both in Salesforce and in the database, and updates both systems with that data according to user-defined attribute mappings.
 
 ## Installation
 
@@ -22,7 +20,37 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+First, you'll want to install the default bin and configuration files, which is handled by the included Rails generator:
+
+    $ bundle exec rails g restforce
+
+This gem assumes that you're running Rails 4 or greater, therefore the `bin` file should be checked into the repository with the rest of your code. The `config/restforce-db.yml` file should be managed the same way you manage your secrets files, and probably not checked into the repository.
+
+To register a Salesforce mapping in an `ActiveRecord` model, you need to add a few lines of DSL-style code to your class definition:
+
+```ruby
+class LineCook < ActiveRecord::Base
+
+  include Restforce::DB::Model
+
+  map_to "Line_Cook__c", name: "Name", specialty: "Favorite_Food__c"
+
+end
+```
+
+This will automatically register the model with an entry in the `Restforce::DB::RecordType` collection, which is all it takes for the files to be synchronized by the `restforce-db` worker.
+
+To run the worker, you'll want to run the binstub installed through the generator (see above). Then you can run the self-daemonizing executable.
+
+        $ bin/restforce-db start
+
+By default, this will load the credentials at the same location the generator installed them. You can explicitly pass the location of your configuration file with the `-c` option:
+
+        $ bin/restforce-db -c /path/to/my/config.yml start
+
+For additional information and a full set of options, you can run:
+
+        $ bin/restforce-db -h
 
 ## Development
 
@@ -32,8 +60,9 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-1. Fork it ( https://github.com/ahorner/restforce-db/fork )
+1. Fork it ( https://github.com/tablexi/restforce-db/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+3. Ensure that your changes pass all style checks and tests (`rake`)
+4. Commit your changes (`git commit -am 'Add some feature'`)
+5. Push to the branch (`git push origin my-new-feature`)
+6. Create a new Pull Request
