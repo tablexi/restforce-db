@@ -8,9 +8,10 @@ ActiveRecord::Base.establish_connection(
 
 ActiveRecord::Schema.define do
   create_table :custom_objects do |table|
-    table.column :name,          :string
-    table.column :example,       :string
-    table.column :salesforce_id, :string
+    table.column :name,            :string
+    table.column :example,         :string
+    table.column :salesforce_id,   :string
+    table.column :synchronized_at, :datetime
     table.timestamps null: false
   end
 

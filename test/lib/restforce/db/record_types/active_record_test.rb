@@ -28,6 +28,7 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
         expect(instance.salesforce_id).to_equal salesforce_id
         expect(instance.name).to_equal sync_from.attributes[:name]
         expect(instance.example).to_equal sync_from.attributes[:example]
+        expect(instance.synchronized_at).to_not_be_nil
       end
     end
 
@@ -46,6 +47,7 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
         expect(instance).to_equal sync_to.reload
         expect(instance.name).to_equal sync_from.attributes[:name]
         expect(instance.example).to_equal sync_from.attributes[:example]
+        expect(instance.synchronized_at).to_not_be_nil
       end
     end
   end
@@ -68,6 +70,7 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
       expect(instance.salesforce_id).to_equal salesforce_id
       expect(instance.name).to_equal create_from.attributes[:name]
       expect(instance.example).to_equal create_from.attributes[:example]
+      expect(instance.synchronized_at).to_not_be_nil
     end
   end
 

@@ -30,6 +30,14 @@ module Restforce
           @record.updated_at
         end
 
+        # Public: Bump the synchronization timestamp on the record.
+        #
+        # Returns nothing.
+        def after_sync
+          @record.touch(:synchronized_at)
+          super
+        end
+
         private
 
         # Internal: Get a description of the expected attribute Hash format.

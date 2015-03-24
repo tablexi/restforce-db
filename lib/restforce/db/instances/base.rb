@@ -23,10 +23,11 @@ module Restforce
         #
         # attributes - A Hash mapping attribute names to values.
         #
-        # Returns a truthy value.
+        # Returns self.
         # Raises if the update fails for any reason.
         def update!(attributes)
           record.update!(attributes)
+          after_sync
         end
 
         # Public: Update the instance with attributes copied from the passed
@@ -36,7 +37,7 @@ module Restforce
         #          attributes corresponding to the configured mappings for this
         #          instance.
         #
-        # Returns a truthy value.
+        # Returns self.
         # Raises if the update fails for any reason.
         def copy!(from_record)
           update! @mapping.convert(conversion, from_record.attributes)
@@ -55,6 +56,15 @@ module Restforce
         # Returns a Boolean.
         def synced?
           true
+        end
+
+        # Public: A hook which is performed after records are synchronized.
+        # Override this method in subclasses to inject generic behaviors into
+        # the record synchronization flow.
+        #
+        # Returns self.
+        def after_sync
+          self
         end
 
       end

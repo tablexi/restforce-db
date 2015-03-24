@@ -18,11 +18,10 @@ module Restforce
         # Raises on any validation or database error.
         def create!(from_record)
           attributes = @mapping.convert(:database, from_record.attributes)
-          record = @record_type.create!(
-            attributes.merge(salesforce_id: from_record.id),
-          )
 
-          Instances::ActiveRecord.new(record, @mapping)
+          record = @record_type.create!(attributes.merge(salesforce_id: from_record.id))
+
+          Instances::ActiveRecord.new(record, @mapping).after_sync
         end
 
         # Public: Find the instance of this ActiveRecord model corresponding to

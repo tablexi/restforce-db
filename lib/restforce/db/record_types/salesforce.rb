@@ -19,7 +19,8 @@ module Restforce
         def create!(from_record)
           attributes = @mapping.convert(:salesforce, from_record.attributes)
           record_id = DB.client.create!(@record_type, attributes)
-          from_record.update!(salesforce_id: record_id)
+
+          from_record.update!(salesforce_id: record_id).after_sync
 
           find(record_id)
         end

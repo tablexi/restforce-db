@@ -22,6 +22,10 @@ describe Restforce::DB::Instances::ActiveRecord do
     it "updates the record in Salesforce with the passed attributes" do
       expect(record.reload.example).to_equal text
     end
+
+    it "bumps the record's synchronized_at timestamp" do
+      expect(record.reload.synchronized_at).to_not_be_nil
+    end
   end
 
   describe "#copy!" do
