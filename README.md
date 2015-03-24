@@ -22,23 +22,32 @@ Or install it yourself as:
 
 First, you'll want to install the default bin and configuration files, which is handled by the included Rails generator:
 
-    $ bundle exec rails g restforce
+    $ bundle exec rails g restforce:install
 
 This gem assumes that you're running Rails 4 or greater, therefore the `bin` file should be checked into the repository with the rest of your code. The `config/restforce-db.yml` file should be managed the same way you manage your secrets files, and probably not checked into the repository.
+
+### Update your model schema
+
+In order to keep your database records in sync with Salesforce, the table will need to store a reference to its associated Salesforce record. A generator is included to trivially add this `salesforce_id` column to your tables:
+
+    $ bundle exec rails g restforce:migration MyModel
+    $ bundle exec rake db:migrate
+
+### Register a mapping
 
 To register a Salesforce mapping in an `ActiveRecord` model, you need to add a few lines of DSL-style code to your class definition:
 
 ```ruby
-class LineCook < ActiveRecord::Base
+class MyModel < ActiveRecord::Base
 
   include Restforce::DB::Model
 
-  map_to "Line_Cook__c", name: "Name", specialty: "Favorite_Food__c"
+  map_to "Object__c", name: "Name", color: "Color__c"
 
 end
 ```
 
-This will automatically register the model with an entry in the `Restforce::DB::RecordType` collection. Your schema **must** contain a `salesforce_id` column for each table you wish to synchronize with a record type in Salesforce. 
+This will automatically register the model with an entry in the `Restforce::DB::RecordType` collection.
 
 To run the worker, you'll want to run the binstub installed through the generator (see above). Then you can run the self-daemonizing executable.
 

@@ -1,0 +1,10 @@
+# :nodoc:
+class Add<%= class_name %>SalesforceBinding < ActiveRecord::Migration
+
+  # :nodoc:
+  def change
+    add_column :<%= table_name %>, :salesforce_id, :string
+    add_index :<%= table_name %>, :salesforce_id, unique: true
+  end
+
+end
