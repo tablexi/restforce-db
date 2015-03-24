@@ -54,9 +54,10 @@ module Restforce
           constraints = [
             ("SystemModstamp <= #{options[:before].utc.iso8601}" if options[:before]),
             ("SystemModstamp > #{options[:after].utc.iso8601}" if options[:after]),
-          ].compact.join(" ")
+          ].compact.join(" and ")
+          constraints = " where #{constraints}" unless constraints.empty?
 
-          query = "Select #{lookups} from #{@record_type} where #{constraints}"
+          query = "select #{lookups} from #{@record_type}#{constraints}"
 
           DB.client.query(query).each do |record|
             yield Instances::Salesforce.new(record, @mapping)
