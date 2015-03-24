@@ -1,5 +1,6 @@
 require "cgi"
 require "minitest/autorun"
+require "minitest/bang"
 require "minitest/spec/expect"
 require "yaml"
 

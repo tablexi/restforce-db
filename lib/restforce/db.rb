@@ -15,8 +15,9 @@ require "restforce/db/record_types/active_record"
 require "restforce/db/record_types/salesforce"
 
 require "restforce/db/mapping"
+require "restforce/db/model"
 require "restforce/db/synchronizer"
-require "restforce/db/record"
+require "restforce/db/record_type"
 
 module Restforce
 
