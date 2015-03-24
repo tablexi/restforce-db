@@ -24,8 +24,9 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(/^exe\//) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "restforce"
   spec.add_dependency "activerecord"
+  spec.add_dependency "daemons"
+  spec.add_dependency "restforce"
 
   spec.add_development_dependency "bundler", "~> 1.8"
   spec.add_development_dependency "database_cleaner"
