@@ -66,7 +66,7 @@ module Restforce
       # options - A Hash of options to pass to the synchronizer.
       #
       # Returns nothing.
-      def synchronize(options)
+      def synchronize(options = {})
         @synchronizer.run(options)
       end
 
