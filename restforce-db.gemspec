@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
     for Salesforce API interactions, and provides a self-daemonizing binary
     which keeps records in sync by way of a tight polling loop."
 
-  spec.homepage      = "https://www.github.com/ahorner/restforce-db"
+  spec.homepage      = "https://www.github.com/tablexi/restforce-db"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($RS)
