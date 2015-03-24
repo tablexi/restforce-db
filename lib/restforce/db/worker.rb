@@ -43,13 +43,16 @@ module Restforce
 
       # Public: Initialize a new Restforce::DB::Worker.
       #
-      # options - A Hash of options to configure the worker's run. Curently
+      # options - A Hash of options to configure the worker's run. Currently
       #           supported options are:
-      #           verbose  - Display command line output. Defaults to false.
       #           interval - The maximum polling loop rest time.
+      #           config   - The path to a client configuration file.
+      #           verbose  - Display command line output? Defaults to false.
       def initialize(options = {})
         @verbose = options.fetch(:verbose) { false }
         self.class.interval = options.fetch(:interval) { DEFAULT_INTERVAL }
+
+        Restforce::DB.configure { |config| config.parse(options[:config]) }
       end
 
       # Public: Start the polling loop for this Worker. Synchronizes all

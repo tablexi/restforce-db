@@ -16,7 +16,8 @@ module Restforce
       def initialize(args)
         @options = {
           verbose: false,
-          pid_dir: "#{Rails.root}/tmp/pids",
+          pid_dir: Rails.root.join("tmp", "pids"),
+          config:  Rails.root.join("config", "restforce-db.yml"),
         }
 
         @args = parser.parse!(args)
@@ -75,11 +76,14 @@ module Restforce
             puts opt
             exit 1
           end
-          opt.on("--pid-dir DIR", "The directory in which to store the pidfile.") do |dir|
-            @options[:pid_dir] = dir
+          opt.on("-c FILE", "--config FILE", "The location of a Restforce credentials file.") do |file|
+            @options[:config] = file
           end
           opt.on("-i N", "--interval N", "Amount of time to wait between synchronizations.") do |n|
             @options[:interval] = n.to_i
+          end
+          opt.on("--pid-dir DIR", "The directory in which to store the pidfile.") do |dir|
+            @options[:pid_dir] = dir
           end
           opt.on("-v", "--verbose", "Turn on noisy logging.") do
             @options[:verbose] = true

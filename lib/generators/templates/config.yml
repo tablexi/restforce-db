@@ -1,0 +1,8 @@
+---
+client:
+  username:       "<username@example.com>"
+  password:       "<password>"
+  security_token: "<your salesforce security token>"
+  client_id:      "<your salesforce remote app client id>"
+  client_secret:  "<your salesforce remote app client secret>"
+  host:           "login.salesforce.com"
