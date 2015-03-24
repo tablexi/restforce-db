@@ -134,9 +134,9 @@ module Restforce
         text = "[Restforce::DB] #{text}"
         puts text if @verbose
 
-        return unless logger
+        return unless self.class.logger
 
-        logger.send(level, "#{Time.now.strftime('%FT%T%z')}: #{text}")
+        self.class.logger.send(level, "#{Time.now.strftime('%FT%T%z')}: #{text}")
       end
 
       # Internal: Log an error for the worker, outputting the entire error
