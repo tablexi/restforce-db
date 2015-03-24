@@ -18,6 +18,7 @@ require "restforce/db/mapping"
 require "restforce/db/model"
 require "restforce/db/synchronizer"
 require "restforce/db/record_type"
+require "restforce/db/worker"
 
 module Restforce
 
