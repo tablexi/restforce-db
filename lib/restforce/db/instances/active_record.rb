@@ -30,6 +30,14 @@ module Restforce
           @record.updated_at
         end
 
+        # Public: Get the time of the last synchronization update to this
+        # record.
+        #
+        # Returns a Time-compatible object.
+        def last_synchronize
+          @record.synchronized_at
+        end
+
         # Public: Bump the synchronization timestamp on the record.
         #
         # Returns nothing.

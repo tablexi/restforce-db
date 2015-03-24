@@ -11,7 +11,7 @@ module Restforce
         # Public: Initialize a new Restforce::DB::RecordTypes::Base.
         #
         # record_type - The name or class of the system record type.
-        # mapping     - An instance of Restforce::DB::Mapping.
+        # mapping     - A Restforce::DB::Mapping.
         def initialize(record_type, mapping = Mapping.new)
           @record_type = record_type
           @mapping = mapping
@@ -26,13 +26,25 @@ module Restforce
         # Raises on any validation or external error.
         def sync!(from_record)
           if synced?(from_record)
-            record = find(from_record.id)
-            record.copy!(from_record)
-
-            record
+            update!(from_record)
           else
             create!(from_record)
           end
+        end
+
+        # Public: Update an existing record of this record type with the
+        # attributes from the passed record. Only applies changes if from_record
+        # has been more recently updated than the last record synchronization.
+        #
+        # from_record - A Restforce::DB::Instances::Base instance.
+        #
+        # Returns a Restforce::DB::Instances::Base instance.
+        # Raises on any validation or external error.
+        def update!(from_record)
+          record = find(from_record.id)
+          return record if from_record.last_update < record.last_synchronize
+
+          record.copy!(from_record)
         end
 
       end

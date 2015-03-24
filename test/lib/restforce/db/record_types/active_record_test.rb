@@ -10,8 +10,9 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
 
   describe "#sync!" do
     let(:sync_from) do
-      Struct.new(:id, :attributes).new(
+      Struct.new(:id, :last_update, :attributes).new(
         salesforce_id,
+        Time.now,
         name:    "Some name",
         example: "Some text",
       )
@@ -33,15 +34,14 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
     end
 
     describe "with an existing database record" do
-      let(:sync_to) do
+      let!(:sync_to) do
         CustomObject.create!(
-          name: "Existing name",
-          example: "Existing sample text",
-          salesforce_id: salesforce_id,
+          name:            "Existing name",
+          example:         "Existing sample text",
+          salesforce_id:   salesforce_id,
+          synchronized_at: Time.now,
         )
       end
-
-      before { sync_to }
 
       it "updates the existing database record" do
         expect(instance).to_equal sync_to.reload
@@ -54,8 +54,9 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
 
   describe "#create!" do
     let(:create_from) do
-      Struct.new(:id, :attributes).new(
+      Struct.new(:id, :last_update, :attributes).new(
         salesforce_id,
+        Time.now,
         name:    "Some name",
         example: "Some text",
       )

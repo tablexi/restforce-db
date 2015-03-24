@@ -28,6 +28,14 @@ module Restforce
           Time.parse(@record.SystemModstamp)
         end
 
+        # Public: Get the time of the last synchronization update to this
+        # record.
+        #
+        # Returns a Time-compatible object.
+        def last_synchronize
+          last_update
+        end
+
         private
 
         # Internal: Get a description of the expected attribute Hash format.

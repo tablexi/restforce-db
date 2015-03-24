@@ -58,25 +58,47 @@ describe Restforce::DB::Synchronizer do
     end
 
     describe "given a Salesforce record with an existing record in the database" do
+      let!(:database_attributes) do
+        {
+          name:            "Some existing name",
+          example:         "Some existing sample text",
+          synchronized_at: Time.now,
+        }
+      end
       let(:database_record) do
-        CustomObject.create!(
-          name:          "Some existing name",
-          example:       "Some existing sample text",
-          salesforce_id: salesforce_id,
-        )
+        CustomObject.create!(database_attributes.merge(salesforce_id: salesforce_id))
       end
 
-      before do
-        database_record
-        salesforce_id
-        synchronizer.run
+      describe "with a stale synchronization timestamp" do
+        before do
+          # Set the synchronization timestamp to 5 seconds before the Salesforce
+          # modification timestamp.
+          updated = salesforce_type.find(salesforce_id).last_update
+          database_record.update!(synchronized_at: updated - 5)
+
+          synchronizer.run
+        end
+
+        it "updates the database record" do
+          record = database_record.reload
+
+          expect(record.name).to_equal attributes[:name]
+          expect(record.example).to_equal attributes[:example]
+        end
       end
 
-      it "updates the database record" do
-        record = database_record.reload
+      describe "when the synchronization timestamp is newer than the Salesforce record's" do
+        before do
+          database_record.touch(:synchronized_at)
+          synchronizer.run
+        end
 
-        expect(record.name).to_equal attributes[:name]
-        expect(record.example).to_equal attributes[:example]
+        it "does not update the database record" do
+          record = database_record.reload
+
+          expect(record.name).to_equal database_attributes[:name]
+          expect(record.example).to_equal database_attributes[:example]
+        end
       end
     end
 

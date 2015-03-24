@@ -37,7 +37,8 @@ module Restforce
           Instances::ActiveRecord.new(record, @mapping)
         end
 
-        # Public: Iterate through all ActiveRecord records of this type.
+        # Public: Iterate through all recently-updated ActiveRecord records of
+        # this type.
         #
         # options - A Hash of options which should be applied to the set of
         #           fetched records. Allowed options are:
@@ -49,7 +50,7 @@ module Restforce
         # Yields a series of Restforce::DB::Instances::ActiveRecord instances.
         # Returns nothing.
         def each(options = {})
-          scope = @record_type
+          scope = @record_type.where("updated_at > synchronized_at OR synchronized_at IS NULL")
           scope = scope.where("updated_at > ?", options[:after]) if options[:after]
           scope = scope.where("updated_at < ?", options[:before]) if options[:before]
 
@@ -61,7 +62,7 @@ module Restforce
         private
 
         # Internal: Has this Salesforce record already been linked to a database
-        # record?
+        # record of this type?
         #
         # record - A Restforce::DB::Instances::Salesforce instance.
         #
