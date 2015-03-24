@@ -38,7 +38,7 @@ class LineCook < ActiveRecord::Base
 end
 ```
 
-This will automatically register the model with an entry in the `Restforce::DB::RecordType` collection, which is all it takes for the files to be synchronized by the `restforce-db` worker.
+This will automatically register the model with an entry in the `Restforce::DB::RecordType` collection. Your schema **must** contain a `salesforce_id` column for each table you wish to synchronize with a record type in Salesforce. 
 
 To run the worker, you'll want to run the binstub installed through the generator (see above). Then you can run the self-daemonizing executable.
 
