@@ -16,8 +16,9 @@ require "restforce/db/record_types/salesforce"
 
 require "restforce/db/mapping"
 require "restforce/db/model"
-require "restforce/db/synchronizer"
 require "restforce/db/record_type"
+require "restforce/db/synchronizer"
+require "restforce/db/tracker"
 require "restforce/db/worker"
 
 module Restforce
@@ -28,6 +29,7 @@ module Restforce
 
     class << self
 
+      attr_accessor :last_run
       attr_writer :configuration
 
     end

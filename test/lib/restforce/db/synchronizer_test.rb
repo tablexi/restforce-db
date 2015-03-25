@@ -9,6 +9,15 @@ describe Restforce::DB::Synchronizer do
   let(:salesforce_type) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c", mapping) }
   let(:synchronizer) { Restforce::DB::Synchronizer.new(database_type, salesforce_type) }
 
+  describe "#initialize" do
+    before { Restforce::DB.last_run = Time.now }
+    after { Restforce::DB.last_run = nil }
+
+    it "prefills the Synchronizer's last_run timestamp with the global configuration" do
+      expect(synchronizer.last_run).to_equal Restforce::DB.last_run
+    end
+  end
+
   describe "#run", vcr: { match_requests_on: [:method, VCR.request_matchers.uri_without_param(:q)] } do
     let(:attributes) do
       {

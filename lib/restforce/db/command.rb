@@ -18,6 +18,7 @@ module Restforce
           verbose: false,
           pid_dir: Rails.root.join("tmp", "pids"),
           config:  Rails.root.join("config", "restforce-db.yml"),
+          tracker: Rails.root.join("config", ".restforce"),
           logfile: Rails.root.join("log", "restforce-db.log"),
         }
 
@@ -57,6 +58,7 @@ module Restforce
 
         Restforce::DB::Worker.after_fork
         Restforce::DB::Worker.logger ||= logger
+        Restforce::DB::Worker.tracker ||= tracker
 
         worker = Restforce::DB::Worker.new(options)
         worker.start
@@ -83,11 +85,14 @@ module Restforce
           opt.on("-i N", "--interval N", "Amount of time to wait between synchronizations.") do |n|
             @options[:interval] = n.to_i
           end
-          opt.on("-l FILE ", "--logfile FILE", "The file where logging output should be captured.") do |file|
+          opt.on("-l FILE", "--logfile FILE", "The file where logging output should be captured.") do |file|
             @options[:logfile] = file
           end
           opt.on("--pid-dir DIR", "The directory in which to store the pidfile.") do |dir|
             @options[:pid_dir] = dir
+          end
+          opt.on("-t FILE", "--tracker FILE", "The file where run characteristics should be logged.") do |file|
+            @options[:tracker] = file
           end
           opt.on("-v", "--verbose", "Turn on noisy logging.") do
             @options[:verbose] = true
@@ -105,6 +110,13 @@ module Restforce
             "#{severity} [#{datetime.strftime('%Y-%m-%d %H:%M:%S')}] #{msg}\n"
           end
         end
+      end
+
+      # Internal: Get a Tracker instance to manage run characteristics.
+      #
+      # Returns a Restforce::DB::Tracker.
+      def tracker
+        @tracker ||= Tracker.new(@options[:tracker])
       end
 
     end

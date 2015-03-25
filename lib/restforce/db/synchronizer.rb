@@ -19,7 +19,7 @@ module Restforce
       # last_run_time          - A Time object reflecting the time of the most
       #                          recent synchronization run. Runs will only
       #                          synchronize data more recent than this stamp.
-      def initialize(database_record_type, salesforce_record_type, last_run_time = nil)
+      def initialize(database_record_type, salesforce_record_type, last_run_time = DB.last_run)
         @database_record_type = database_record_type
         @salesforce_record_type = salesforce_record_type
         @last_run = last_run_time

@@ -10,7 +10,7 @@ module Restforce
 
       class << self
 
-        attr_accessor :logger, :interval
+        attr_accessor :logger, :tracker, :interval
 
         # Public: Store the list of currently open file descriptors so that they
         # may be reopened when a new process is spawned.
@@ -72,13 +72,7 @@ module Restforce
         end
 
         loop do
-          log "=============================="
-
-          runtime = Benchmark.realtime do
-            Restforce::DB::RecordType.each do |name, record_type|
-              synchronize name, record_type
-            end
-          end
+          runtime = Benchmark.realtime { perform }
 
           if runtime < self.class.interval && !stop?
             sleep(self.class.interval - runtime)
@@ -97,6 +91,21 @@ module Restforce
       end
 
       private
+
+      # Internal: Perform the synchronization loop, recording the time that the
+      # run is performed so that future runs can pick up where the last run
+      # left off.
+      #
+      # Returns nothing.
+      def perform
+        log "=============================="
+
+        runtime = Time.now
+        Restforce::DB::RecordType.each do |name, record_type|
+          synchronize name, record_type
+        end
+        tracker.track(runtime)
+      end
 
       # Internal: Synchronize the objects in the database and Salesforce
       # corresponding to the passed record type.
