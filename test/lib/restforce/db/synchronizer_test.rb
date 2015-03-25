@@ -66,7 +66,7 @@ describe Restforce::DB::Synchronizer do
       end
     end
 
-    describe "given a Salesforce record with an existing record in the database" do
+    describe "given a Salesforce record with an associated database record" do
       let!(:database_attributes) do
         {
           name:            "Some existing name",
@@ -78,7 +78,7 @@ describe Restforce::DB::Synchronizer do
         CustomObject.create!(database_attributes.merge(salesforce_id: salesforce_id))
       end
 
-      describe "with a stale synchronization timestamp" do
+      describe "when synchronization is stale" do
         before do
           # Set the synchronization timestamp to 5 seconds before the Salesforce
           # modification timestamp.
@@ -96,7 +96,7 @@ describe Restforce::DB::Synchronizer do
         end
       end
 
-      describe "when the synchronization timestamp is newer than the Salesforce record's" do
+      describe "when synchronization is up-to-date" do
         before do
           database_record.touch(:synchronized_at)
           synchronizer.run
