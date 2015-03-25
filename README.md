@@ -14,10 +14,6 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install restforce-db
-
 ## Usage
 
 First, you'll want to install the default bin and configuration files, which is handled by the included Rails generator:
@@ -49,23 +45,30 @@ end
 
 This will automatically register the model with an entry in the `Restforce::DB::RecordType` collection.
 
-To run the worker, you'll want to run the binstub installed through the generator (see above). Then you can run the self-daemonizing executable.
+### Run the daemon
 
-        $ bin/restforce-db start
+To actually perform the system synchronization, you'll want to run the binstub installed through the generator (see above). This will daemonize a process which loops repeatedly to continuously synchronize your database and Salesforce according to your established mappings.
+
+        $ bundle exec bin/restforce-db start
 
 By default, this will load the credentials at the same location the generator installed them. You can explicitly pass the location of your configuration file with the `-c` option:
 
-        $ bin/restforce-db -c /path/to/my/config.yml start
+        $ bundle exec bin/restforce-db -c /path/to/my/config.yml start
 
 For additional information and a full set of options, you can run:
 
-        $ bin/restforce-db -h
+        $ bundle exec bin/restforce-db -h
 
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Caveats
+
+- **Update Prioritization.** When synchronization occurs, newly-updated records in Salesforce are prioritized over newly-updated database records. This means that any changes to records in the database may be overwritten if changes were made to the Salesforce at the same time.
+- **API Usage.** This gem performs most of its functionality via the Salesforce API (by way of the [`restforce`](https://github.com/ejholmes/restforce) gem). If you're at risk of hitting your Salesforce API limits, this may not be the right approach for you.
 
 ## Contributing
 

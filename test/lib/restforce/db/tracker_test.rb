@@ -21,7 +21,7 @@ describe Restforce::DB::Tracker do
         file.rewind
       end
 
-      it "initializes Restforce::DB.last_run to the value" do
+      it "initializes Restforce::DB.last_run to the recorded time" do
         tracker
         expect(Restforce::DB.last_run.to_i).to_equal runtime.to_i
       end
