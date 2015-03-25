@@ -57,10 +57,11 @@ module Restforce
         Dir.chdir(Rails.root)
 
         Restforce::DB::Worker.after_fork
-        Restforce::DB::Worker.logger ||= logger
-        Restforce::DB::Worker.tracker ||= tracker
 
         worker = Restforce::DB::Worker.new(options)
+        worker.logger = logger
+        worker.tracker = tracker
+
         worker.start
       rescue => e
         Restforce::DB::Worker.logger.fatal e

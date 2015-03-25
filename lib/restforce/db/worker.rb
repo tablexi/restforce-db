@@ -10,8 +10,6 @@ module Restforce
 
       class << self
 
-        attr_accessor :logger, :tracker, :interval
-
         # Public: Store the list of currently open file descriptors so that they
         # may be reopened when a new process is spawned.
         #
@@ -40,6 +38,8 @@ module Restforce
         end
 
       end
+
+      attr_accessor :logger, :tracker
 
       # Public: Initialize a new Restforce::DB::Worker.
       #
@@ -98,13 +98,30 @@ module Restforce
       #
       # Returns nothing.
       def perform
-        log "=============================="
-
-        runtime = Time.now
-        Restforce::DB::RecordType.each do |name, record_type|
-          synchronize name, record_type
+        track do
+          Restforce::DB::RecordType.each do |name, record_type|
+            synchronize name, record_type
+          end
         end
-        tracker.track(runtime)
+      end
+
+      # Internal: Run the passed block, updating the tracker with the time at
+      # which the run was initiated.
+      #
+      # Yields to a passed block.
+      # Returns nothing.
+      def track
+        if tracker
+          runtime = Time.now
+          log "SYNCHRONIZING from #{tracker.last_run.iso8601}"
+
+          yield
+
+          log "DONE"
+          tracker.track(runtime)
+        else
+          yield
+        end
       end
 
       # Internal: Synchronize the objects in the database and Salesforce
@@ -115,9 +132,9 @@ module Restforce
       #
       # Returns a Boolean.
       def synchronize(name, record_type)
-        log "(#{name}) SYNCHRONIZING"
+        log "  SYNCHRONIZE #{name}"
         runtime =  Benchmark.realtime { record_type.synchronize }
-        log format("(#{name}) COMPLETED after %.4f", runtime)
+        log format("  COMPLETE after %.4f", runtime)
 
         return true
       rescue => e
@@ -142,8 +159,8 @@ module Restforce
       def log(text, level = :info)
         puts text if @verbose
 
-        return unless self.class.logger
-        self.class.logger.send(level, text)
+        return unless logger
+        logger.send(level, text)
       end
 
       # Internal: Log an error for the worker, outputting the entire error

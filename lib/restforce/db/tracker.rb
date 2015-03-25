@@ -7,6 +7,8 @@ module Restforce
     # successful sync" timestamp.
     class Tracker
 
+      attr_reader :last_run
+
       # Public: Initialize a Restforce::DB::Tracker. Sets a last_run timestamp
       # on Restforce::DB if the supplied tracking file already contains a stamp.
       #
@@ -15,7 +17,10 @@ module Restforce
         @file = File.open(file_path, "a+")
 
         timestamp = @file.read
-        Restforce::DB.last_run = Time.parse(timestamp) unless timestamp.empty?
+        return if timestamp.empty?
+
+        @last_run = Time.parse(timestamp)
+        Restforce::DB.last_run = @last_run
       end
 
       # Public: Persist the passed time in the tracker file.
@@ -24,6 +29,8 @@ module Restforce
       #
       # Returns nothing.
       def track(time)
+        @last_run = time
+
         @file.truncate(0)
         @file.print(time.utc.iso8601)
         @file.flush
