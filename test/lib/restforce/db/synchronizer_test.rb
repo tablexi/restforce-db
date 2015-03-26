@@ -33,15 +33,31 @@ describe Restforce::DB::Synchronizer do
     describe "given an existing Salesforce record" do
       before do
         salesforce_id
-        synchronizer.run
       end
 
-      it "populates the database with the new record" do
-        record = database_model.last
+      describe "for a root mapping" do
+        before do
+          synchronizer.run
+        end
 
-        expect(record.name).to_equal attributes[:name]
-        expect(record.example).to_equal attributes[:example]
-        expect(record.salesforce_id).to_equal salesforce_id
+        it "creates a matching database record" do
+          record = database_model.last
+
+          expect(record.name).to_equal attributes[:name]
+          expect(record.example).to_equal attributes[:example]
+          expect(record.salesforce_id).to_equal salesforce_id
+        end
+      end
+
+      describe "for a non-root mapping" do
+        before do
+          mapping.root = false
+          synchronizer.run
+        end
+
+        it "does not create a database record" do
+          expect(database_model.last).to_be_nil
+        end
       end
     end
 

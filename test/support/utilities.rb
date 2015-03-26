@@ -20,6 +20,7 @@ def mappings!
     Restforce::DB::Mapping.new(
       database_model,
       salesforce_model,
+      root: true,
       fields: fields,
       associations: associations,
     )

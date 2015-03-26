@@ -36,7 +36,8 @@ module Restforce
 
       self.collection ||= {}
 
-      attr_accessor :database_record_type, :salesforce_record_type
+      attr_reader :database_record_type, :salesforce_record_type
+      attr_writer :root
 
       # Public: Initialize a new Restforce::DB::Mapping.
       #

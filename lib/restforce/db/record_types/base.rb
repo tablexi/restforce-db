@@ -27,7 +27,7 @@ module Restforce
         def sync!(from_record)
           if synced?(from_record)
             update!(from_record)
-          else
+          elsif @mapping.root?
             create!(from_record)
           end
         end
