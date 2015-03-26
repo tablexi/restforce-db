@@ -33,7 +33,7 @@ module Restforce
         Dir.mkdir(dir) unless File.exist?(dir)
 
         daemon_args = {
-          dir: @options[:pid_dir],
+          dir: dir,
           dir_mode: :normal,
           monitor: @monitor,
           ARGV: @args,
@@ -64,7 +64,7 @@ module Restforce
 
         worker.start
       rescue => e
-        Restforce::DB::Worker.logger.fatal e
+        logger.fatal e
         STDERR.puts e.message
         exit 1
       end

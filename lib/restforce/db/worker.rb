@@ -50,7 +50,7 @@ module Restforce
       #           verbose  - Display command line output? Defaults to false.
       def initialize(options = {})
         @verbose = options.fetch(:verbose) { false }
-        self.class.interval = options.fetch(:interval) { DEFAULT_INTERVAL }
+        @interval = options.fetch(:interval) { DEFAULT_INTERVAL }
 
         Restforce::DB.configure { |config| config.parse(options[:config]) }
       end
@@ -74,8 +74,8 @@ module Restforce
         loop do
           runtime = Benchmark.realtime { perform }
 
-          if runtime < self.class.interval && !stop?
-            sleep(self.class.interval - runtime)
+          if runtime < @interval && !stop?
+            sleep(@interval - runtime)
           end
 
           break if stop?
