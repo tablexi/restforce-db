@@ -19,7 +19,13 @@ module Restforce
         def create!(from_record)
           attributes = @mapping.convert(@record_type, from_record.attributes)
 
-          record = @record_type.create!(attributes.merge(salesforce_id: from_record.id))
+          record = @record_type.new(attributes.merge(salesforce_id: from_record.id))
+          @mapping.associations.each do |association, lookup|
+            lookup_id = from_record.record.send(lookup)
+            associated = record.send("build_#{association}")
+            build_association associated, lookup_id
+          end
+          record.save!
 
           Instances::ActiveRecord.new(@record_type, record, @mapping).after_sync
         end
@@ -69,6 +75,33 @@ module Restforce
         # Returns a Boolean.
         def synced?(record)
           @record_type.exists?(salesforce_id: record.id)
+        end
+
+        # Internal: Assemble an associated record, using the data from the
+        # Salesforce record corresponding to a specific lookup ID.
+        #
+        # TODO: With some refactoring using ActiveRecord inflections, this
+        # should be possible to handle as a recursive call to the configured
+        # Mapping's database record type. Right now, nested associations are
+        # ignored.
+        #
+        # associated - The associatd database record.
+        # lookup_id  - A Salesforce ID corresponding to the record type in the
+        #              Mapping defined for the associated database model.
+        #
+        # Returns a Boolean.
+        def build_association(associated, lookup_id)
+          mapping = Mapping[associated.class]
+
+          salesforce_instance = mapping.salesforce_record_type.find(lookup_id)
+          attributes = mapping.convert(associated.class, salesforce_instance.attributes)
+
+          associated.assign_attributes(
+            attributes.merge(
+              salesforce_id: lookup_id,
+              synchronized_at: Time.now,
+            ),
+          )
         end
 
       end

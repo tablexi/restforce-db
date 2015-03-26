@@ -31,25 +31,50 @@ In order to keep your database records in sync with Salesforce, the table will n
 
 ### Register a mapping
 
-To register a Salesforce mapping in an `ActiveRecord` model, you need to add a few lines of DSL-style code to your class definition:
+To register a Salesforce mapping in an `ActiveRecord` model, you'll need to add a few lines of DSL-style code to the relevant class definitions:
 
 ```ruby
-class MyModel < ActiveRecord::Base
+class Restaurant < ActiveRecord::Base
 
   include Restforce::DB::Model
+  has_one :specialty, class_name: "Dish"
 
   sync_with(
-    "Object__c",
+    "Restaurants__c",
     fields: {
-      name: "Name",
-      color: "Color__c",
+      name:  "Name",
+      style: "Style__c",
     },
+    associations: {
+      specialty: "Specialty__c",
+    },
+    root: true,
   )
 
 end
+
+class Dish < ActiveRecord::Base
+
+  include Restforce::DB::Model
+  belongs_to :restaurant
+
+  sync_with(
+    "Dish__c",
+    fields: {
+      name:       "Name",
+      ingredient: "Ingredient__c",
+    },
+  )
+end
 ```
 
-This will automatically register the model with an entry in the `Restforce::DB::Mapping` collection. This collection defines the manner in which the database and Salesforce systems will be synchronized.
+This will automatically register the models with entries in the `Restforce::DB::Mapping` collection. This collection defines the manner in which the database and Salesforce systems will be synchronized.
+
+There are a few options to be aware of when describing a mapping:
+
+- `fields`: These are direct field-to-field mappings. The keys should line up with your ActiveRecord attribute names, while the values should line up with the matching field names in Salesforce.
+- `associations`: These are mappings of ActiveRecord associations to Salesforce lookups. Associations defined here will be built as part of the creation process for a newly-synced record. 
+- `root`: When `true`, all records of the associated type will be synchronized from Salesforce into the database and vice-versa. When `false` or `nil`, records will still be updated, but can only be created through associations (see just above).
 
 ### Run the daemon
 

@@ -5,6 +5,7 @@ def configure!
   end
 
   after do
+    Restforce::DB::Mapping.collection = {}
     DatabaseCleaner.clean
     Salesforce.clean!
   end
