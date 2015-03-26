@@ -113,7 +113,12 @@ module Restforce
       def track
         if tracker
           runtime = Time.now
-          log "SYNCHRONIZING from #{tracker.last_run.iso8601}"
+
+          if tracker.last_run
+            log "SYNCHRONIZING from #{tracker.last_run.iso8601}"
+          else
+            log "SYNCHRONIZING"
+          end
 
           yield
 
