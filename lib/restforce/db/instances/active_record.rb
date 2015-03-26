@@ -46,15 +46,6 @@ module Restforce
           super
         end
 
-        private
-
-        # Internal: Get a description of the expected attribute Hash format.
-        #
-        # Returns a Symbol.
-        def conversion
-          :database
-        end
-
       end
 
     end

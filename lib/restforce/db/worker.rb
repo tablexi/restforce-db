@@ -73,10 +73,7 @@ module Restforce
 
         loop do
           runtime = Benchmark.realtime { perform }
-
-          if runtime < @interval && !stop?
-            sleep(@interval - runtime)
-          end
+          sleep(@interval - runtime) if runtime < @interval && !stop?
 
           break if stop?
         end
@@ -99,8 +96,8 @@ module Restforce
       # Returns nothing.
       def perform
         track do
-          Restforce::DB::RecordType.each do |name, record_type|
-            synchronize name, record_type
+          Restforce::DB::Mapping.each do |name, mapping|
+            synchronize name, mapping
           end
         end
       end
@@ -132,13 +129,13 @@ module Restforce
       # Internal: Synchronize the objects in the database and Salesforce
       # corresponding to the passed record type.
       #
-      # name        - The String name of the record type to synchronize.
-      # record_type - A Restforce::DB::RecordType.
+      # name    - The String name of the record type to synchronize.
+      # mapping - A Restforce::DB::Mapping.
       #
       # Returns a Boolean.
-      def synchronize(name, record_type)
+      def synchronize(name, mapping)
         log "  SYNCHRONIZE #{name}"
-        runtime =  Benchmark.realtime { record_type.synchronize }
+        runtime = Benchmark.realtime { mapping.synchronizer.run }
         log format("  COMPLETE after %.4f", runtime)
 
         return true

@@ -4,37 +4,62 @@ describe Restforce::DB::Mapping do
 
   configure!
 
-  let(:mapping) { Restforce::DB::Mapping.new(mappings) }
-  let(:mappings) do
+  let(:database_model) { CustomObject }
+  let(:salesforce_model) { "CustomObject__c" }
+  let(:associations) { {} }
+  let(:fields) do
     {
       column_one: "SF_Field_One__c",
       column_two: "SF_Field_Two__c",
     }
   end
+  let!(:mapping) do
+    Restforce::DB::Mapping.new(
+      database_model,
+      salesforce_model,
+      fields: fields,
+      associations: associations,
+    )
+  end
 
-  describe "#initialize" do
+  describe ".each" do
 
-    it "assigns the passed mappings to the object" do
-      expect(mapping.mappings).to_equal(mappings)
+    # Restforce::DB::Mapping actually implements Enumerable, so we're just
+    # going with a trivially testable portion of the Enumerable API.
+    it "yields the registered record types" do
+      expect(Restforce::DB::Mapping.first).to_equal [database_model.name, mapping]
     end
   end
 
-  describe "#add_mappings" do
-    let(:new_mappings) { { a: "few", more: "mappings" } }
+  describe "#initialize" do
 
-    before do
-      mapping.add_mappings new_mappings
+    it "adds the mapping to the global collection" do
+      expect(Restforce::DB::Mapping[database_model]).to_equal mapping
+    end
+  end
+
+  describe "#salesforce_fields" do
+
+    describe "given no mapped associations" do
+
+      it "lists the fields in the attribute map" do
+        expect(mapping.salesforce_fields).to_equal(fields.values)
+      end
     end
 
-    it "appends the passed mappings to the object's internal collection" do
-      expect(mapping.mappings).to_equal(mappings.merge(new_mappings))
+    describe "given a set of associations" do
+      let(:associations) { { user: "Owner" } }
+
+      it "lists the field and association lookups" do
+        expect(mapping.salesforce_fields).to_equal(fields.values + associations.values)
+      end
     end
   end
 
   describe "#attributes" do
 
     it "builds a normalized Hash of database attribute values" do
-      attributes = mapping.attributes(:database) do |attribute|
+      attributes = mapping.attributes(database_model) do |attribute|
         expect(mapping.database_fields.include?(attribute)).to_equal true
         attribute
       end
@@ -44,7 +69,7 @@ describe Restforce::DB::Mapping do
     end
 
     it "builds a normalized Hash of Salesforce field values" do
-      attributes = mapping.attributes(:salesforce) do |attribute|
+      attributes = mapping.attributes(salesforce_model) do |attribute|
         expect(mapping.salesforce_fields.include?(attribute)).to_equal true
         attribute
       end
@@ -58,13 +83,13 @@ describe Restforce::DB::Mapping do
     let(:attributes) { { column_one: "some value" } }
 
     it "converts an attribute Hash to a Salesforce-compatible form" do
-      expect(mapping.convert(:salesforce, attributes)).to_equal(
-        mappings[attributes.keys.first] => attributes.values.first,
+      expect(mapping.convert(salesforce_model, attributes)).to_equal(
+        fields[attributes.keys.first] => attributes.values.first,
       )
     end
 
     it "performs no special conversion for database columns" do
-      expect(mapping.convert(:database, attributes)).to_equal(attributes)
+      expect(mapping.convert(database_model, attributes)).to_equal(attributes)
     end
   end
 end

@@ -12,9 +12,11 @@ module Restforce
 
         # Public: Initialize a new Restforce::DB::Instances::Base instance.
         #
-        # record  - The Salesforce or database record to manage.
-        # mapping - An instance of Restforce::DB::Mapping.
-        def initialize(record, mapping = Mapping.new)
+        # record_type - A String or Class describing the record's type.
+        # record      - The Salesforce or database record to manage.
+        # mapping     - An instance of Restforce::DB::Mapping.
+        def initialize(record_type, record, mapping = nil)
+          @record_type = record_type
           @record = record
           @mapping = mapping
         end
@@ -40,7 +42,7 @@ module Restforce
         # Returns self.
         # Raises if the update fails for any reason.
         def copy!(from_record)
-          update! @mapping.convert(conversion, from_record.attributes)
+          update! @mapping.convert(@record_type, from_record.attributes)
         end
 
         # Public: Get a Hash mapping the configured attributes names to their
@@ -48,7 +50,7 @@ module Restforce
         #
         # Returns a Hash.
         def attributes
-          @mapping.attributes(conversion) { |attribute| record.send(attribute) }
+          @mapping.attributes(@record_type) { |attribute| record.send(attribute) }
         end
 
         # Public: Has this record been synced with Salesforce?

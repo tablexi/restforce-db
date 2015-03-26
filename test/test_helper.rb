@@ -11,15 +11,3 @@ secrets_file = File.expand_path("../config/secrets.yml", __FILE__)
 Secrets = YAML.load_file(secrets_file)
 
 Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each { |f| require f }
-
-# :nodoc:
-def configure!
-  before do
-    Salesforce.configure!
-  end
-
-  after do
-    DatabaseCleaner.clean
-    Salesforce.clean!
-  end
-end

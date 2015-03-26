@@ -12,7 +12,7 @@ module Restforce
         #
         # record_type - The name or class of the system record type.
         # mapping     - A Restforce::DB::Mapping.
-        def initialize(record_type, mapping = Mapping.new)
+        def initialize(record_type, mapping = nil)
           @record_type = record_type
           @mapping = mapping
         end

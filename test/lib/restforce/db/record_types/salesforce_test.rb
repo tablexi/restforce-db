@@ -3,23 +3,22 @@ require_relative "../../../../test_helper"
 describe Restforce::DB::RecordTypes::Salesforce do
 
   configure!
+  mappings!
 
-  let(:mapping) { Restforce::DB::Mapping.new }
-  let(:record_type) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c", mapping) }
+  let(:record_type) { mapping.salesforce_record_type }
 
   describe "#create!", :vcr do
     let(:database_record) do
-      CustomObject.create!(
+      database_model.create!(
         name: "Something",
         example: "Something else",
       )
     end
-    let(:sync_from) { Restforce::DB::Instances::ActiveRecord.new(database_record, mapping) }
+    let(:sync_from) { Restforce::DB::Instances::ActiveRecord.new(database_model, database_record, mapping) }
     let(:instance) { record_type.create!(sync_from).record }
 
     before do
-      mapping.add_mappings name: "Name", example: "Example_Field__c"
-      Salesforce.records << ["CustomObject__c", instance.Id]
+      Salesforce.records << [salesforce_model, instance.Id]
     end
 
     it "creates a record in Salesforce from the passed database record's attributes" do
@@ -33,7 +32,7 @@ describe Restforce::DB::RecordTypes::Salesforce do
   end
 
   describe "#find", :vcr do
-    let(:id) { Salesforce.create!("CustomObject__c") }
+    let(:id) { Salesforce.create!(salesforce_model) }
 
     it "finds existing records in Salesforce" do
       expect(record_type.find(id)).to_be_instance_of Restforce::DB::Instances::Salesforce

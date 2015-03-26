@@ -3,11 +3,9 @@ require_relative "../../../test_helper"
 describe Restforce::DB::Synchronizer do
 
   configure!
+  mappings!
 
-  let(:mapping) { Restforce::DB::Mapping.new(name: "Name", example: "Example_Field__c") }
-  let(:database_type) { Restforce::DB::RecordTypes::ActiveRecord.new(CustomObject, mapping) }
-  let(:salesforce_type) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c", mapping) }
-  let(:synchronizer) { Restforce::DB::Synchronizer.new(database_type, salesforce_type) }
+  let(:synchronizer) { mapping.synchronizer }
 
   describe "#initialize" do
     before { Restforce::DB.last_run = Time.now }
@@ -27,8 +25,8 @@ describe Restforce::DB::Synchronizer do
     end
     let(:salesforce_id) do
       Salesforce.create!(
-        "CustomObject__c",
-        mapping.convert(:salesforce, attributes),
+        salesforce_model,
+        mapping.convert(salesforce_model, attributes),
       )
     end
 
@@ -39,7 +37,7 @@ describe Restforce::DB::Synchronizer do
       end
 
       it "populates the database with the new record" do
-        record = CustomObject.last
+        record = database_model.last
 
         expect(record.name).to_equal attributes[:name]
         expect(record.example).to_equal attributes[:example]
@@ -48,18 +46,18 @@ describe Restforce::DB::Synchronizer do
     end
 
     describe "given an existing database record" do
-      let(:database_record) { CustomObject.create!(attributes) }
+      let(:database_record) { database_model.create!(attributes) }
       let(:salesforce_id) { database_record.reload.salesforce_id }
 
       before do
         database_record
         synchronizer.run
 
-        Salesforce.records << ["CustomObject__c", salesforce_id]
+        Salesforce.records << [salesforce_model, salesforce_id]
       end
 
       it "populates Salesforce with the new record" do
-        record = salesforce_type.find(salesforce_id).record
+        record = mapping.salesforce_record_type.find(salesforce_id).record
 
         expect(record.Name).to_equal attributes[:name]
         expect(record.Example_Field__c).to_equal attributes[:example]
@@ -75,14 +73,14 @@ describe Restforce::DB::Synchronizer do
         }
       end
       let(:database_record) do
-        CustomObject.create!(database_attributes.merge(salesforce_id: salesforce_id))
+        database_model.create!(database_attributes.merge(salesforce_id: salesforce_id))
       end
 
       describe "when synchronization is stale" do
         before do
           # Set the synchronization timestamp to 5 seconds before the Salesforce
           # modification timestamp.
-          updated = salesforce_type.find(salesforce_id).last_update
+          updated = mapping.salesforce_record_type.find(salesforce_id).last_update
           database_record.update!(synchronized_at: updated - 5)
 
           synchronizer.run

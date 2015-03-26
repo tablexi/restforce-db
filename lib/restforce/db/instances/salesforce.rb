@@ -36,15 +36,6 @@ module Restforce
           last_update
         end
 
-        private
-
-        # Internal: Get a description of the expected attribute Hash format.
-        #
-        # Returns a Symbol.
-        def conversion
-          :salesforce
-        end
-
       end
 
     end

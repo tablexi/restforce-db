@@ -17,7 +17,7 @@ module Restforce
         # Returns a Restforce::DB::Instances::Salesforce instance.
         # Raises on any error from Salesforce.
         def create!(from_record)
-          attributes = @mapping.convert(:salesforce, from_record.attributes)
+          attributes = @mapping.convert(@record_type, from_record.attributes)
           record_id = DB.client.create!(@record_type, attributes)
 
           from_record.update!(salesforce_id: record_id).after_sync
@@ -37,7 +37,7 @@ module Restforce
 
           return unless record
 
-          Instances::Salesforce.new(record, @mapping)
+          Instances::Salesforce.new(@record_type, record, @mapping)
         end
 
         # Public: Iterate through all Salesforce records of this type.
@@ -61,7 +61,7 @@ module Restforce
           query = "select #{lookups} from #{@record_type}#{constraints}"
 
           DB.client.query(query).each do |record|
-            yield Instances::Salesforce.new(record, @mapping)
+            yield Instances::Salesforce.new(@record_type, record, @mapping)
           end
         end
 

@@ -6,7 +6,7 @@ describe Restforce::DB::Model do
 
   let(:database_model) { CustomObject }
   let(:salesforce_model) { "CustomObject__c" }
-  let(:mappings) do
+  let(:fields) do
     {
       name:    "Name",
       example: "Example_Field__c",
@@ -17,31 +17,14 @@ describe Restforce::DB::Model do
     database_model.send(:include, Restforce::DB::Model)
   end
 
-  describe ".map_to" do
+  describe ".sync_with" do
     before do
-      database_model.map_to(salesforce_model, mappings)
+      database_model.sync_with(salesforce_model, fields: fields)
     end
 
-    it "creates a mapping in Restforce::DB::RecordType" do
-      expect(Restforce::DB::RecordType[database_model])
-        .to_be_instance_of(Restforce::DB::RecordType)
-    end
-
-    it "applies the passed attribute mappings to the registered RecordType" do
-      expect(Restforce::DB::RecordType[database_model].mapping.mappings)
-        .to_equal(mappings)
-    end
-  end
-
-  describe ".add_mappings" do
-    before do
-      database_model.map_to(salesforce_model)
-      database_model.add_mappings(mappings)
-    end
-
-    it "applies the passed attribute mappings to the registered RecordType" do
-      expect(Restforce::DB::RecordType[database_model].mapping.mappings)
-        .to_equal(mappings)
+    it "creates a mapping in Restforce::DB::Mapping" do
+      expect(Restforce::DB::Mapping[database_model])
+        .to_be_instance_of(Restforce::DB::Mapping)
     end
   end
 

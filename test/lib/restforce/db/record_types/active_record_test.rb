@@ -3,9 +3,9 @@ require_relative "../../../../test_helper"
 describe Restforce::DB::RecordTypes::ActiveRecord do
 
   configure!
+  mappings!
 
-  let(:mapping) { Restforce::DB::Mapping.new }
-  let(:record_type) { Restforce::DB::RecordTypes::ActiveRecord.new(CustomObject, mapping) }
+  let(:record_type) { mapping.database_record_type }
   let(:salesforce_id) { "a001a000001E1vREAL" }
 
   describe "#sync!" do
@@ -19,10 +19,6 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
     end
     let(:instance) { record_type.sync!(sync_from).record }
 
-    before do
-      mapping.add_mappings(name: "Name", example: "Example_Field__c")
-    end
-
     describe "without an existing database record" do
 
       it "creates a new database record from the passed Salesforce record" do
@@ -35,7 +31,7 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
 
     describe "with an existing database record" do
       let!(:sync_to) do
-        CustomObject.create!(
+        database_model.create!(
           name:            "Existing name",
           example:         "Existing sample text",
           salesforce_id:   salesforce_id,
@@ -63,10 +59,6 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
     end
     let(:instance) { record_type.create!(create_from).record }
 
-    before do
-      mapping.add_mappings(name: "Name", example: "Example_Field__c")
-    end
-
     it "creates a record in the database from the passed Salesforce record's attributes" do
       expect(instance.salesforce_id).to_equal salesforce_id
       expect(instance.name).to_equal create_from.attributes[:name]
@@ -78,7 +70,7 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
   describe "#find" do
 
     it "finds existing records in the database by their salesforce id" do
-      CustomObject.create!(salesforce_id: salesforce_id)
+      database_model.create!(salesforce_id: salesforce_id)
       expect(record_type.find(salesforce_id)).to_be_instance_of Restforce::DB::Instances::ActiveRecord
     end
 

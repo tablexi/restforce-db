@@ -3,11 +3,10 @@ require_relative "../../../../test_helper"
 describe Restforce::DB::Instances::Salesforce do
 
   configure!
+  mappings!
 
-  let(:mapping) { Restforce::DB::Mapping.new(example: "Example_Field__c") }
-  let(:record_type) { Restforce::DB::RecordTypes::Salesforce.new("CustomObject__c", mapping) }
-  let(:id) { Salesforce.create!("CustomObject__c") }
-  let(:instance) { record_type.find(id) }
+  let(:id) { Salesforce.create!(salesforce_model) }
+  let(:instance) { mapping.salesforce_record_type.find(id) }
 
   describe "#update!", :vcr do
     let(:text) { "Some new text" }
@@ -21,7 +20,7 @@ describe Restforce::DB::Instances::Salesforce do
     end
 
     it "updates the record in Salesforce with the passed attributes" do
-      expect(record_type.find(id).record.Example_Field__c).to_equal text
+      expect(mapping.salesforce_record_type.find(id).record.Example_Field__c).to_equal text
     end
   end
 
@@ -41,7 +40,7 @@ describe Restforce::DB::Instances::Salesforce do
   describe "#last_update" do
     let(:timestamp) { "2015-03-18T20:28:24.000+0000" }
     let(:record) { Struct.new(:SystemModstamp).new(timestamp) }
-    let(:instance) { Restforce::DB::Instances::Salesforce.new(record) }
+    let(:instance) { Restforce::DB::Instances::Salesforce.new(salesforce_model, record) }
 
     it "parses a time from the record's system modification timestamp" do
       expect(instance.last_update).to_equal(Time.new(2015, 3, 18, 20, 28, 24, 0))

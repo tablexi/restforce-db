@@ -17,11 +17,11 @@ module Restforce
         # Returns a Restforce::DB::Instances::ActiveRecord instance.
         # Raises on any validation or database error.
         def create!(from_record)
-          attributes = @mapping.convert(:database, from_record.attributes)
+          attributes = @mapping.convert(@record_type, from_record.attributes)
 
           record = @record_type.create!(attributes.merge(salesforce_id: from_record.id))
 
-          Instances::ActiveRecord.new(record, @mapping).after_sync
+          Instances::ActiveRecord.new(@record_type, record, @mapping).after_sync
         end
 
         # Public: Find the instance of this ActiveRecord model corresponding to
@@ -34,7 +34,7 @@ module Restforce
           record = @record_type.find_by(salesforce_id: id)
           return nil unless record
 
-          Instances::ActiveRecord.new(record, @mapping)
+          Instances::ActiveRecord.new(@record_type, record, @mapping)
         end
 
         # Public: Iterate through all recently-updated ActiveRecord records of
@@ -55,7 +55,7 @@ module Restforce
           scope = scope.where("updated_at < ?", options[:before]) if options[:before]
 
           scope.find_each do |record|
-            yield Instances::ActiveRecord.new(record, @mapping)
+            yield Instances::ActiveRecord.new(@record_type, record, @mapping)
           end
         end
 

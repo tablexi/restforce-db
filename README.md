@@ -38,26 +38,32 @@ class MyModel < ActiveRecord::Base
 
   include Restforce::DB::Model
 
-  map_to "Object__c", name: "Name", color: "Color__c"
+  sync_with(
+    "Object__c",
+    fields: {
+      name: "Name",
+      color: "Color__c",
+    },
+  )
 
 end
 ```
 
-This will automatically register the model with an entry in the `Restforce::DB::RecordType` collection.
+This will automatically register the model with an entry in the `Restforce::DB::Mapping` collection. This collection defines the manner in which the database and Salesforce systems will be synchronized.
 
 ### Run the daemon
 
-To actually perform the system synchronization, you'll want to run the binstub installed through the generator (see above). This will daemonize a process which loops repeatedly to continuously synchronize your database and Salesforce according to your established mappings.
+To actually perform this system synchronization, you'll want to run the binstub installed through the generator (see above). This will daemonize a process which loops repeatedly to continuously synchronize your database and your Salesforce account, according to the established mappings.
 
-        $ bundle exec bin/restforce-db start
+    $ bundle exec bin/restforce-db start
 
 By default, this will load the credentials at the same location the generator installed them. You can explicitly pass the location of your configuration file with the `-c` option:
 
-        $ bundle exec bin/restforce-db -c /path/to/my/config.yml start
+    $ bundle exec bin/restforce-db -c /path/to/my/config.yml start
 
 For additional information and a full set of options, you can run:
 
-        $ bundle exec bin/restforce-db -h
+    $ bundle exec bin/restforce-db -h
 
 ## Development
 
