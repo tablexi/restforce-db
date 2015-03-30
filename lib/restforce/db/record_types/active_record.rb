@@ -20,12 +20,19 @@ module Restforce
           attributes = @mapping.convert(@record_type, from_record.attributes)
 
           record = @record_type.new(attributes.merge(salesforce_id: from_record.id))
-          @mapping.associations.each do |association, lookup|
+          associations = @mapping.associations.map do |association, lookup|
             associated = record.association(association).build
             lookup_id = from_record.record.send(lookup)
             build_association associated, lookup_id
           end
-          record.save!
+
+          record.transaction do
+            record.save!
+
+            # We touch the synchronization timestamps here to ensure that they
+            # exceed the last updated timestamp.
+            associations.each { |association| association.touch(:synchronized_at) }
+          end
 
           Instances::ActiveRecord.new(@record_type, record, @mapping).after_sync
         end
@@ -85,11 +92,11 @@ module Restforce
         # Mapping's database record type. Right now, nested associations are
         # ignored.
         #
-        # associated - The associatd database record.
+        # associated - The associated database record.
         # lookup_id  - A Salesforce ID corresponding to the record type in the
         #              Mapping defined for the associated database model.
         #
-        # Returns a Boolean.
+        # Returns the associated ActiveRecord instance.
         def build_association(associated, lookup_id)
           return if lookup_id.nil?
 
@@ -98,12 +105,8 @@ module Restforce
           salesforce_instance = mapping.salesforce_record_type.find(lookup_id)
           attributes = mapping.convert(associated.class, salesforce_instance.attributes)
 
-          associated.assign_attributes(
-            attributes.merge(
-              salesforce_id: lookup_id,
-              synchronized_at: Time.now,
-            ),
-          )
+          associated.assign_attributes(attributes.merge(salesforce_id: lookup_id))
+          associated
         end
 
       end

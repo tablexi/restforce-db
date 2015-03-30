@@ -99,6 +99,7 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
         expect(user.email).to_equal("somebody@example.com")
         expect(user.salesforce_id).to_equal(association_id)
         expect(user.synchronized_at).to_not_be_nil
+        expect(user.synchronized_at).to_be(:>=, user.updated_at)
       end
     end
   end
