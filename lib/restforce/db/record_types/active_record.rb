@@ -21,8 +21,8 @@ module Restforce
 
           record = @record_type.new(attributes.merge(salesforce_id: from_record.id))
           @mapping.associations.each do |association, lookup|
+            associated = record.association(association).build
             lookup_id = from_record.record.send(lookup)
-            associated = record.send("build_#{association}")
             build_association associated, lookup_id
           end
           record.save!
