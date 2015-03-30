@@ -91,6 +91,8 @@ module Restforce
         #
         # Returns a Boolean.
         def build_association(associated, lookup_id)
+          return if lookup_id.nil?
+
           mapping = Mapping[associated.class]
 
           salesforce_instance = mapping.salesforce_record_type.find(lookup_id)

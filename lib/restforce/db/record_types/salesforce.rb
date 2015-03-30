@@ -73,7 +73,7 @@ module Restforce
         #
         # Returns a String.
         def lookups
-          (Instances::Salesforce::INTERNAL_ATTRIBUTES + @mapping.salesforce_fields).join(", ")
+          (Instances::Salesforce::INTERNAL_ATTRIBUTES + @mapping.salesforce_fields).uniq.join(", ")
         end
 
         # Internal: Has this database record already been linked to a Salesforce
