@@ -52,6 +52,7 @@ module Restforce
         @verbose = options.fetch(:verbose) { false }
         @interval = options.fetch(:interval) { DEFAULT_INTERVAL }
 
+        Restforce::DB.reset
         Restforce::DB.configure { |config| config.parse(options[:config]) }
       end
 
