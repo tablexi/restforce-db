@@ -35,12 +35,27 @@ module Restforce
       #
       # Returns nothing.
       def load(configurations)
-        self.username       = configurations["username"]
-        self.password       = configurations["password"]
-        self.security_token = configurations["security_token"]
-        self.client_id      = configurations["client_id"]
-        self.client_secret  = configurations["client_secret"]
-        self.host           = configurations["host"]
+        self.username       = parsed(configurations, "username")
+        self.password       = parsed(configurations, "password")
+        self.security_token = parsed(configurations, "security_token")
+        self.client_id      = parsed(configurations, "client_id")
+        self.client_secret  = parsed(configurations, "client_secret")
+        self.host           = parsed(configurations, "host")
+      end
+
+      private
+
+      # Internal: Get the requested setting from a Hash of configurations.
+      #
+      # configurations - A Hash of configurations.
+      # setting        - A String name of a single configuration in the Hash.
+      #
+      # Returns the value of the setting.
+      # Raises ArgumentError if the setting is not contained in the Hash.
+      def parsed(configurations, setting)
+        configurations.fetch setting do |key|
+          raise ArgumentError, "Configuration is missing #{key}"
+        end
       end
 
     end
