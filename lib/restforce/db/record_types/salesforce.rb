@@ -31,10 +31,7 @@ module Restforce
         #
         # Returns nil or a Restforce::DB::Instances::Salesforce instance.
         def find(id)
-          record = DB.client.query(
-            "select #{lookups} from #{@record_type} where Id = '#{id}'",
-          ).first
-
+          record = DB.client.query(query("Id = '#{id}'")).first
           return unless record
 
           Instances::Salesforce.new(@record_type, record, @mapping)
@@ -55,12 +52,9 @@ module Restforce
           constraints = [
             ("SystemModstamp <= #{options[:before].utc.iso8601}" if options[:before]),
             ("SystemModstamp > #{options[:after].utc.iso8601}" if options[:after]),
-          ].compact.join(" and ")
-          constraints = " where #{constraints}" unless constraints.empty?
+          ]
 
-          query = "select #{lookups} from #{@record_type}#{constraints}"
-
-          DB.client.query(query).each do |record|
+          DB.client.query(query(*constraints)).each do |record|
             yield Instances::Salesforce.new(@record_type, record, @mapping)
           end
         end
@@ -84,6 +78,18 @@ module Restforce
         # Returns a Boolean.
         def synced?(record)
           record.synced?
+        end
+
+        # Internal: Get a query String, given an Array of existing conditions.
+        #
+        # conditions - An Array of conditions to append to the query.
+        #
+        # Returns a String.
+        def query(*conditions)
+          filters = (conditions + @mapping.conditions).compact.join(" and ")
+          filters = " where #{filters}" unless filters.empty?
+
+          "select #{lookups} from #{@record_type}#{filters}"
         end
 
       end

@@ -17,6 +17,7 @@ def mappings!
   let(:salesforce_model) { "CustomObject__c" }
   let(:fields) { { name: "Name", example: "Example_Field__c" } }
   let(:associations) { {} }
+  let(:conditions) { [] }
   let!(:mapping) do
     Restforce::DB::Mapping.new(
       database_model,
@@ -24,6 +25,7 @@ def mappings!
       root: true,
       fields: fields,
       associations: associations,
+      conditions: conditions,
     )
   end
 end

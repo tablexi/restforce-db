@@ -41,5 +41,38 @@ describe Restforce::DB::RecordTypes::Salesforce do
     it "returns nil when no matching record exists" do
       expect(record_type.find("a001a000001E1vFAKE")).to_be_nil
     end
+
+    describe "given a set of mapping conditions" do
+      let(:conditions) { ["Visible__c = TRUE"] }
+
+      describe "when a record meets the conditions" do
+
+        it "finds the record" do
+          expect(record_type.find(id)).to_be_instance_of Restforce::DB::Instances::Salesforce
+        end
+      end
+
+      describe "when a record does not meet the conditions" do
+        let(:id) { Salesforce.create!(salesforce_model, "Visible__c" => false) }
+
+        it "does not find the record" do
+          expect(record_type.find(id)).to_be_nil
+        end
+      end
+    end
   end
+
+  describe "#each", :vcr do
+    let(:id) { Salesforce.create!(salesforce_model) }
+    before { id }
+
+    # Restforce::DB::RecordType::Salesforce actually implements Enumerable, so
+    # we're just going with a trivially testable portion of the Enumerable API.
+    it "loops through the existing records in Salesforce" do
+      record = record_type.first
+      expect(record).to_be_instance_of(Restforce::DB::Instances::Salesforce)
+      expect(record.id).to_equal(id)
+    end
+  end
+
 end

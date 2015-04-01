@@ -36,7 +36,12 @@ module Restforce
 
       self.collection ||= {}
 
-      attr_reader :database_record_type, :salesforce_record_type, :associations
+      attr_reader(
+        :database_record_type,
+        :salesforce_record_type,
+        :associations,
+        :conditions,
+      )
       attr_writer :root
 
       # Public: Initialize a new Restforce::DB::Mapping.
@@ -50,6 +55,9 @@ module Restforce
       #                    :associations - A Hash of mappings between Active
       #                                    Record association names and the
       #                                    corresponding Salesforce Lookup name.
+      #                    :conditions   - An Array of lookup conditions which
+      #                                    should be applied to the Salesforce
+      #                                    queries.
       #                    :root         - A Boolean reflecting whether or not
       #                                    this is a root-level mapping.
       def initialize(database_model, salesforce_model, options = {})
@@ -58,6 +66,7 @@ module Restforce
 
         @fields = options.fetch(:fields) { {} }
         @associations = options.fetch(:associations) { {} }
+        @conditions = options.fetch(:conditions) { [] }
         @root = options.fetch(:root) { false }
 
         @types = {
