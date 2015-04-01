@@ -50,8 +50,8 @@ module Restforce
         # Returns nothing.
         def each(options = {})
           constraints = [
-            ("SystemModstamp <= #{options[:before].utc.iso8601}" if options[:before]),
-            ("SystemModstamp > #{options[:after].utc.iso8601}" if options[:after]),
+            ("SystemModstamp < #{options[:before].utc.iso8601}" if options[:before]),
+            ("SystemModstamp >= #{options[:after].utc.iso8601}" if options[:after]),
           ]
 
           DB.client.query(query(*constraints)).each do |record|

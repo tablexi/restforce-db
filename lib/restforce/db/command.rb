@@ -83,6 +83,9 @@ module Restforce
           opt.on("-c FILE", "--config FILE", "The location of a Restforce credentials file.") do |file|
             @options[:config] = file
           end
+          opt.on("-d N", "--delay N", "Amount of time by which to delay synchronization queries.") do |n|
+            @options[:delay] = n.to_f
+          end
           opt.on("-i N", "--interval N", "Amount of time to wait between synchronizations.") do |n|
             @options[:interval] = n.to_i
           end

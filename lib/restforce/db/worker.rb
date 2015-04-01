@@ -7,6 +7,7 @@ module Restforce
     class Worker
 
       DEFAULT_INTERVAL = 5
+      DEFAULT_DELAY = 1
 
       class << self
 
@@ -51,6 +52,7 @@ module Restforce
       def initialize(options = {})
         @verbose = options.fetch(:verbose) { false }
         @interval = options.fetch(:interval) { DEFAULT_INTERVAL }
+        @delay = options.fetch(:delay) { DEFAULT_DELAY }
 
         Restforce::DB.reset
         Restforce::DB.configure { |config| config.parse(options[:config]) }
@@ -136,7 +138,7 @@ module Restforce
       # Returns a Boolean.
       def synchronize(name, mapping)
         log "  SYNCHRONIZE #{name}"
-        runtime = Benchmark.realtime { mapping.synchronizer.run }
+        runtime = Benchmark.realtime { mapping.synchronizer.run(delay: @delay) }
         log format("  COMPLETE after %.4f", runtime)
 
         return true

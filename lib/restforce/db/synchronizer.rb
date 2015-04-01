@@ -34,16 +34,22 @@ module Restforce
       # overwriting recent changes to the database, in the event that Salesforce
       # has also been updated since the last sync.
       #
-      # options - A Hash of options for configuring the run. Currently unused.
+      # options - A Hash of options for configuring the run. Valid keys are:
+      #           :delay - An offset to apply to the time filters. Allows the
+      #                    synchronization to account for server time drift.
       #
       # Returns the Time the run was performed.
-      def run(_options = {})
+      def run(options = {})
         run_time = Time.now
 
-        @salesforce_record_type.each(after: last_run, before: run_time) do |record|
+        delay = options.fetch(:delay) { 0 }
+        before = run_time - delay
+        after = last_run - delay if last_run
+
+        @salesforce_record_type.each(after: after, before: before) do |record|
           @database_record_type.sync!(record)
         end
-        @database_record_type.each(after: last_run, before: run_time) do |record|
+        @database_record_type.each(after: after, before: before) do |record|
           @salesforce_record_type.sync!(record)
         end
 
