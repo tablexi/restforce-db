@@ -56,6 +56,46 @@ describe Restforce::DB::Mapping do
     end
   end
 
+  describe "#lookup_column" do
+    let(:db) { mapping.database_record_type }
+
+    describe "when the database table has a column matching the Salesforce model" do
+      before do
+        def db.column?(_)
+          true
+        end
+      end
+
+      it "returns the explicit column name" do
+        expect(mapping.lookup_column).to_equal(:custom_object_salesforce_id)
+      end
+    end
+
+    describe "when the database table has a generic salesforce ID column" do
+      before do
+        def db.column?(column)
+          column == :salesforce_id
+        end
+      end
+
+      it "returns the generic column name" do
+        expect(mapping.lookup_column).to_equal(:salesforce_id)
+      end
+    end
+
+    describe "when the database table has no salesforce ID column" do
+      before do
+        def db.column?(_)
+          false
+        end
+      end
+
+      it "raises an error" do
+        expect(-> { mapping.lookup_column }).to_raise Restforce::DB::Mapping::InvalidMappingError
+      end
+    end
+  end
+
   describe "#attributes" do
 
     it "builds a normalized Hash of database attribute values" do

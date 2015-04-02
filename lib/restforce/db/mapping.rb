@@ -7,6 +7,8 @@ module Restforce
     # attributes from one to the other.
     class Mapping
 
+      class InvalidMappingError < StandardError; end
+
       class << self
 
         include Enumerable
@@ -37,6 +39,8 @@ module Restforce
       self.collection ||= {}
 
       attr_reader(
+        :database_model,
+        :salesforce_model,
         :database_record_type,
         :salesforce_record_type,
         :associations,
@@ -61,6 +65,9 @@ module Restforce
       #                    :root         - A Boolean reflecting whether or not
       #                                    this is a root-level mapping.
       def initialize(database_model, salesforce_model, options = {})
+        @database_model = database_model
+        @salesforce_model = salesforce_model
+
         @database_record_type = RecordTypes::ActiveRecord.new(database_model, self)
         @salesforce_record_type = RecordTypes::Salesforce.new(salesforce_model, self)
 
@@ -91,6 +98,26 @@ module Restforce
       # Returns an Array.
       def database_fields
         @fields.keys
+      end
+
+      # Public: Get the name of the database column which should be used to
+      # store the Salesforce lookup ID.
+      #
+      # Raises an InvalidMappingError if no database column exists.
+      # Returns a Symbol.
+      def lookup_column
+        @lookup_column ||= begin
+          column_prefix = salesforce_model.underscore.chomp("__c")
+          column = :"#{column_prefix}_salesforce_id"
+
+          if database_record_type.column?(column)
+            column
+          elsif database_record_type.column?(:salesforce_id)
+            :salesforce_id
+          else
+            raise InvalidMappingError, "#{database_model} must define a Salesforce ID column"
+          end
+        end
       end
 
       # Public: Is this a root-level mapping? Used to determine whether or not

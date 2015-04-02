@@ -19,7 +19,8 @@ module Restforce
         def create!(from_record)
           attributes = @mapping.convert(@record_type, from_record.attributes)
 
-          record = @record_type.new(attributes.merge(salesforce_id: from_record.id))
+          record = @record_type.new(attributes.merge(@mapping.lookup_column => from_record.id))
+
           associations = @mapping.associations.map do |association, lookup|
             associated = record.association(association).build
             lookup_id = from_record.record.send(lookup)
@@ -44,7 +45,7 @@ module Restforce
         #
         # Returns nil or a Restforce::DB::Instances::ActiveRecord instance.
         def find(id)
-          record = @record_type.find_by(salesforce_id: id)
+          record = @record_type.find_by(@mapping.lookup_column => id)
           return nil unless record
 
           Instances::ActiveRecord.new(@record_type, record, @mapping)
@@ -72,6 +73,19 @@ module Restforce
           end
         end
 
+        # Public: Does the model represented by this record type have a column
+        # with the requested name?
+        #
+        # column - A Symbol column name.
+        #
+        # Returns a Boolean.
+        def column?(column)
+          ::ActiveRecord::Base.connection.column_exists?(
+            record_type.table_name,
+            column,
+          )
+        end
+
         private
 
         # Internal: Has this Salesforce record already been linked to a database
@@ -81,7 +95,7 @@ module Restforce
         #
         # Returns a Boolean.
         def synced?(record)
-          @record_type.exists?(salesforce_id: record.id)
+          record_type.exists?(@mapping.lookup_column => record.id)
         end
 
         # Internal: Assemble an associated record, using the data from the

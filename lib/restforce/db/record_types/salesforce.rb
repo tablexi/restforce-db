@@ -20,7 +20,7 @@ module Restforce
           attributes = @mapping.convert(@record_type, from_record.attributes)
           record_id = DB.client.create!(@record_type, attributes)
 
-          from_record.update!(salesforce_id: record_id).after_sync
+          from_record.update!(@mapping.lookup_column => record_id).after_sync
 
           find(record_id)
         end

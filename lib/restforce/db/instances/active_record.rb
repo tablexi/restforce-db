@@ -13,14 +13,14 @@ module Restforce
         #
         # Returns a String.
         def id
-          @record.salesforce_id
+          @record.send(@mapping.lookup_column)
         end
 
         # Public: Has this record been synced to a Salesforce record?
         #
         # Returns a Boolean.
         def synced?
-          @record.salesforce_id?
+          @record.send(:"#{@mapping.lookup_column}?")
         end
 
         # Public: Get the time of the last update to this record.
