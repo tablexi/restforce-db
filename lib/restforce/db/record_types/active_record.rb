@@ -21,10 +21,8 @@ module Restforce
 
           record = @record_type.new(attributes.merge(@mapping.lookup_column => from_record.id))
 
-          associations = @mapping.associations.map do |association, lookup|
-            associated = record.association(association).build
-            lookup_id = from_record.record.send(lookup)
-            build_association associated, lookup_id
+          associations = @mapping.associations.map do |association, _|
+            Associations::ActiveRecord.new(record, association).build(from_record.record)
           end
 
           record.transaction do
@@ -81,7 +79,7 @@ module Restforce
         # Returns a Boolean.
         def column?(column)
           ::ActiveRecord::Base.connection.column_exists?(
-            record_type.table_name,
+            @record_type.table_name,
             column,
           )
         end
@@ -95,32 +93,7 @@ module Restforce
         #
         # Returns a Boolean.
         def synced?(record)
-          record_type.exists?(@mapping.lookup_column => record.id)
-        end
-
-        # Internal: Assemble an associated record, using the data from the
-        # Salesforce record corresponding to a specific lookup ID.
-        #
-        # TODO: With some refactoring using ActiveRecord inflections, this
-        # should be possible to handle as a recursive call to the configured
-        # Mapping's database record type. Right now, nested associations are
-        # ignored.
-        #
-        # associated - The associated database record.
-        # lookup_id  - A Salesforce ID corresponding to the record type in the
-        #              Mapping defined for the associated database model.
-        #
-        # Returns the associated ActiveRecord instance.
-        def build_association(associated, lookup_id)
-          return if lookup_id.nil?
-
-          mapping = Mapping[associated.class]
-
-          salesforce_instance = mapping.salesforce_record_type.find(lookup_id)
-          attributes = mapping.convert(associated.class, salesforce_instance.attributes)
-
-          associated.assign_attributes(attributes.merge(salesforce_id: lookup_id))
-          associated
+          @record_type.exists?(@mapping.lookup_column => record.id)
         end
 
       end

@@ -23,8 +23,7 @@ describe Restforce::DB::Model do
     end
 
     it "creates a mapping in Restforce::DB::Mapping" do
-      expect(Restforce::DB::Mapping[database_model])
-        .to_be_instance_of(Restforce::DB::Mapping)
+      expect(Restforce::DB::Mapping[database_model]).to_not_be :empty?
     end
   end
 

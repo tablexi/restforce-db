@@ -50,8 +50,9 @@ describe Restforce::DB::Synchronizer do
       end
 
       describe "for a non-root mapping" do
+        let(:through) { "SomeField__c" }
+
         before do
-          mapping.root = false
           synchronizer.run
         end
 

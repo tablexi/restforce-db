@@ -24,10 +24,12 @@ This gem assumes that you're running Rails 4 or greater, therefore the `bin` fil
 
 ### Update your model schema
 
-In order to keep your database records in sync with Salesforce, the table will need to store a reference to its associated Salesforce record. A generator is included to trivially add this `salesforce_id` column to your tables:
+In order to keep your database records in sync with Salesforce, the table will need to store a reference to its associated Salesforce record. A generator is included to trivially add a generic `salesforce_id` column to your tables:
 
     $ bundle exec rails g restforce:migration MyModel
     $ bundle exec rake db:migrate
+
+If you need to activate multiple Salesforce mappings within a single model, you can do this with scoped column names. For example, if your Salesforce object types are named "Animal__c" and "Cat__c", `Restforce::DB` will look for columns named `animal_salesforce_id` and `cat_salesforce_id`.
 
 ### Register a mapping
 
@@ -48,7 +50,6 @@ class Restaurant < ActiveRecord::Base
     associations: {
       specialty: "Specialty__c",
     },
-    root: true,
   )
 
 end
@@ -60,6 +61,7 @@ class Dish < ActiveRecord::Base
 
   sync_with(
     "Dish__c",
+    through: "Specialty__c",
     fields: {
       name:       "Name",
       ingredient: "Ingredient__c",
@@ -74,7 +76,7 @@ There are a few options to be aware of when describing a mapping:
 
 - `fields`: These are direct field-to-field mappings. The keys should line up with your ActiveRecord attribute names, while the values should line up with the matching field names in Salesforce.
 - `associations`: These are mappings of ActiveRecord associations to Salesforce lookups. Associations defined here will be built as part of the creation process for a newly-synced record. 
-- `root`: When `true`, all records of the associated type will be synchronized from Salesforce into the database and vice-versa. When `false` or `nil`, records will still be updated, but can only be created through associations (see just above).
+- `through`: This should be set for models which are created through an association. It references the lookup field on its parent's Salesforce object type.
 
 ### Run the daemon
 

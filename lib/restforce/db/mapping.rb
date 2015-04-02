@@ -29,8 +29,10 @@ module Restforce
         # Yields one Mapping for each database-to-Salesforce mapping.
         # Returns nothing.
         def each
-          collection.each do |database_model, record_type|
-            yield database_model.name, record_type
+          collection.each do |_, mappings|
+            mappings.each do |mapping|
+              yield mapping
+            end
           end
         end
 
@@ -45,8 +47,8 @@ module Restforce
         :salesforce_record_type,
         :associations,
         :conditions,
+        :through,
       )
-      attr_writer :root
 
       # Public: Initialize a new Restforce::DB::Mapping.
       #
@@ -74,14 +76,15 @@ module Restforce
         @fields = options.fetch(:fields) { {} }
         @associations = options.fetch(:associations) { {} }
         @conditions = options.fetch(:conditions) { [] }
-        @root = options.fetch(:root) { false }
+        @through = options.fetch(:through) { nil }
 
         @types = {
           database_model   => :database,
           salesforce_model => :salesforce,
         }
 
-        self.class.collection[database_model] = self
+        self.class.collection[database_model] ||= []
+        self.class.collection[database_model] << self
       end
 
       # Public: Get a list of the relevant Salesforce field names for this
@@ -89,7 +92,7 @@ module Restforce
       #
       # Returns an Array.
       def salesforce_fields
-        @fields.values + @associations.values
+        @fields.values + @associations.values.flatten
       end
 
       # Public: Get a list of the relevant database column names for this
@@ -125,7 +128,7 @@ module Restforce
       #
       # Returns a Boolean.
       def root?
-        @root
+        @through.nil?
       end
 
       # Public: Build a normalized Hash of attributes from the appropriate set

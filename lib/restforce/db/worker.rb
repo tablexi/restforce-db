@@ -99,8 +99,8 @@ module Restforce
       # Returns nothing.
       def perform
         track do
-          Restforce::DB::Mapping.each do |name, mapping|
-            synchronize name, mapping
+          Restforce::DB::Mapping.each do |mapping|
+            synchronize mapping
           end
         end
       end
@@ -132,12 +132,11 @@ module Restforce
       # Internal: Synchronize the objects in the database and Salesforce
       # corresponding to the passed record type.
       #
-      # name    - The String name of the record type to synchronize.
       # mapping - A Restforce::DB::Mapping.
       #
       # Returns a Boolean.
-      def synchronize(name, mapping)
-        log "  SYNCHRONIZE #{name}"
+      def synchronize(mapping)
+        log "  SYNCHRONIZE #{mapping.database_model.name} with #{mapping.salesforce_model}"
         runtime = Benchmark.realtime { mapping.synchronizer.run(delay: @delay) }
         log format("  COMPLETE after %.4f", runtime)
 

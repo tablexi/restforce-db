@@ -18,11 +18,12 @@ def mappings!
   let(:fields) { { name: "Name", example: "Example_Field__c" } }
   let(:associations) { {} }
   let(:conditions) { [] }
+  let(:through) { nil }
   let!(:mapping) do
     Restforce::DB::Mapping.new(
       database_model,
       salesforce_model,
-      root: true,
+      through: through,
       fields: fields,
       associations: associations,
       conditions: conditions,

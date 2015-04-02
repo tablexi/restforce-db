@@ -6,6 +6,8 @@ require "restforce/extensions"
 require "restforce/db/version"
 require "restforce/db/configuration"
 
+require "restforce/db/associations/active_record"
+
 require "restforce/db/instances/base"
 require "restforce/db/instances/active_record"
 require "restforce/db/instances/salesforce"

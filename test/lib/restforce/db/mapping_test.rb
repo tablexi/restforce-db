@@ -27,14 +27,14 @@ describe Restforce::DB::Mapping do
     # Restforce::DB::Mapping actually implements Enumerable, so we're just
     # going with a trivially testable portion of the Enumerable API.
     it "yields the registered record types" do
-      expect(Restforce::DB::Mapping.first).to_equal [database_model.name, mapping]
+      expect(Restforce::DB::Mapping.first).to_equal mapping
     end
   end
 
   describe "#initialize" do
 
     it "adds the mapping to the global collection" do
-      expect(Restforce::DB::Mapping[database_model]).to_equal mapping
+      expect(Restforce::DB::Mapping[database_model]).to_equal [mapping]
     end
   end
 
