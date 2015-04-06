@@ -8,7 +8,7 @@ module Restforce
       # models defined in the Restforce::DB::Instances namespace.
       class Base
 
-        attr_reader :record
+        attr_reader :record, :record_type, :mapping
 
         # Public: Initialize a new Restforce::DB::Instances::Base instance.
         #
