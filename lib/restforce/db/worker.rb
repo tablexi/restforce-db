@@ -122,7 +122,8 @@ module Restforce
         Initializer.new(mapping, @runner).run
       end
 
-      # Internal: Collect record changes for the passd mapping/
+      # Internal: Collect a list of changes from recently-updated records for
+      # the passed mapping.
       #
       # mapping - A Restforce::DB::Mapping.
       #
@@ -141,7 +142,7 @@ module Restforce
         Synchronizer.new(mapping).run(@changes)
       end
 
-      # Internal: Time and log the output of a named task.
+      # Internal: Log a description and response time for a specific named task.
       #
       # name    - A String task name.
       # mapping - A Restforce::DB::Mapping.
