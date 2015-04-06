@@ -1,3 +1,5 @@
+require "file_daemon"
+
 module Restforce
 
   module DB
@@ -6,39 +8,10 @@ module Restforce
     # all record synchronization occurs.
     class Worker
 
+      include FileDaemon
+
       DEFAULT_INTERVAL = 5
       DEFAULT_DELAY = 1
-
-      class << self
-
-        # Public: Store the list of currently open file descriptors so that they
-        # may be reopened when a new process is spawned.
-        #
-        # Returns nothing.
-        def before_fork
-          return if @files_to_reopen
-
-          @files_to_reopen = []
-          ObjectSpace.each_object(File) do |file|
-            @files_to_reopen << file unless file.closed?
-          end
-        end
-
-        # Public: Reopen all file descriptors that have been stored through the
-        # before_fork hook.
-        #
-        # Returns nothing.
-        def after_fork
-          @files_to_reopen.each do |file|
-            begin
-              file.reopen file.path, "a+"
-              file.sync = true
-            rescue ::Exception # rubocop:disable HandleExceptions, RescueException
-            end
-          end
-        end
-
-      end
 
       attr_accessor :logger, :tracker
 
@@ -75,7 +48,6 @@ module Restforce
         end
 
         loop do
-          @runner.tick!
           runtime = Benchmark.realtime { perform }
           sleep(@interval - runtime) if runtime < @interval && !stop?
 
@@ -99,9 +71,19 @@ module Restforce
       #
       # Returns nothing.
       def perform
+        @runner.tick!
+        @changes = Hash.new { |h, k| h[k] = Accumulator.new }
+
         track do
           Restforce::DB::Mapping.each do |mapping|
-            synchronize mapping
+            task("PROPAGATING RECORDS", mapping) { propagate mapping }
+            task("COLLECTING CHANGES", mapping) { collect mapping }
+          end
+
+          # NOTE: We can only perform the synchronization after all record
+          # changes have been aggregated, so this second loop is necessary.
+          Restforce::DB::Mapping.each do |mapping|
+            task("APPLYING CHANGES", mapping) { synchronize mapping }
           end
         end
       end
@@ -130,15 +112,44 @@ module Restforce
         end
       end
 
-      # Internal: Synchronize the objects in the database and Salesforce
-      # corresponding to the passed record type.
+      # Internal: Propagate unsynchronized records between the two systems for
+      # the passed mapping.
       #
       # mapping - A Restforce::DB::Mapping.
       #
-      # Returns a Boolean.
+      # Returns nothing.
+      def propagate(mapping)
+        Initializer.new(mapping, @runner).run
+      end
+
+      # Internal: Collect record changes for the passd mapping/
+      #
+      # mapping - A Restforce::DB::Mapping.
+      #
+      # Returns nothing.
+      def collect(mapping)
+        Collector.new(mapping, @runner).run(@changes)
+      end
+
+      # Internal: Apply the aggregated changes to the objects in both systems,
+      # according to the defined mappings.
+      #
+      # mapping - A Restforce::DB::Mapping.
+      #
+      # Returns nothing.
       def synchronize(mapping)
-        log "  SYNCHRONIZE #{mapping.database_model.name} with #{mapping.salesforce_model}"
-        runtime = Benchmark.realtime { Synchronizer.new(mapping, @runner).run }
+        Synchronizer.new(mapping).run(@changes)
+      end
+
+      # Internal: Time and log the output of a named task.
+      #
+      # name    - A String task name.
+      # mapping - A Restforce::DB::Mapping.
+      #
+      # Returns a Boolean.
+      def task(name, mapping)
+        log "  #{name} between #{mapping.database_model.name} and #{mapping.salesforce_model}"
+        runtime = Benchmark.realtime { yield }
         log format("  COMPLETE after %.4f", runtime)
 
         return true

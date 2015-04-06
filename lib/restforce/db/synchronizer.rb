@@ -11,31 +11,41 @@ module Restforce
       # Public: Initialize a new Restforce::DB::Synchronizer.
       #
       # mapping - A Restforce::DB::Mapping.
-      # runner  - A Restforce::DB::Runner.
-      def initialize(mapping, runner = Runner.new)
+      def initialize(mapping)
         @mapping = mapping
-        @runner = runner
       end
 
-      # Public: Run the synchronize process, pulling in records from Salesforce
-      # and the database to determine which records need to be created and/or
-      # updated.
+      # Public: Synchronize records for the current mapping from a Hash of
+      # record descriptors to attributes.
       #
-      # NOTE: We bootstrap our record lookups to the exact same timespan, and
-      # run the Salesforce sync into the database first. This has the effect of
-      # overwriting recent changes to the database, in the event that Salesforce
-      # has also been updated since the last sync.
+      # changes - A Hash, with keys composed of a Salesforce ID and model name,
+      #           with Restforce::DB::Accumulator objects as values.
       #
-      # Returns the Time the run was performed.
-      def run
-        @runner.run(@mapping) do |run|
-          run.salesforce_records do |record|
-            @mapping.database_record_type.sync!(record)
-          end
-          run.database_records do |record|
-            @mapping.salesforce_record_type.sync!(record)
-          end
+      # Returns nothing.
+      def run(changes)
+        changes.each do |(id, salesforce_model), accumulator|
+          next unless salesforce_model == @mapping.salesforce_model
+
+          update(@mapping.database_record_type.find(id), accumulator)
+          update(@mapping.salesforce_record_type.find(id), accumulator)
         end
+      end
+
+      private
+
+      # Internal: Update the passed instance with the accumulated attributes
+      # from a synchronization run.
+      #
+      # instance    - An instance of Restforce::DB::Instances::Base.
+      # accumulator - A Restforce::DB::Accumulator.
+      #
+      # Returns nothing.
+      def update(instance, accumulator)
+        diff = accumulator.diff(@mapping.convert(@mapping.salesforce_model, instance.attributes))
+        attributes = @mapping.convert_from_salesforce(instance.record_type, diff)
+
+        return if attributes.empty?
+        instance.update!(attributes)
       end
 
     end

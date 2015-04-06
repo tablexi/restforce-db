@@ -35,6 +35,8 @@ module Restforce
       # passed Salesforce record. Does nothing if the Salesforce record has
       # already been synchronized into the system at least once.
       #
+      # record - A Restforce::DB::Instances::Salesforce.
+      #
       # Returns nothing.
       def create_in_database(record)
         return if record.synced?
@@ -44,6 +46,8 @@ module Restforce
       # Internal: Attempt to create a partner record in Salesforce for the
       # passed database record. Does nothing if the database record already has
       # an associated Salesforce record.
+      #
+      # record - A Restforce::DB::Instances::ActiveRecord.
       #
       # Returns nothing.
       def create_in_salesforce(record)
