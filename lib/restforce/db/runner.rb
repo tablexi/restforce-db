@@ -3,16 +3,18 @@ module Restforce
   module DB
 
     # Restforce::DB::Runner provides an abstraction for lookup timing during the
-    # synchronization process. It provides methods
+    # synchronization process. It provides methods for accessing only recently-
+    # modified records within the context of a specific Mapping.
     class Runner
 
       attr_reader :last_run, :before, :after
 
       # Public: Initialize a new Restforce::DB::Runner.
       #
-      # delay    - A Numeric offet to apply to all record lookups. Can be used
-      #            to mitigate server timing issues.
-      # last_run - A Time indicating the point at which new runs should begin.
+      # delay         - A Numeric offet to apply to all record lookups. Can be
+      #                 used to mitigate server timing issues.
+      # last_run_time - A Time indicating the point at which new runs should
+      #                 begin.
       def initialize(delay = 0, last_run_time = DB.last_run)
         @delay = delay
         @last_run = last_run_time
