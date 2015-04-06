@@ -32,19 +32,6 @@ module Restforce
           after_sync
         end
 
-        # Public: Update the instance with attributes copied from the passed
-        # record.
-        #
-        # record - An object responding to `#attributes`. Must return a Hash of
-        #          attributes corresponding to the configured mappings for this
-        #          instance.
-        #
-        # Returns self.
-        # Raises if the update fails for any reason.
-        def copy!(from_record)
-          update! @mapping.convert(@record_type, from_record.attributes)
-        end
-
         # Public: Get a Hash mapping the configured attributes names to their
         # values for this instance.
         #

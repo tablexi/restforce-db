@@ -8,46 +8,6 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
   let(:record_type) { mapping.database_record_type }
   let(:salesforce_id) { "a001a000001E1vREAL" }
 
-  describe "#sync!" do
-    let(:sync_from) do
-      Struct.new(:id, :last_update, :attributes).new(
-        salesforce_id,
-        Time.now,
-        name:    "Some name",
-        example: "Some text",
-      )
-    end
-    let(:instance) { record_type.sync!(sync_from).record }
-
-    describe "without an existing database record" do
-
-      it "creates a new database record from the passed Salesforce record" do
-        expect(instance.salesforce_id).to_equal salesforce_id
-        expect(instance.name).to_equal sync_from.attributes[:name]
-        expect(instance.example).to_equal sync_from.attributes[:example]
-        expect(instance.synchronized_at).to_not_be_nil
-      end
-    end
-
-    describe "with an existing database record" do
-      let!(:sync_to) do
-        database_model.create!(
-          name:            "Existing name",
-          example:         "Existing sample text",
-          salesforce_id:   salesforce_id,
-          synchronized_at: Time.now,
-        )
-      end
-
-      it "updates the existing database record" do
-        expect(instance).to_equal sync_to.reload
-        expect(instance.name).to_equal sync_from.attributes[:name]
-        expect(instance.example).to_equal sync_from.attributes[:example]
-        expect(instance.synchronized_at).to_not_be_nil
-      end
-    end
-  end
-
   describe "#create!" do
     let(:attributes) do
       {
