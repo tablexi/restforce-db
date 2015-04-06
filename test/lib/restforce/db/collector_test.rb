@@ -20,6 +20,8 @@ describe Restforce::DB::Collector do
         mapping.convert(salesforce_model, attributes),
       )
     end
+    let(:key) { [salesforce_id, salesforce_model] }
+
     subject { collector.run }
 
     describe "given an existing Salesforce record" do
@@ -28,7 +30,7 @@ describe Restforce::DB::Collector do
       it "returns the attributes from the Salesforce record" do
         record = mapping.salesforce_record_type.find(salesforce_id)
 
-        expect(subject[salesforce_id]).to_equal(
+        expect(subject[key]).to_equal(
           record.last_update => {
             "Name" => attributes[:name],
             "Example_Field__c" => attributes[:example],
@@ -47,7 +49,7 @@ describe Restforce::DB::Collector do
       it "returns the attributes from the database record" do
         record = mapping.database_record_type.find(salesforce_id)
 
-        expect(subject[salesforce_id]).to_equal(
+        expect(subject[key]).to_equal(
           record.last_update => {
             "Name" => attributes[:name],
             "Example_Field__c" => attributes[:example],
@@ -72,7 +74,7 @@ describe Restforce::DB::Collector do
         sf_record = mapping.salesforce_record_type.find(salesforce_id)
         db_record = mapping.database_record_type.find(salesforce_id)
 
-        expect(subject[salesforce_id]).to_equal(
+        expect(subject[key]).to_equal(
           sf_record.last_update => {
             "Name" => attributes[:name],
             "Example_Field__c" => attributes[:example],

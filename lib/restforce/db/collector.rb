@@ -25,7 +25,7 @@ module Restforce
       #
       # accumulator - A Hash-like accumulator object.
       #
-      # Returns a Hash mapping Salesforce IDs to Restforce::DB::Accumulators.
+      # Returns a Hash mapping Salesforce ID/type combinations to accumulators.
       def run(accumulator = nil)
         @accumulated_changes = accumulator || accumulated_changes
 
@@ -56,10 +56,18 @@ module Restforce
       #
       # Returns nothing.
       def accumulate(record)
-        accumulated_changes[record.id].store(
+        accumulated_changes[key_for(record)].store(
           record.last_update,
           @mapping.convert(@mapping.salesforce_model, record.attributes),
         )
+      end
+
+      # Internal: Get a unique key with enough information to look up the passed
+      # record in Salesforce.
+      #
+      # Returns an Object.
+      def key_for(record)
+        [record.id, record.mapping.salesforce_model]
       end
 
     end
