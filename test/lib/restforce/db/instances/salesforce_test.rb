@@ -47,4 +47,24 @@ describe Restforce::DB::Instances::Salesforce do
     end
   end
 
+  describe "#synced?", :vcr do
+
+    describe "when no matching database record exists" do
+
+      it "returns false" do
+        expect(instance).to_not_be :synced?
+      end
+    end
+
+    describe "when a matching database record exists" do
+      before do
+        database_model.create!(salesforce_id: id)
+      end
+
+      it "returns true" do
+        expect(instance).to_be :synced?
+      end
+    end
+  end
+
 end
