@@ -14,14 +14,13 @@ module Restforce
         include Enumerable
         attr_accessor :collection
 
-        # Public: Get the Restforce::DB::Mapping entry for the specified
-        # database model.
+        # Public: Get the Restforce::DB::Mapping entry for the specified model.
         #
-        # database_model - A Class compatible with ActiveRecord::Base.
+        # database_model - A String or Class.
         #
         # Returns a Restforce::DB::Mapping.
-        def [](database_model)
-          collection[database_model]
+        def [](model)
+          collection[model]
         end
 
         # Public: Iterate through all registered Restforce::DB::Mappings.
@@ -29,10 +28,24 @@ module Restforce
         # Yields one Mapping for each database-to-Salesforce mapping.
         # Returns nothing.
         def each
-          collection.each do |_, mappings|
+          collection.each do |model, mappings|
+            # Since each mapping is inserted twice, we ignore the half which
+            # were inserted via Salesforce model names.
+            next unless model.is_a?(Class)
+
             mappings.each do |mapping|
               yield mapping
             end
+          end
+        end
+
+        # Public: Add a mapping to the overarching Mapping collection.
+        #
+        # Returns nothing.
+        def <<(mapping)
+          [mapping.database_model, mapping.salesforce_model].each do |model|
+            collection[model] ||= []
+            collection[model] << mapping
           end
         end
 
@@ -83,8 +96,7 @@ module Restforce
           salesforce_model => :salesforce,
         }
 
-        self.class.collection[database_model] ||= []
-        self.class.collection[database_model] << self
+        self.class << self
       end
 
       # Public: Get a list of the relevant Salesforce field names for this

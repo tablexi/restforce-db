@@ -35,6 +35,7 @@ describe Restforce::DB::Mapping do
 
     it "adds the mapping to the global collection" do
       expect(Restforce::DB::Mapping[database_model]).to_equal [mapping]
+      expect(Restforce::DB::Mapping[salesforce_model]).to_equal [mapping]
     end
   end
 
