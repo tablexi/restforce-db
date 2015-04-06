@@ -12,7 +12,7 @@ describe Restforce::DB::Accumulator do
     end
 
     it "stores the passed changeset in the accumulator" do
-      expect(accumulator.changes[timestamp]).to_equal changes
+      expect(accumulator[timestamp]).to_equal changes
     end
   end
 
