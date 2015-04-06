@@ -5,12 +5,7 @@ describe Restforce::DB::Collector do
   configure!
   mappings!
 
-  let(:collector) do
-    Restforce::DB::Collector.new(
-      mapping.database_record_type,
-      mapping.salesforce_record_type,
-    )
-  end
+  let(:collector) { Restforce::DB::Collector.new(mapping) }
 
   describe "#initialize" do
     before { Restforce::DB.last_run = Time.now }
@@ -43,7 +38,10 @@ describe Restforce::DB::Collector do
         record = mapping.salesforce_record_type.find(salesforce_id)
 
         expect(subject[salesforce_id]).to_equal(
-          record.last_update => attributes,
+          record.last_update => {
+            "Name" => attributes[:name],
+            "Example_Field__c" => attributes[:example],
+          },
         )
       end
     end
@@ -59,7 +57,10 @@ describe Restforce::DB::Collector do
         record = mapping.database_record_type.find(salesforce_id)
 
         expect(subject[salesforce_id]).to_equal(
-          record.last_update => attributes,
+          record.last_update => {
+            "Name" => attributes[:name],
+            "Example_Field__c" => attributes[:example],
+          },
         )
       end
     end
@@ -81,8 +82,14 @@ describe Restforce::DB::Collector do
         db_record = mapping.database_record_type.find(salesforce_id)
 
         expect(subject[salesforce_id]).to_equal(
-          sf_record.last_update => attributes,
-          db_record.last_update => database_attributes,
+          sf_record.last_update => {
+            "Name" => attributes[:name],
+            "Example_Field__c" => attributes[:example],
+          },
+          db_record.last_update => {
+            "Name" => database_attributes[:name],
+            "Example_Field__c" => database_attributes[:example],
+          },
         )
       end
     end

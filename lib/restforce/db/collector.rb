@@ -19,9 +19,8 @@ module Restforce
       # last_run_time          - A Time object reflecting the time of the most
       #                          recent collection run. Runs will only collect
       #                          data more recent than this stamp.
-      def initialize(database_record_type, salesforce_record_type, last_run_time = DB.last_run)
-        @database_record_type = database_record_type
-        @salesforce_record_type = salesforce_record_type
+      def initialize(mapping, last_run_time = DB.last_run)
+        @mapping = mapping
         @last_run = last_run_time
       end
 
@@ -46,8 +45,8 @@ module Restforce
           before: before,
         }
 
-        @salesforce_record_type.each(options) { |record| accumulate(record) }
-        @database_record_type.each(options) { |record| accumulate(record) }
+        @mapping.salesforce_record_type.each(options) { |record| accumulate(record) }
+        @mapping.database_record_type.each(options) { |record| accumulate(record) }
 
         accumulated_changes
       ensure
@@ -73,7 +72,7 @@ module Restforce
       def accumulate(record)
         accumulated_changes[record.id].store(
           record.last_update,
-          record.attributes,
+          @mapping.convert(@mapping.salesforce_model, record.attributes),
         )
       end
 
