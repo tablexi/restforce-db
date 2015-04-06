@@ -1,0 +1,81 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://<host>/services/oauth2/token
+    body:
+      encoding: US-ASCII
+      string: grant_type=password&client_id=<client_id>&client_secret=<client_secret>&username=<username>&password=<password><security_token>
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 06 Apr 2015 09:47:15 GMT
+      Set-Cookie:
+      - BrowserId=iKvYr10tSN21kZP4Ayl0oQ;Path=/;Domain=.salesforce.com;Expires=Fri,
+        05-Jun-2015 09:47:15 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache, no-store
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1428313635415","token_type":"Bearer","instance_url":"https://<host>","signature":"qgEz8rnSJoiUzNODq0gJyMJXLTeQ+pjzTyA1BwJ1Nq8=","access_token":"00D1a000000H3O9!AQ4AQIEcyaEa1EiezSuMSEJm73cIL8I5CDJ_vnqlgzm7mAXRhbGBSo3xF6_EdmNqSa42nDRyl2szOaP4ybHrIHxo.G4YonU_"}'
+    http_version: 
+  recorded_at: Mon, 06 Apr 2015 09:47:15 GMT
+- request:
+    method: get
+    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c%20where%20SystemModstamp%20%3C%202015-04-06T09:47:14Z
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Authorization:
+      - OAuth 00D1a000000H3O9!AQ4AQIEcyaEa1EiezSuMSEJm73cIL8I5CDJ_vnqlgzm7mAXRhbGBSo3xF6_EdmNqSa42nDRyl2szOaP4ybHrIHxo.G4YonU_
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 06 Apr 2015 09:47:16 GMT
+      Set-Cookie:
+      - BrowserId=-Oj4BnncTOaI79jHDt5lUg;Path=/;Domain=.salesforce.com;Expires=Fri,
+        05-Jun-2015 09:47:16 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=17/15000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":0,"done":true,"records":[]}'
+    http_version: 
+  recorded_at: Mon, 06 Apr 2015 09:47:16 GMT
+recorded_with: VCR 2.9.3
