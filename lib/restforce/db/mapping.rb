@@ -202,14 +202,6 @@ module Restforce
         end
       end
 
-      # Public: Get a Synchronizer for the record types captured by this
-      # Mapping.
-      #
-      # Returns a Restforce::DB::Synchronizer.
-      def synchronizer
-        @synchronizer ||= Synchronizer.new(@database_record_type, @salesforce_record_type)
-      end
-
     end
 
   end

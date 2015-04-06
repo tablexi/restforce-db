@@ -8,21 +8,13 @@ module Restforce
     # update records with the appropriate values.
     class Synchronizer
 
-      attr_reader :last_run
-
       # Public: Initialize a new Restforce::DB::Synchronizer.
       #
-      # database_record_type   - A Restforce::DB::RecordTypes::ActiveRecord
-      #                          instance.
-      # salesforce_record_type - A Restforce::DB::RecordTypes::Salesforce
-      #                          instance.
-      # last_run_time          - A Time object reflecting the time of the most
-      #                          recent synchronization run. Runs will only
-      #                          synchronize data more recent than this stamp.
-      def initialize(database_record_type, salesforce_record_type, last_run_time = DB.last_run)
-        @database_record_type = database_record_type
-        @salesforce_record_type = salesforce_record_type
-        @last_run = last_run_time
+      # mapping - A Restforce::DB::Mapping.
+      # runner  - A Restforce::DB::Runner.
+      def initialize(mapping, runner = Runner.new)
+        @mapping = mapping
+        @runner = runner
       end
 
       # Public: Run the synchronize process, pulling in records from Salesforce
@@ -34,26 +26,16 @@ module Restforce
       # overwriting recent changes to the database, in the event that Salesforce
       # has also been updated since the last sync.
       #
-      # options - A Hash of options for configuring the run. Valid keys are:
-      #           :delay - An offset to apply to the time filters. Allows the
-      #                    synchronization to account for server time drift.
-      #
       # Returns the Time the run was performed.
-      def run(options = {})
-        run_time = Time.now
-
-        delay = options.fetch(:delay) { 0 }
-        before = run_time - delay
-        after = last_run - delay if last_run
-
-        @salesforce_record_type.each(after: after, before: before) do |record|
-          @database_record_type.sync!(record)
+      def run
+        @runner.run(@mapping) do |run|
+          run.salesforce_records do |record|
+            @mapping.database_record_type.sync!(record)
+          end
+          run.database_records do |record|
+            @mapping.salesforce_record_type.sync!(record)
+          end
         end
-        @database_record_type.each(after: after, before: before) do |record|
-          @salesforce_record_type.sync!(record)
-        end
-
-        @last_run = run_time
       end
 
     end

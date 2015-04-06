@@ -52,10 +52,10 @@ module Restforce
       def initialize(options = {})
         @verbose = options.fetch(:verbose) { false }
         @interval = options.fetch(:interval) { DEFAULT_INTERVAL }
-        @delay = options.fetch(:delay) { DEFAULT_DELAY }
+        @runner = Runner.new(options.fetch(:delay) { DEFAULT_DELAY })
 
-        Restforce::DB.reset
-        Restforce::DB.configure { |config| config.parse(options[:config]) }
+        DB.reset
+        DB.configure { |config| config.parse(options[:config]) }
       end
 
       # Public: Start the polling loop for this Worker. Synchronizes all
@@ -75,6 +75,7 @@ module Restforce
         end
 
         loop do
+          @runner.tick!
           runtime = Benchmark.realtime { perform }
           sleep(@interval - runtime) if runtime < @interval && !stop?
 
@@ -137,7 +138,7 @@ module Restforce
       # Returns a Boolean.
       def synchronize(mapping)
         log "  SYNCHRONIZE #{mapping.database_model.name} with #{mapping.salesforce_model}"
-        runtime = Benchmark.realtime { mapping.synchronizer.run(delay: @delay) }
+        runtime = Benchmark.realtime { Synchronizer.new(mapping, @runner).run }
         log format("  COMPLETE after %.4f", runtime)
 
         return true

@@ -7,15 +7,6 @@ describe Restforce::DB::Collector do
 
   let(:collector) { Restforce::DB::Collector.new(mapping) }
 
-  describe "#initialize" do
-    before { Restforce::DB.last_run = Time.now }
-    after { Restforce::DB.last_run = nil }
-
-    it "prefills the Collector's last_run timestamp with the global configuration" do
-      expect(collector.last_run).to_equal Restforce::DB.last_run
-    end
-  end
-
   describe "#run", vcr: { match_requests_on: [:method, VCR.request_matchers.uri_without_param(:q)] } do
     let(:attributes) do
       {
