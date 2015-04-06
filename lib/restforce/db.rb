@@ -20,6 +20,7 @@ require "restforce/db/runner"
 
 require "restforce/db/accumulator"
 require "restforce/db/collector"
+require "restforce/db/initializer"
 require "restforce/db/mapping"
 require "restforce/db/model"
 require "restforce/db/synchronizer"
