@@ -16,6 +16,7 @@ require "restforce/db/record_types/base"
 require "restforce/db/record_types/active_record"
 require "restforce/db/record_types/salesforce"
 
+require "restforce/db/accumulator"
 require "restforce/db/mapping"
 require "restforce/db/model"
 require "restforce/db/synchronizer"
