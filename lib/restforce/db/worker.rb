@@ -25,7 +25,7 @@ module Restforce
       def initialize(options = {})
         @verbose = options.fetch(:verbose) { false }
         @interval = options.fetch(:interval) { DEFAULT_INTERVAL }
-        @runner = Runner.new(options.fetch(:delay) { DEFAULT_DELAY })
+        @delay = options.fetch(:delay) { DEFAULT_DELAY }
 
         DB.reset
         DB.configure { |config| config.parse(options[:config]) }
@@ -71,10 +71,10 @@ module Restforce
       #
       # Returns nothing.
       def perform
-        @runner.tick!
-        @changes = Hash.new { |h, k| h[k] = Accumulator.new }
-
         track do
+          runner.tick!
+          @changes = Hash.new { |h, k| h[k] = Accumulator.new }
+
           Restforce::DB::Mapping.each do |mapping|
             task("PROPAGATING RECORDS", mapping) { propagate mapping }
             task("COLLECTING CHANGES", mapping) { collect mapping }
@@ -112,6 +112,14 @@ module Restforce
         end
       end
 
+      # Internal: Get a Runner object which can be passed to the various
+      # workflow objects to scope their record lookups.
+      #
+      # Returns a Restforce::DB::Runner.
+      def runner
+        @runner ||= Runner.new(@delay)
+      end
+
       # Internal: Propagate unsynchronized records between the two systems for
       # the passed mapping.
       #
@@ -119,7 +127,7 @@ module Restforce
       #
       # Returns nothing.
       def propagate(mapping)
-        Initializer.new(mapping, @runner).run
+        Initializer.new(mapping, runner).run
       end
 
       # Internal: Collect a list of changes from recently-updated records for
@@ -129,7 +137,7 @@ module Restforce
       #
       # Returns nothing.
       def collect(mapping)
-        Collector.new(mapping, @runner).run(@changes)
+        Collector.new(mapping, runner).run(@changes)
       end
 
       # Internal: Apply the aggregated changes to the objects in both systems,
