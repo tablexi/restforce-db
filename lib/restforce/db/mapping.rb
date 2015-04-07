@@ -39,7 +39,11 @@ module Restforce
           end
         end
 
-        # Public: Add a mapping to the overarching Mapping collection.
+        # Public: Add a mapping to the overarching Mapping collection. Appends
+        # the mapping to the collection for both its database and salesforce
+        # object types.
+        #
+        # mapping - A Restforce::DB::Mapping.
         #
         # Returns nothing.
         def <<(mapping)
