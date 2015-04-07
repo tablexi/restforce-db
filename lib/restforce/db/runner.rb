@@ -42,6 +42,7 @@ module Restforce
       def run(mapping)
         @mapping = mapping
         yield self
+      ensure
         @mapping = nil
       end
 
