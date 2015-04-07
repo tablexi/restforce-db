@@ -16,7 +16,7 @@ module Restforce
 
         # Public: Get the Restforce::DB::Mapping entry for the specified model.
         #
-        # database_model - A String or Class.
+        # model - A String or Class.
         #
         # Returns a Restforce::DB::Mapping.
         def [](model)
