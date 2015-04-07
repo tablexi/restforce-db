@@ -29,17 +29,4 @@ describe Restforce::DB::Instances::ActiveRecord do
       expect(record.reload.synchronized_at).to_not_be_nil
     end
   end
-
-  describe "#copy!" do
-    let(:text) { "Copied text" }
-    let(:copy_from) { Struct.new(:attributes).new(example: text) }
-
-    before do
-      instance.copy!(copy_from)
-    end
-
-    it "updates the record with the attributes from the copied object" do
-      expect(record.example).to_equal text
-    end
-  end
 end

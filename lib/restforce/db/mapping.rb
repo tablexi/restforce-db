@@ -14,14 +14,13 @@ module Restforce
         include Enumerable
         attr_accessor :collection
 
-        # Public: Get the Restforce::DB::Mapping entry for the specified
-        # database model.
+        # Public: Get the Restforce::DB::Mapping entry for the specified model.
         #
-        # database_model - A Class compatible with ActiveRecord::Base.
+        # model - A String or Class.
         #
         # Returns a Restforce::DB::Mapping.
-        def [](database_model)
-          collection[database_model]
+        def [](model)
+          collection[model]
         end
 
         # Public: Iterate through all registered Restforce::DB::Mappings.
@@ -29,16 +28,38 @@ module Restforce
         # Yields one Mapping for each database-to-Salesforce mapping.
         # Returns nothing.
         def each
-          collection.each do |_, mappings|
+          collection.each do |model, mappings|
+            # Since each mapping is inserted twice, we ignore the half which
+            # were inserted via Salesforce model names.
+            next unless model.is_a?(Class)
+
             mappings.each do |mapping|
               yield mapping
             end
           end
         end
 
+        # Public: Add a mapping to the overarching Mapping collection.
+        #
+        # Returns nothing.
+        def <<(mapping)
+          [mapping.database_model, mapping.salesforce_model].each do |model|
+            collection[model] ||= []
+            collection[model] << mapping
+          end
+        end
+
       end
 
       self.collection ||= {}
+
+      extend Forwardable
+      def_delegators(
+        :@attribute_map,
+        :attributes,
+        :convert,
+        :convert_from_salesforce,
+      )
 
       attr_reader(
         :database_model,
@@ -78,13 +99,9 @@ module Restforce
         @conditions = options.fetch(:conditions) { [] }
         @through = options.fetch(:through) { nil }
 
-        @types = {
-          database_model   => :database,
-          salesforce_model => :salesforce,
-        }
+        @attribute_map = AttributeMap.new(database_model, salesforce_model, @fields)
 
-        self.class.collection[database_model] ||= []
-        self.class.collection[database_model] << self
+        self.class << self
       end
 
       # Public: Get a list of the relevant Salesforce field names for this
@@ -129,73 +146,6 @@ module Restforce
       # Returns a Boolean.
       def root?
         @through.nil?
-      end
-
-      # Public: Build a normalized Hash of attributes from the appropriate set
-      # of mappings. The keys of the resulting mapping Hash will correspond to
-      # the database column names.
-      #
-      # in_format - A String or Class reflecting the record type from which the
-      #             attribute Hash is being compiled.
-      #
-      # Yields the attribute name.
-      # Returns a Hash.
-      def attributes(from_format)
-        use_mappings =
-          case @types[from_format]
-          when :salesforce
-            @fields
-          when :database
-            # Generate a mapping of database column names to record attributes.
-            database_fields.zip(database_fields)
-          else
-            raise ArgumentError
-          end
-
-        use_mappings.each_with_object({}) do |(attribute, mapping), values|
-          values[attribute] = yield(mapping)
-        end
-      end
-
-      # Public: Convert a Hash of attributes to a format compatible with a
-      # specific platform.
-      #
-      # to_format  - A String or Class reflecting the record type for which the
-      #              attribute Hash is being compiled.
-      # attributes - A Hash of attributes, with keys corresponding to the
-      #              normalized attribute names.
-      #
-      # Examples
-      #
-      #   mapping = Mapping.new(MyClass, "Object__c", some_key: "SomeField__c")
-      #
-      #   mapping.convert("Object__c", some_key: "some value")
-      #   # => { "Some_Field__c" => "some value" }
-      #
-      #   mapping.convert(MyClass, some_key: "some other value")
-      #   # => { some_key: "some other value" }
-      #
-      # Returns a Hash.
-      def convert(to_format, attributes)
-        case @types[to_format]
-        when :database
-          attributes.dup
-        when :salesforce
-          @fields.each_with_object({}) do |(attribute, mapping), converted|
-            next unless attributes.key?(attribute)
-            converted[mapping] = attributes[attribute]
-          end
-        else
-          raise ArgumentError
-        end
-      end
-
-      # Public: Get a Synchronizer for the record types captured by this
-      # Mapping.
-      #
-      # Returns a Restforce::DB::Synchronizer.
-      def synchronizer
-        @synchronizer ||= Synchronizer.new(@database_record_type, @salesforce_record_type)
       end
 
     end

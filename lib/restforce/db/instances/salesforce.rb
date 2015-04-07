@@ -36,6 +36,13 @@ module Restforce
           last_update
         end
 
+        # Public: Has this record been synced with Salesforce?
+        #
+        # Returns a Boolean.
+        def synced?
+          @mapping.database_model.exists?(@mapping.lookup_column => id)
+        end
+
       end
 
     end

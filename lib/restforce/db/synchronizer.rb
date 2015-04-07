@@ -8,52 +8,44 @@ module Restforce
     # update records with the appropriate values.
     class Synchronizer
 
-      attr_reader :last_run
-
       # Public: Initialize a new Restforce::DB::Synchronizer.
       #
-      # database_record_type   - A Restforce::DB::RecordTypes::ActiveRecord
-      #                          instance.
-      # salesforce_record_type - A Restforce::DB::RecordTypes::Salesforce
-      #                          instance.
-      # last_run_time          - A Time object reflecting the time of the most
-      #                          recent synchronization run. Runs will only
-      #                          synchronize data more recent than this stamp.
-      def initialize(database_record_type, salesforce_record_type, last_run_time = DB.last_run)
-        @database_record_type = database_record_type
-        @salesforce_record_type = salesforce_record_type
-        @last_run = last_run_time
+      # mapping - A Restforce::DB::Mapping.
+      def initialize(mapping)
+        @mapping = mapping
       end
 
-      # Public: Run the synchronize process, pulling in records from Salesforce
-      # and the database to determine which records need to be created and/or
-      # updated.
+      # Public: Synchronize records for the current mapping from a Hash of
+      # record descriptors to attributes.
       #
-      # NOTE: We bootstrap our record lookups to the exact same timespan, and
-      # run the Salesforce sync into the database first. This has the effect of
-      # overwriting recent changes to the database, in the event that Salesforce
-      # has also been updated since the last sync.
+      # changes - A Hash, with keys composed of a Salesforce ID and model name,
+      #           with Restforce::DB::Accumulator objects as values.
       #
-      # options - A Hash of options for configuring the run. Valid keys are:
-      #           :delay - An offset to apply to the time filters. Allows the
-      #                    synchronization to account for server time drift.
-      #
-      # Returns the Time the run was performed.
-      def run(options = {})
-        run_time = Time.now
+      # Returns nothing.
+      def run(changes)
+        changes.each do |(id, salesforce_model), accumulator|
+          next unless salesforce_model == @mapping.salesforce_model
 
-        delay = options.fetch(:delay) { 0 }
-        before = run_time - delay
-        after = last_run - delay if last_run
-
-        @salesforce_record_type.each(after: after, before: before) do |record|
-          @database_record_type.sync!(record)
+          update(@mapping.database_record_type.find(id), accumulator)
+          update(@mapping.salesforce_record_type.find(id), accumulator)
         end
-        @database_record_type.each(after: after, before: before) do |record|
-          @salesforce_record_type.sync!(record)
-        end
+      end
 
-        @last_run = run_time
+      private
+
+      # Internal: Update the passed instance with the accumulated attributes
+      # from a synchronization run.
+      #
+      # instance    - An instance of Restforce::DB::Instances::Base.
+      # accumulator - A Restforce::DB::Accumulator.
+      #
+      # Returns nothing.
+      def update(instance, accumulator)
+        diff = accumulator.diff(@mapping.convert(@mapping.salesforce_model, instance.attributes))
+        attributes = @mapping.convert_from_salesforce(instance.record_type, diff)
+
+        return if attributes.empty?
+        instance.update!(attributes)
       end
 
     end

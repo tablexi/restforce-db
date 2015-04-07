@@ -35,6 +35,7 @@ describe Restforce::DB::Mapping do
 
     it "adds the mapping to the global collection" do
       expect(Restforce::DB::Mapping[database_model]).to_equal [mapping]
+      expect(Restforce::DB::Mapping[salesforce_model]).to_equal [mapping]
     end
   end
 
@@ -93,43 +94,6 @@ describe Restforce::DB::Mapping do
       it "raises an error" do
         expect(-> { mapping.lookup_column }).to_raise Restforce::DB::Mapping::InvalidMappingError
       end
-    end
-  end
-
-  describe "#attributes" do
-
-    it "builds a normalized Hash of database attribute values" do
-      attributes = mapping.attributes(database_model) do |attribute|
-        expect(mapping.database_fields.include?(attribute)).to_equal true
-        attribute
-      end
-
-      expect(attributes.keys).to_equal(mapping.database_fields)
-      expect(attributes.values).to_equal(mapping.database_fields)
-    end
-
-    it "builds a normalized Hash of Salesforce field values" do
-      attributes = mapping.attributes(salesforce_model) do |attribute|
-        expect(mapping.salesforce_fields.include?(attribute)).to_equal true
-        attribute
-      end
-
-      expect(attributes.keys).to_equal(mapping.database_fields)
-      expect(attributes.values).to_equal(mapping.salesforce_fields)
-    end
-  end
-
-  describe "#convert" do
-    let(:attributes) { { column_one: "some value" } }
-
-    it "converts an attribute Hash to a Salesforce-compatible form" do
-      expect(mapping.convert(salesforce_model, attributes)).to_equal(
-        fields[attributes.keys.first] => attributes.values.first,
-      )
-    end
-
-    it "performs no special conversion for database columns" do
-      expect(mapping.convert(database_model, attributes)).to_equal(attributes)
     end
   end
 end
