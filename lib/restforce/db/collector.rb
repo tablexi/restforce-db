@@ -65,6 +65,8 @@ module Restforce
       # Internal: Get a unique key with enough information to look up the passed
       # record in Salesforce.
       #
+      # record - A Restforce::DB::Instances::Base.
+      #
       # Returns an Object.
       def key_for(record)
         [record.id, record.mapping.salesforce_model]

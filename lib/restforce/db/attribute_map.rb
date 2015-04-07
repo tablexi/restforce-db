@@ -10,12 +10,12 @@ module Restforce
       #
       # database_model   - A Class compatible with ActiveRecord::Base.
       # salesforce_model - A String name of an object type in Salesforce.
-      # options          - A Hash of mappings between database columns and
+      # fields           - A Hash of mappings between database columns and
       #                    fields in Salesforce.
-      def initialize(database_model, salesforce_model, field_mappings = {})
-        @fields = field_mappings
+      def initialize(database_model, salesforce_model, fields = {})
         @database_model = database_model
         @salesforce_model = salesforce_model
+        @fields = fields
 
         @types = {
           database_model   => :database,
@@ -27,10 +27,10 @@ module Restforce
       # of mappings. The keys of the resulting mapping Hash will correspond to
       # the database column names.
       #
-      # in_format - A String or Class reflecting the record type from which the
-      #             attribute Hash is being compiled.
+      # from_format - A String or Class reflecting the record type from which
+      #               the attribute Hash is being compiled.
       #
-      # Yields the attribute name.
+      # Yields a series of attribute names.
       # Returns a Hash.
       def attributes(from_format)
         use_mappings =
