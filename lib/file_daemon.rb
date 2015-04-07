@@ -1,5 +1,6 @@
 # FileDaemon defines some standard hooks for forking processes which retain
-# file descriptors.
+# file descriptors. Implementation derived from the Delayed::Job library:
+# https://github.com/collectiveidea/delayed_job/blob/master/lib/delayed/worker.rb#L77-L98.
 module FileDaemon
 
   # Public: Extend the including class with before/after_fork hooks.
@@ -19,12 +20,7 @@ module FileDaemon
     #
     # Returns nothing.
     def before_fork
-      return if @files_to_reopen
-
-      @files_to_reopen = []
-      ObjectSpace.each_object(File) do |file|
-        @files_to_reopen << file unless file.closed?
-      end
+      @files_to_reopen ||= ObjectSpace.each_object(File).reject(&:closed?)
     end
 
     # Public: Reopen all file descriptors that have been stored through the
@@ -36,7 +32,7 @@ module FileDaemon
         begin
           file.reopen file.path, "a+"
           file.sync = true
-        rescue ::Exception # rubocop:disable HandleExceptions, RescueException
+        rescue ::IOError # rubocop:disable HandleExceptions
         end
       end
     end
