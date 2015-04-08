@@ -23,7 +23,15 @@ module Restforce
         #
         # Returns a Restforce::DB::Mapping.
         def sync_with(salesforce_model, **options)
-          mapping = Mapping.new(self, salesforce_model, options)
+          mapping = Mapping.new(self, salesforce_model)
+
+          mapping.through = options[:through]
+          mapping.strategy = Strategies::Passive.new if mapping.through
+
+          mapping.fields = options.fetch(:fields) { {} }
+          mapping.associations = options.fetch(:associations) { {} }
+          mapping.conditions = options.fetch(:conditions) { [] }
+
           Registry << mapping
 
           mapping

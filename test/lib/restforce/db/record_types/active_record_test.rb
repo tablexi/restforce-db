@@ -43,12 +43,10 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
       let(:associations) { { user: "Friend__c" } }
 
       before do
-        mapping = Restforce::DB::Mapping.new(
-          User,
-          "Contact",
-          through: "Friend__c",
-          fields: { email: "Email" },
-        )
+        mapping = Restforce::DB::Mapping.new(User, "Contact").tap do |m|
+          m.through = "Friend__c"
+          m.fields  = { email: "Email" }
+        end
         Restforce::DB::Registry << mapping
 
         salesforce_record_type = mapping.salesforce_record_type

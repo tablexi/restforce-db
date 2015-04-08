@@ -20,13 +20,11 @@ def mappings!
   let(:conditions) { [] }
   let(:through) { nil }
   let!(:mapping) do
-    Restforce::DB::Mapping.new(
-      database_model,
-      salesforce_model,
-      through: through,
-      fields: fields,
-      associations: associations,
-      conditions: conditions,
-    )
+    Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |m|
+      m.through      = through
+      m.conditions   = conditions
+      m.fields       = fields
+      m.associations = associations
+    end
   end
 end

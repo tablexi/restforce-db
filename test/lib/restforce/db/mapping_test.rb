@@ -15,27 +15,17 @@ describe Restforce::DB::Mapping do
   end
   let(:through) { nil }
   let!(:mapping) do
-    Restforce::DB::Mapping.new(
-      database_model,
-      salesforce_model,
-      fields: fields,
-      associations: associations,
-      through: through,
-    )
+    Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |m|
+      m.fields       = fields
+      m.associations = associations
+      m.through      = through
+    end
   end
 
   describe "#initialize" do
 
     it "defaults to an initialization strategy of `Always`" do
       expect(mapping.strategy).to_be_instance_of(Restforce::DB::Strategies::Always)
-    end
-
-    describe "when a :through option is supplied" do
-      let(:through) { "Some_Field__c" }
-
-      it "employs a `Passive` initialization strategy" do
-        expect(mapping.strategy).to_be_instance_of(Restforce::DB::Strategies::Passive)
-      end
     end
   end
 

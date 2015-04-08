@@ -26,8 +26,9 @@ describe Restforce::DB::Initializer do
         salesforce_id
       end
 
-      describe "for a root mapping" do
+      describe "for an Always strategy" do
         before do
+          mapping.strategy = Restforce::DB::Strategies::Always.new
           initializer.run
         end
 
@@ -40,10 +41,9 @@ describe Restforce::DB::Initializer do
         end
       end
 
-      describe "for a non-root mapping" do
-        let(:through) { "SomeField__c" }
-
+      describe "for a Passive strategy" do
         before do
+          mapping.strategy = Restforce::DB::Strategies::Passive.new
           initializer.run
         end
 
@@ -61,8 +61,9 @@ describe Restforce::DB::Initializer do
         database_record
       end
 
-      describe "for a root mapping" do
+      describe "for an Always strategy" do
         before do
+          mapping.strategy = Restforce::DB::Strategies::Always.new
           initializer.run
           Salesforce.records << [salesforce_model, salesforce_id]
         end
@@ -75,10 +76,9 @@ describe Restforce::DB::Initializer do
         end
       end
 
-      describe "for a non-root mapping" do
-        let(:through) { "SomeField__c" }
-
+      describe "for a Passive strategy" do
         before do
+          mapping.strategy = Restforce::DB::Strategies::Passive.new
           initializer.run
         end
 

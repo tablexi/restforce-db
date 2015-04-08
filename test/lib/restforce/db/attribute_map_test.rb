@@ -16,7 +16,11 @@ describe Restforce::DB::AttributeMap do
   let(:attribute_map) { Restforce::DB::AttributeMap.new(database_model, salesforce_model, fields) }
 
   describe "#attributes" do
-    let(:mapping) { Restforce::DB::Mapping.new(database_model, salesforce_model, fields: fields) }
+    let(:mapping) do
+      Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |m|
+        m.fields = fields
+      end
+    end
 
     it "builds a normalized Hash of database attribute values" do
       attributes = attribute_map.attributes(database_model) do |attribute|
