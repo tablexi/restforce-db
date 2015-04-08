@@ -24,21 +24,7 @@ describe Restforce::DB::Mapping do
     )
   end
 
-  describe ".each" do
-
-    # Restforce::DB::Mapping actually implements Enumerable, so we're just
-    # going with a trivially testable portion of the Enumerable API.
-    it "yields the registered record types" do
-      expect(Restforce::DB::Mapping.first).to_equal mapping
-    end
-  end
-
   describe "#initialize" do
-
-    it "adds the mapping to the global collection" do
-      expect(Restforce::DB::Mapping[database_model]).to_equal [mapping]
-      expect(Restforce::DB::Mapping[salesforce_model]).to_equal [mapping]
-    end
 
     it "defaults to an initialization strategy of `Always`" do
       expect(mapping.strategy).to_be_instance_of(Restforce::DB::Strategies::Always)

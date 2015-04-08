@@ -22,8 +22,8 @@ describe Restforce::DB::Model do
       database_model.sync_with(salesforce_model, fields: fields)
     end
 
-    it "creates a mapping in Restforce::DB::Mapping" do
-      expect(Restforce::DB::Mapping[database_model]).to_not_be :empty?
+    it "adds a mapping to the global Restforce::DB::Registry" do
+      expect(Restforce::DB::Registry[database_model]).to_not_be :empty?
     end
   end
 

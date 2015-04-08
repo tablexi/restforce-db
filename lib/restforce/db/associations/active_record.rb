@@ -28,7 +28,7 @@ module Restforce
         #
         # Returns the constructed associated record.
         def build(from_record)
-          Mapping[associated.class].each do |mapping|
+          Registry[associated.class].each do |mapping|
             lookup_id = from_record[mapping.through]
             apply(mapping, lookup_id)
           end

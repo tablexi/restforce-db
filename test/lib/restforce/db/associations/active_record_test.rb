@@ -21,6 +21,8 @@ describe Restforce::DB::Associations::ActiveRecord do
         through: "Friend__c",
         fields: { email: "Email" },
       )
+      Restforce::DB::Registry << mapping
+
       salesforce_record_type = mapping.salesforce_record_type
 
       # Stub out the `#find` method on the record type

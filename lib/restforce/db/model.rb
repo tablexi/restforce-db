@@ -23,7 +23,10 @@ module Restforce
         #
         # Returns a Restforce::DB::Mapping.
         def sync_with(salesforce_model, **options)
-          Mapping.new(self, salesforce_model, options)
+          mapping = Mapping.new(self, salesforce_model, options)
+          Registry << mapping
+
+          mapping
         end
 
       end
