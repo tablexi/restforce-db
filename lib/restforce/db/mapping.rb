@@ -73,6 +73,7 @@ module Restforce
         :associations,
         :conditions,
         :through,
+        :strategy,
       )
 
       # Public: Initialize a new Restforce::DB::Mapping.
@@ -89,8 +90,8 @@ module Restforce
       #                    :conditions   - An Array of lookup conditions which
       #                                    should be applied to the Salesforce
       #                                    queries.
-      #                    :root         - A Boolean reflecting whether or not
-      #                                    this is a root-level mapping.
+      #                    :through      - A String reflecting a Lookup ID from
+      #                                    an associated Salesforce record.
       def initialize(database_model, salesforce_model, options = {})
         @database_model = database_model
         @salesforce_model = salesforce_model
@@ -102,6 +103,7 @@ module Restforce
         @associations = options.fetch(:associations) { {} }
         @conditions = options.fetch(:conditions) { [] }
         @through = options.fetch(:through) { nil }
+        @strategy = @through ? Strategies::Passive.new : Strategies::Always.new
 
         @attribute_map = AttributeMap.new(database_model, salesforce_model, @fields)
 
@@ -142,14 +144,6 @@ module Restforce
             raise InvalidMappingError, "#{database_model} must define a Salesforce ID column"
           end
         end
-      end
-
-      # Public: Is this a root-level mapping? Used to determine whether or not
-      # to trigger the creation of "missing" database records.
-      #
-      # Returns a Boolean.
-      def root?
-        @through.nil?
       end
 
     end
