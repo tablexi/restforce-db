@@ -35,7 +35,7 @@ module Restforce
       # Public: Define a relationship in which the current mapping contains the
       # lookup ID for another mapping.
       #
-      # # TODO: This should eventually be implemented as a full-fledged
+      # TODO: This should eventually be implemented as a full-fledged
       # association on the mapping. Something like:
       # @mapping.associate(association, Associations::BelongsTo, options)
       #
