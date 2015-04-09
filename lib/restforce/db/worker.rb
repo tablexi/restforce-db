@@ -75,14 +75,14 @@ module Restforce
           runner.tick!
           @changes = Hash.new { |h, k| h[k] = Accumulator.new }
 
-          Restforce::DB::Mapping.each do |mapping|
+          Restforce::DB::Registry.each do |mapping|
             task("PROPAGATING RECORDS", mapping) { propagate mapping }
             task("COLLECTING CHANGES", mapping) { collect mapping }
           end
 
           # NOTE: We can only perform the synchronization after all record
           # changes have been aggregated, so this second loop is necessary.
-          Restforce::DB::Mapping.each do |mapping|
+          Restforce::DB::Registry.each do |mapping|
             task("APPLYING CHANGES", mapping) { synchronize mapping }
           end
         end
