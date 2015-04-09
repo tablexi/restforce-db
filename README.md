@@ -126,7 +126,9 @@ As shown above, the `:through` option may contain _an array of Lookup field name
 
 ##### `has_one`
 
-This defines an inverse relationship for a `belongs_to` relationship. In the example above, `Dish` defines a `has_one` relationship with `:restaurant`, and lists the relevant Lookup field on the parent object in its `:through` argument.
+This defines an inverse relationship for a `belongs_to` relationship. In the example above, `Dish` defines _two_ `has_one` relationships with `:restaurant`, one for each mapping. The `:through` arguments for each call to `has_one` correspond to the relevant Lookup field on the parent object.
+
+In the above example, given the relationships defined between our records, we can ascertain that `Restaurant__c.Specialty__c` is a `Lookup(Dish__c)` field in Salesforce, while ` Restaurant__c.KeyIngredient__c` is a `Lookup(Ingredient__c)`.
 
 ##### `has_many`
 
