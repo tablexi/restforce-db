@@ -41,16 +41,14 @@ class Restaurant < ActiveRecord::Base
   include Restforce::DB::Model
   has_one :specialty, class_name: "Dish"
 
-  sync_with(
-    "Restaurants__c",
-    fields: {
+  sync_with("Restaurant__c", :always) do
+    where "StarRating__c > 4"
+    belongs_to :specialty, through: "Specialty__c"
+    maps(
       name:  "Name",
       style: "Style__c",
-    },
-    associations: {
-      specialty: "Specialty__c",
-    },
-  )
+    )
+  end
 
 end
 
@@ -59,24 +57,50 @@ class Dish < ActiveRecord::Base
   include Restforce::DB::Model
   belongs_to :restaurant
 
-  sync_with(
-    "Dish__c",
-    through: "Specialty__c",
-    fields: {
+  sync_with("Dish__c", :passive) do
+    has_one :restaurant, through: "Specialty__c"
+    maps(
       name:       "Name",
       ingredient: "Ingredient__c",
-    },
-  )
+    )
+  end
+
 end
 ```
 
 This will automatically register the models with entries in the `Restforce::DB::Mapping` collection. This collection defines the manner in which the database and Salesforce systems will be synchronized.
 
-There are a few options to be aware of when describing a mapping:
+Demonstrated above, `Restforce::DB` has its own DSL for defining mappings, heavily inspired by the ActiveRecord model DSL. The various options are outlined here.
 
-- `fields`: These are direct field-to-field mappings. The keys should line up with your ActiveRecord attribute names, while the values should line up with the matching field names in Salesforce.
-- `associations`: These are mappings of ActiveRecord associations to Salesforce lookups. Associations defined here will be built as part of the creation process for a newly-synced record. 
-- `through`: This should be set for models which are created through an association. It references the lookup field on its parent's Salesforce object type.
+#### Lookup Conditions
+
+`where` accepts one or more query strings which will be used to filter _all_ queries performed for the specific mapping. In the example above, Restaurant objects will only be detected in Salesforce if they exceed a certain value for the `StarRating__c` field.
+
+Individual conditions supplied to `where` will be appended together with `AND` clauses, and must be composed of valid [`SOQL`](http://www.salesforce.com/us/developer/docs/soql_sosl/).
+
+#### Field Mappings
+
+`maps` defines a set of direct field-to-field mappings. It takes a Hash as an argument; the keys should line up with your ActiveRecord attribute names, while the values should line up with the matching field names in Salesforce.
+
+#### Associations
+
+Associations in `Restforce::DB` can be a little tricky, as they depend on your ActiveRecord association mappings, but are independent of those mappings, and can even (as seen above) seem to conflict with them.
+
+If your Salesforce objects have parity with your ActiveRecord models, your association mappings will likely have parity, as well. But, as demonstrated above, you should define your association mappings based on your Salesforce schema.
+
+##### `belongs_to`
+
+This defines an association type in which the Lookup (i.e., foreign key) _is on the mapped Salesforce model_. In the example above, the `Restaurant__c` object type in Salesforce has a `Specialty__c` Lookup field, which corresponds to the `Dish__c` object type. Thus, the `Restaurant__c` mapping declares the `belongs_to` relationship.
+
+The `:through` option may contain _an array of Lookup field names_, which may be useful if more than one mapping on the associated ActiveRecord model refers to a Lookup for the same Salesforce record.
+
+##### `has_one`
+
+This defines an inverse relationship for a `belongs_to` relationship. In the example above, `Dish` defines a `has_one` relationship with `:restaurant`, and lists the relevant Lookup field on the parent object.
+
+##### `has_many`
+
+**TODO**
 
 ### Run the daemon
 
@@ -100,7 +124,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Caveats
 
-- **Update Prioritization.** When synchronization occurs, newly-updated records in Salesforce are prioritized over newly-updated database records. This means that any changes to records in the database may be overwritten if changes were made to the Salesforce at the same time.
+- **Update Prioritization.** When synchronization occurs, the most recently updated record, Salesforce or database, gets to make the final call about the values of _all_ of the fields it observes. This means that race conditions can and probably will happen if both systems are updated within the same polling interval.
 - **API Usage.** This gem performs most of its functionality via the Salesforce API (by way of the [`restforce`](https://github.com/ejholmes/restforce) gem). If you're at risk of hitting your Salesforce API limits, this may not be the right approach for you.
 
 ## Contributing
