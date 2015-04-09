@@ -43,7 +43,7 @@ class Restaurant < ActiveRecord::Base
 
   sync_with("Restaurant__c", :always) do
     where "StarRating__c > 4"
-    belongs_to :specialty, through: "Specialty__c"
+    belongs_to :specialty, through: %w(Specialty__c KeyIngredient__c)
     maps(
       name:  "Name",
       style: "Style__c",
@@ -60,8 +60,15 @@ class Dish < ActiveRecord::Base
   sync_with("Dish__c", :passive) do
     has_one :restaurant, through: "Specialty__c"
     maps(
-      name:       "Name",
-      ingredient: "Ingredient__c",
+      name:   "Name",
+      origin: "Origin__c",
+    )
+  end
+
+  sync_with("Ingredient__c", :passive) do
+    has_one :restaurant, through: "KeyIngredient__c"
+    maps(
+      key_ingredient: "Name",
     )
   end
 
@@ -108,13 +115,18 @@ If your Salesforce objects have parity with your ActiveRecord models, your assoc
 
 ##### `belongs_to`
 
-This defines an association type in which the Lookup (i.e., foreign key) _is on the mapped Salesforce model_. In the example above, the `Restaurant__c` object type in Salesforce has a `Specialty__c` Lookup field, which corresponds to the `Dish__c` object type. Thus, the `Restaurant__c` mapping declares the `belongs_to` relationship.
+This defines an association type in which the Lookup (i.e., foreign key) _is on the mapped Salesforce model_. In the example above, the `Restaurant__c` object type in Salesforce has two Lookup fields:
 
-The `:through` option may contain _an array of Lookup field names_, which may be useful if more than one mapping on the associated ActiveRecord model refers to a Lookup for the same Salesforce record.
+- `Specialty__c`, which corresponds to the `Dish__c` object type, and
+- `KeyIngredient__c`, which corresponds to the `Ingredient__c` object type
+ 
+Thus, the `Restaurant__c` mapping declares a `belongs_to` relationship to `:specialty`, with a `:through` argument referencing both of the Lookups used by the mappings on the associated `Dish` class.
+
+As shown above, the `:through` option may contain _an array of Lookup field names_, which may be useful if more than one mapping on the associated ActiveRecord model refers to a Lookup on the same Salesforce record.
 
 ##### `has_one`
 
-This defines an inverse relationship for a `belongs_to` relationship. In the example above, `Dish` defines a `has_one` relationship with `:restaurant`, and lists the relevant Lookup field on the parent object.
+This defines an inverse relationship for a `belongs_to` relationship. In the example above, `Dish` defines a `has_one` relationship with `:restaurant`, and lists the relevant Lookup field on the parent object in its `:through` argument.
 
 ##### `has_many`
 
