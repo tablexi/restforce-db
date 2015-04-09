@@ -14,7 +14,7 @@ describe Restforce::DB::Strategies::Always do
   describe "#build?", :vcr do
 
     describe "given a Salesforce record" do
-      let(:salesforce_id) { Salesforce.create! "CustomObject__c" }
+      let(:salesforce_id) { Salesforce.create! salesforce_model }
       let(:record) { mapping.salesforce_record_type.find(salesforce_id) }
 
       it "wants to build a new matching record" do
