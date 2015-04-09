@@ -72,6 +72,24 @@ This will automatically register the models with entries in the `Restforce::DB::
 
 Demonstrated above, `Restforce::DB` has its own DSL for defining mappings, heavily inspired by the ActiveRecord model DSL. The various options are outlined here.
 
+#### Synchronization Strategies
+
+The second argument to `sync_with` is a Symbol, reflecting the desired synchronization strategy for the mapping. Valid options are as follows:
+
+##### `:always`
+
+An `always` synchronization strategy will create any new records it encounters while polling for changes, and once the object has been persisted in both systems, will update that object any time changes are made to the matching object in the other system.
+
+Associations defined on an `always` mapping will trigger the creation of those associated records on initial record creation.
+
+##### `:passive`
+
+A `passive` synchronization strategy will update all modified records that already exist in both systems, but will not directly create any new records. Objects defined with a `passive` mapping can only be created as a by-product of another mapping's association definitions (via an `always` strategy).
+
+##### `:associated`
+
+_Coming Soon_
+
 #### Lookup Conditions
 
 `where` accepts one or more query strings which will be used to filter _all_ queries performed for the specific mapping. In the example above, Restaurant objects will only be detected in Salesforce if they exceed a certain value for the `StarRating__c` field.
@@ -100,7 +118,7 @@ This defines an inverse relationship for a `belongs_to` relationship. In the exa
 
 ##### `has_many`
 
-**TODO**
+_Coming Soon_
 
 ### Run the daemon
 
