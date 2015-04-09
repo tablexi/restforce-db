@@ -6,12 +6,6 @@ describe Restforce::DB::Model do
 
   let(:database_model) { CustomObject }
   let(:salesforce_model) { "CustomObject__c" }
-  let(:fields) do
-    {
-      name:    "Name",
-      example: "Example_Field__c",
-    }
-  end
 
   before do
     database_model.send(:include, Restforce::DB::Model)
@@ -19,11 +13,16 @@ describe Restforce::DB::Model do
 
   describe ".sync_with" do
     before do
-      database_model.sync_with(salesforce_model, fields: fields)
+      database_model.sync_with(salesforce_model) do
+        maps(
+          name:    "Name",
+          example: "Example_Field__c",
+        )
+      end
     end
 
-    it "creates a mapping in Restforce::DB::Mapping" do
-      expect(Restforce::DB::Mapping[database_model]).to_not_be :empty?
+    it "adds a mapping to the global Restforce::DB::Registry" do
+      expect(Restforce::DB::Registry[database_model]).to_not_be :empty?
     end
   end
 

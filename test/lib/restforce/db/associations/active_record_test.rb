@@ -15,12 +15,12 @@ describe Restforce::DB::Associations::ActiveRecord do
     let(:associated_record) { association.build(salesforce_record) }
 
     before do
-      mapping = Restforce::DB::Mapping.new(
-        User,
-        "Contact",
-        through: "Friend__c",
-        fields: { email: "Email" },
-      )
+      mapping = Restforce::DB::Mapping.new(User, "Contact").tap do |m|
+        m.through = "Friend__c"
+        m.fields  = { email: "Email" }
+      end
+      Restforce::DB::Registry << mapping
+
       salesforce_record_type = mapping.salesforce_record_type
 
       # Stub out the `#find` method on the record type

@@ -9,57 +9,9 @@ module Restforce
 
       class InvalidMappingError < StandardError; end
 
-      class << self
-
-        include Enumerable
-        attr_accessor :collection
-
-        # Public: Get the Restforce::DB::Mapping entry for the specified model.
-        #
-        # model - A String or Class.
-        #
-        # Returns a Restforce::DB::Mapping.
-        def [](model)
-          collection[model]
-        end
-
-        # Public: Iterate through all registered Restforce::DB::Mappings.
-        #
-        # Yields one Mapping for each database-to-Salesforce mapping.
-        # Returns nothing.
-        def each
-          collection.each do |model, mappings|
-            # Since each mapping is inserted twice, we ignore the half which
-            # were inserted via Salesforce model names.
-            next unless model.is_a?(Class)
-
-            mappings.each do |mapping|
-              yield mapping
-            end
-          end
-        end
-
-        # Public: Add a mapping to the overarching Mapping collection. Appends
-        # the mapping to the collection for both its database and salesforce
-        # object types.
-        #
-        # mapping - A Restforce::DB::Mapping.
-        #
-        # Returns nothing.
-        def <<(mapping)
-          [mapping.database_model, mapping.salesforce_model].each do |model|
-            collection[model] ||= []
-            collection[model] << mapping
-          end
-        end
-
-      end
-
-      self.collection ||= {}
-
       extend Forwardable
       def_delegators(
-        :@attribute_map,
+        :attribute_map,
         :attributes,
         :convert,
         :convert_from_salesforce,
@@ -70,42 +22,32 @@ module Restforce
         :salesforce_model,
         :database_record_type,
         :salesforce_record_type,
+      )
+
+      attr_accessor(
+        :fields,
         :associations,
         :conditions,
         :through,
+        :strategy,
       )
 
       # Public: Initialize a new Restforce::DB::Mapping.
       #
       # database_model   - A Class compatible with ActiveRecord::Base.
       # salesforce_model - A String name of an object type in Salesforce.
-      # options          - A Hash of mapping attributes. Currently supported
-      #                    keys are:
-      #                    :fields       - A Hash of mappings between database
-      #                                    columns and fields in Salesforce.
-      #                    :associations - A Hash of mappings between Active
-      #                                    Record association names and the
-      #                                    corresponding Salesforce Lookup name.
-      #                    :conditions   - An Array of lookup conditions which
-      #                                    should be applied to the Salesforce
-      #                                    queries.
-      #                    :root         - A Boolean reflecting whether or not
-      #                                    this is a root-level mapping.
-      def initialize(database_model, salesforce_model, options = {})
+      # strategy         - A synchronization Strategy object.
+      def initialize(database_model, salesforce_model, strategy = Strategies::Always.new)
         @database_model = database_model
         @salesforce_model = salesforce_model
 
         @database_record_type = RecordTypes::ActiveRecord.new(database_model, self)
         @salesforce_record_type = RecordTypes::Salesforce.new(salesforce_model, self)
 
-        @fields = options.fetch(:fields) { {} }
-        @associations = options.fetch(:associations) { {} }
-        @conditions = options.fetch(:conditions) { [] }
-        @through = options.fetch(:through) { nil }
-
-        @attribute_map = AttributeMap.new(database_model, salesforce_model, @fields)
-
-        self.class << self
+        self.associations = {}
+        self.fields = {}
+        self.conditions = []
+        self.strategy = strategy
       end
 
       # Public: Get a list of the relevant Salesforce field names for this
@@ -113,7 +55,7 @@ module Restforce
       #
       # Returns an Array.
       def salesforce_fields
-        @fields.values + @associations.values.flatten
+        fields.values + associations.values.flatten
       end
 
       # Public: Get a list of the relevant database column names for this
@@ -121,7 +63,7 @@ module Restforce
       #
       # Returns an Array.
       def database_fields
-        @fields.keys
+        fields.keys
       end
 
       # Public: Get the name of the database column which should be used to
@@ -144,12 +86,13 @@ module Restforce
         end
       end
 
-      # Public: Is this a root-level mapping? Used to determine whether or not
-      # to trigger the creation of "missing" database records.
+      private
+
+      # Internal: Get an AttributeMap for the fields defined for this mapping.
       #
-      # Returns a Boolean.
-      def root?
-        @through.nil?
+      # Returns a Restforce::DB::AttributeMap.
+      def attribute_map
+        @attribute_map ||= AttributeMap.new(database_model, salesforce_model, fields)
       end
 
     end

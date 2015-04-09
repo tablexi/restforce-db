@@ -59,7 +59,11 @@ module Restforce
       #
       # Examples
       #
-      #   mapping = Mapping.new(MyClass, "Object__c", some_key: "SomeField__c")
+      #   mapping = AttributeMap.new(
+      #     MyClass,
+      #     "Object__c",
+      #     some_key: "SomeField__c",
+      #   )
       #
       #   mapping.convert("Object__c", some_key: "some value")
       #   # => { "Some_Field__c" => "some value" }

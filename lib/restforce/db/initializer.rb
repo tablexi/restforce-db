@@ -14,6 +14,7 @@ module Restforce
       # runner  - A Restforce::DB::Runner.
       def initialize(mapping, runner = Runner.new)
         @mapping = mapping
+        @strategy = mapping.strategy
         @runner = runner
       end
 
@@ -21,7 +22,7 @@ module Restforce
       #
       # Returns nothing.
       def run
-        return unless @mapping.root?
+        return if @strategy.passive?
 
         @runner.run(@mapping) do |run|
           run.salesforce_records { |record| create_in_database(record) }
@@ -39,7 +40,7 @@ module Restforce
       #
       # Returns nothing.
       def create_in_database(record)
-        return if record.synced?
+        return unless @strategy.build?(record)
         @mapping.database_record_type.create!(record)
       end
 

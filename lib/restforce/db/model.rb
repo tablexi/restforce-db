@@ -16,14 +16,17 @@ module Restforce
       module ClassMethods
 
         # Public: Initializes a Restforce::DB::Mapping defining this model's
-        # relationship to a Salesforce object type.
+        # relationship to a Salesforce object type. Passes a provided block to
+        # the Restforce::DB::DSL for evaluation.
         #
         # salesforce_model - A String name of an object type in Salesforce.
+        # strategy         - A Symbol naming a desired initialization strategy.
         # options          - A Hash of options to pass through to the Mapping.
+        # block            - A block of code to evaluate through the DSL.
         #
-        # Returns a Restforce::DB::Mapping.
-        def sync_with(salesforce_model, **options)
-          Mapping.new(self, salesforce_model, options)
+        # Returns nothing.
+        def sync_with(salesforce_model, strategy = :always, options = {}, &block)
+          Restforce::DB::DSL.new(self, salesforce_model, strategy, options).instance_eval(&block)
         end
 
       end
