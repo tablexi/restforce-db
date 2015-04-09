@@ -16,14 +16,9 @@ module Restforce
       # options          - A Hash of options to pass to the Strategy object.
       #
       # Returns nothing.
-      def initialize(database_model, salesforce_model, strategy_name = :always, options = {})
-        @database_model = database_model
-        @salesforce_model = salesforce_model
-        @mapping = Mapping.new(database_model, salesforce_model)
-
-        strategy_class = "Restforce::DB::Strategies::#{strategy_name.to_s.camelize}".constantize
-        @mapping.strategy = strategy_class.new(options)
-
+      def initialize(database_model, salesforce_model, strategy_name, options = {})
+        strategy = Strategy.for(strategy_name, options)
+        @mapping = Mapping.new(database_model, salesforce_model, strategy)
         Registry << @mapping
       end
 

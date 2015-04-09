@@ -4,7 +4,8 @@ describe Restforce::DB::DSL do
 
   let(:database_model) { CustomObject }
   let(:salesforce_model) { "CustomObject__c" }
-  let(:dsl) { Restforce::DB::DSL.new(database_model, salesforce_model) }
+  let(:strategy) { :always }
+  let(:dsl) { Restforce::DB::DSL.new(database_model, salesforce_model, strategy) }
   let(:mapping) { dsl.mapping }
 
   before { dsl }
@@ -16,14 +17,18 @@ describe Restforce::DB::DSL do
       expect(Restforce::DB::Registry[salesforce_model]).to_equal [mapping]
     end
 
-    it "defaults to an initialization strategy of :always" do
-      expect(dsl.mapping.strategy).to_be_instance_of(Restforce::DB::Strategies::Always)
+    describe "when a strategy of :always is specified" do
+      let(:strategy) { :always }
+
+      it "respects the declared strategy" do
+        expect(dsl.mapping.strategy).to_be_instance_of(Restforce::DB::Strategies::Always)
+      end
     end
 
-    describe "when an alternate strategy is specified" do
-      let(:dsl) { Restforce::DB::DSL.new(database_model, salesforce_model, :passive) }
+    describe "when a strategy of :passive is specified" do
+      let(:strategy) { :passive }
 
-      it "sets the mapping's strategy appropriately" do
+      it "respects the declared strategy" do
         expect(dsl.mapping.strategy).to_be_instance_of(Restforce::DB::Strategies::Passive)
       end
     end

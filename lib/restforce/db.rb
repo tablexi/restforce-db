@@ -6,6 +6,7 @@ require "restforce/extensions"
 require "restforce/db/version"
 require "restforce/db/configuration"
 require "restforce/db/registry"
+require "restforce/db/strategy"
 require "restforce/db/dsl"
 
 require "restforce/db/associations/active_record"

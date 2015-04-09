@@ -36,7 +36,8 @@ module Restforce
       #
       # database_model   - A Class compatible with ActiveRecord::Base.
       # salesforce_model - A String name of an object type in Salesforce.
-      def initialize(database_model, salesforce_model)
+      # strategy         - A synchronization Strategy object.
+      def initialize(database_model, salesforce_model, strategy = Strategies::Always.new)
         @database_model = database_model
         @salesforce_model = salesforce_model
 
@@ -46,7 +47,7 @@ module Restforce
         self.associations = {}
         self.fields = {}
         self.conditions = []
-        self.strategy = Strategies::Always.new
+        self.strategy = strategy
       end
 
       # Public: Get a list of the relevant Salesforce field names for this
