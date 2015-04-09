@@ -9,10 +9,7 @@ module Restforce
       # synchronized from Salesforce into the database, and vice-versa.
       class Always
 
-        # Public: Initialize a Restforce::DB::Strategies::Always for the passed
-        # mapping.
-        #
-        # mapping - A Restforce::DB::Mapping.
+        # Public: Initialize a Restforce::DB::Strategies::Always.
         def initialize(**_)
         end
 
