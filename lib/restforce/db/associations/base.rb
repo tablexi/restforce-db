@@ -15,8 +15,8 @@ module Restforce
         # name    - The name of the ActiveRecord association to construct.
         # through - The name of the lookup field on the Salesforce record.
         def initialize(name, through: nil)
-          @name = name
-          @lookup = through
+          @name = name.to_sym
+          @lookup = through.is_a?(Array) ? through.map(&:to_s) : through.to_s
         end
 
         # Public: Build a record or series of records for the association
