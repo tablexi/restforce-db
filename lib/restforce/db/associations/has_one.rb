@@ -20,11 +20,10 @@ module Restforce
         # Returns the constructed association record.
         def build(database_record, salesforce_record)
           target = target_mapping(database_record)
-          lookup_id = "#{lookup_field(target, database_record)} = '#{salesforce_record.Id}'"
+          query = "#{lookup_field(target, database_record)} = '#{salesforce_record.Id}'"
 
-          target.salesforce_record_type.each(conditions: lookup_id) do |instance|
-            break construct_for(database_record, instance)
-          end
+          instance = target.salesforce_record_type.first(query)
+          construct_for(database_record, instance)
         end
 
       end

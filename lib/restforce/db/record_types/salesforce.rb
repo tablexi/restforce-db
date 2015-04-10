@@ -25,16 +25,26 @@ module Restforce
           find(record_id)
         end
 
+        # Public: Find the first Salesforce record which meets the passed
+        # conditions.
+        #
+        # conditions - One or more String query conditions
+        #
+        # Returns nil or a Restforce::DB::Instances::Salesforce instance.
+        def first(*conditions)
+          record = DB.client.query(query(conditions)).first
+          return unless record
+
+          Instances::Salesforce.new(@record_type, record, @mapping)
+        end
+
         # Public: Find the Salesforce record corresponding to the passed id.
         #
         # id - The id of the record in Salesforce.
         #
         # Returns nil or a Restforce::DB::Instances::Salesforce instance.
         def find(id)
-          record = DB.client.query(query("Id = '#{id}'")).first
-          return unless record
-
-          Instances::Salesforce.new(@record_type, record, @mapping)
+          first("Id = '#{id}'")
         end
 
         # Public: Iterate through all Salesforce records of this type.
