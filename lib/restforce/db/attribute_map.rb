@@ -80,7 +80,8 @@ module Restforce
           @fields.each_with_object({}) do |(attribute, mapping), converted|
             next unless attributes.key?(attribute)
             value = attributes[attribute]
-            value = value.respond_to?(:iso8601) ? value.utc.iso8601 : value
+            value = value.respond_to?(:utc) ? value.utc : value
+            value = value.respond_to?(:iso8601) ? value.iso8601 : value
 
             converted[mapping] = value
           end
