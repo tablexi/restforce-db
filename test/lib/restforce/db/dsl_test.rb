@@ -72,6 +72,19 @@ describe Restforce::DB::DSL do
     end
   end
 
+  describe "#has_many" do
+    before do
+      dsl.has_many :multiple_associations, through: "External_Field__c"
+    end
+
+    it "adds an association to the created mapping" do
+      association = mapping.associations.first
+      expect(association).to_be_instance_of Restforce::DB::Associations::HasMany
+      expect(association.name).to_equal :multiple_associations
+      expect(association.lookup).to_equal "External_Field__c"
+    end
+  end
+
   describe "#maps" do
     let(:fields) { { some: "Fields__c", to: "Sync__c" } }
 

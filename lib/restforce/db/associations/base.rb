@@ -10,10 +10,10 @@ module Restforce
 
         attr_reader :name, :lookup
 
-        # Public: Initialize a new Restforce::DB::Associatons::HasMany.
+        # Public: Initialize a new Restforce::DB::Associations::Base.
         #
-        # association - The name of the ActiveRecord association to construct.
-        # through     - The name of the lookup field on the Salesforce record.
+        # name    - The name of the ActiveRecord association to construct.
+        # through - The name of the lookup field on the Salesforce record.
         def initialize(name, through: nil)
           @name = name
           @lookup = through
@@ -42,7 +42,7 @@ module Restforce
         # passed mapping.
         #
         # mapping         - A Restforce::DB::Mapping.
-        # database_record - A Restforce::DB::Instances::ActiveRecord.
+        # database_record - An instance of an ActiveRecord::Base subclass.
         #
         # Returns a String.
         def lookup_field(mapping, database_record)
