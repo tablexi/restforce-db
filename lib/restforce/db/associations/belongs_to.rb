@@ -33,15 +33,6 @@ module Restforce
           associated
         end
 
-        # Public: Get a list of fields which should be included in the
-        # Salesforce record's lookups for any mapping including this
-        # association.
-        #
-        # Returns a list of Salesforce fields this record should return.
-        def fields
-          [*lookup]
-        end
-
         private
 
         # Internal: Get a database-ready Hash of attributes from the Salesforce

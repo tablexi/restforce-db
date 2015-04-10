@@ -9,9 +9,22 @@ module Restforce
       # database association's Mapping.
       class HasOne < Base
 
-        # :nodoc:
-        def build(_database_record, _salesforce_record)
-          # TODO
+        include ForeignKey
+
+        # Public: Construct a database record from a single Salesforce record
+        # associated with the supplied parent Salesforce record.
+        #
+        # database_record   - An instance of an ActiveRecord::Base subclass.
+        # salesforce_record - A Hashie::Mash representing a Salesforce object.
+        #
+        # Returns the constructed association record.
+        def build(database_record, salesforce_record)
+          target = target_mapping(database_record)
+          lookup_id = "#{lookup_field(target, database_record)} = '#{salesforce_record.Id}'"
+
+          target.salesforce_record_type.each(conditions: lookup_id) do |instance|
+            break construct_for(database_record, instance)
+          end
         end
 
       end

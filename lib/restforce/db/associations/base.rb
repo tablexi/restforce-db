@@ -33,7 +33,7 @@ module Restforce
         #
         # Returns a list of Salesforce fields this record should return.
         def fields
-          []
+          [*lookup]
         end
 
         private
