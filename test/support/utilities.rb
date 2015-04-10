@@ -6,6 +6,8 @@ def configure!
 
   after do
     Restforce::DB::Registry.clean!
+    Restforce::DB.last_run = nil
+
     DatabaseCleaner.clean
     Salesforce.clean!
   end

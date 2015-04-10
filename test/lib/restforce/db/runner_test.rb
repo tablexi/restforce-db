@@ -5,7 +5,6 @@ describe Restforce::DB::Runner do
 
   describe "#initialize" do
     before { Restforce::DB.last_run = Time.now }
-    after { Restforce::DB.last_run = nil }
 
     it "prefills the Collector's last_run timestamp with the global configuration" do
       expect(runner.last_run).to_equal Restforce::DB.last_run
@@ -14,7 +13,6 @@ describe Restforce::DB::Runner do
 
   describe "#tick!" do
     before { Restforce::DB.last_run = Time.now }
-    after { Restforce::DB.last_run = nil }
 
     it "updates the run timestamps" do
       prior_run = runner.last_run

@@ -11,6 +11,7 @@ require "restforce/db/dsl"
 
 require "restforce/db/associations/base"
 require "restforce/db/associations/belongs_to"
+require "restforce/db/associations/has_many"
 require "restforce/db/associations/has_one"
 
 require "restforce/db/instances/base"

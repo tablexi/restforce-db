@@ -60,6 +60,20 @@ module Restforce
         )
       end
 
+      # Public: Define a relationship in which the current mapping is referenced
+      # by many objects through a lookup ID on another mapping.
+      #
+      # association - The name of the ActiveRecord association.
+      # through     - A String representing the Lookup ID.
+      #
+      # Returns nothing.
+      def has_many(association, through:) # rubocop:disable PredicateName
+        @mapping.associations << Associations::HasMany.new(
+          association,
+          through: through,
+        )
+      end
+
       # Public: Define a set of fields which should be synchronized between the
       # database record and Salesforce.
       #
