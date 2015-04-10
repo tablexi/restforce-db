@@ -63,8 +63,8 @@ module Restforce
         # Returns nothing.
         def each(options = {})
           scope = @record_type.where("updated_at > synchronized_at OR synchronized_at IS NULL")
-          scope = scope.where("updated_at > ?", options[:after]) if options[:after]
           scope = scope.where("updated_at < ?", options[:before]) if options[:before]
+          scope = scope.where("updated_at >= ?", options[:after]) if options[:after]
 
           scope.find_each do |record|
             yield Instances::ActiveRecord.new(@record_type, record, @mapping)
