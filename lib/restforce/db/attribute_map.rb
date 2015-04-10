@@ -79,7 +79,10 @@ module Restforce
         when :salesforce
           @fields.each_with_object({}) do |(attribute, mapping), converted|
             next unless attributes.key?(attribute)
-            converted[mapping] = attributes[attribute]
+            value = attributes[attribute]
+            value = value.respond_to?(:iso8601) ? value.utc.iso8601 : value
+
+            converted[mapping] = value
           end
         else
           raise ArgumentError

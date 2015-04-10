@@ -18,6 +18,10 @@ module Restforce
       # Public: Synchronize records for the current mapping from a Hash of
       # record descriptors to attributes.
       #
+      # NOTE: Synchronizer assumes that the propagation step has done its job
+      # correctly. If we can't locate a database record for a specific Salsforce
+      # ID, we assume it shouldn't be synchronized.
+      #
       # changes - A Hash, with keys composed of a Salesforce ID and model name,
       #           with Restforce::DB::Accumulator objects as values.
       #
@@ -26,8 +30,12 @@ module Restforce
         changes.each do |(id, salesforce_model), accumulator|
           next unless salesforce_model == @mapping.salesforce_model
 
-          update(@mapping.database_record_type.find(id), accumulator)
-          update(@mapping.salesforce_record_type.find(id), accumulator)
+          database_instance = @mapping.database_record_type.find(id)
+          salesforce_instance = @mapping.salesforce_record_type.find(id)
+          next unless database_instance && salesforce_instance
+
+          update(database_instance, accumulator)
+          update(salesforce_instance, accumulator)
         end
       end
 
