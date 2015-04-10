@@ -24,7 +24,7 @@ class Salesforce
   # Returns a Salesforce record ID.
   def self.create!(salesforce_model, attributes = nil)
     attributes ||= { "Name" => "Sample object" }
-    salesforce_id = Restforce::DB.client.create(salesforce_model, attributes)
+    salesforce_id = Restforce::DB.client.create!(salesforce_model, attributes)
     Salesforce.records << [salesforce_model, salesforce_id]
 
     salesforce_id

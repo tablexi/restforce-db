@@ -39,7 +39,7 @@ To register a Salesforce mapping in an `ActiveRecord` model, you'll need to add 
 class Restaurant < ActiveRecord::Base
 
   include Restforce::DB::Model
-  has_one :specialty, class_name: "Dish"
+  has_one :specialty, class_name: "Dish", inverse_of: :restaurant
 
   sync_with("Restaurant__c", :always) do
     where "StarRating__c > 4"
@@ -55,7 +55,7 @@ end
 class Dish < ActiveRecord::Base
 
   include Restforce::DB::Model
-  belongs_to :restaurant
+  belongs_to :restaurant, inverse_of: :specialty
 
   sync_with("Dish__c", :passive) do
     has_one :restaurant, through: "Specialty__c"

@@ -6,19 +6,15 @@ describe Restforce::DB::Mapping do
 
   let(:database_model) { CustomObject }
   let(:salesforce_model) { "CustomObject__c" }
-  let(:associations) { {} }
   let(:fields) do
     {
       column_one: "SF_Field_One__c",
       column_two: "SF_Field_Two__c",
     }
   end
-  let(:through) { nil }
-  let!(:mapping) do
+  let(:mapping) do
     Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |m|
-      m.fields       = fields
-      m.associations = associations
-      m.through      = through
+      m.fields = fields
     end
   end
 
@@ -39,10 +35,16 @@ describe Restforce::DB::Mapping do
     end
 
     describe "given a set of associations" do
-      let(:associations) { { user: "Owner" } }
+      let(:association) do
+        Restforce::DB::Associations::BelongsTo.new(:user, through: "Owner")
+      end
+
+      before do
+        mapping.associations << association
+      end
 
       it "lists the field and association lookups" do
-        expect(mapping.salesforce_fields).to_equal(fields.values + associations.values)
+        expect(mapping.salesforce_fields).to_equal(fields.values + association.fields)
       end
     end
   end

@@ -33,8 +33,13 @@ end
 # :nodoc:
 class CustomObject < ActiveRecord::Base
 
-  belongs_to :user
+  belongs_to :user, inverse_of: :custom_object, autosave: true
 
 end
 
-class User < ActiveRecord::Base; end
+# :nodoc:
+class User < ActiveRecord::Base
+
+  has_one :custom_object, inverse_of: :user
+
+end

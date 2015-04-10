@@ -40,16 +40,23 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
     describe "given a mapped association" do
       let(:record) { Struct.new(:Friend__c).new(association_id) }
       let(:association_id) { "a001a000001EFRIEND" }
-      let(:associations) { { user: "Friend__c" } }
 
       before do
-        mapping = Restforce::DB::Mapping.new(User, "Contact").tap do |m|
-          m.through = "Friend__c"
-          m.fields  = { email: "Email" }
-        end
-        Restforce::DB::Registry << mapping
+        mapping.associations << Restforce::DB::Associations::BelongsTo.new(
+          :user,
+          through: "Friend__c",
+        )
 
-        salesforce_record_type = mapping.salesforce_record_type
+        associated_mapping = Restforce::DB::Mapping.new(User, "Contact").tap do |m|
+          m.fields  = { email: "Email" }
+          m.associations << Restforce::DB::Associations::HasOne.new(
+            :custom_object,
+            through: "Friend__c",
+          )
+        end
+        Restforce::DB::Registry << associated_mapping
+
+        salesforce_record_type = associated_mapping.salesforce_record_type
 
         # Stub out the `#find` method on the record type
         def salesforce_record_type.find(id)

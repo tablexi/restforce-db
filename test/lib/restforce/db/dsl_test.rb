@@ -52,7 +52,10 @@ describe Restforce::DB::DSL do
     end
 
     it "adds an association to the created mapping" do
-      expect(mapping.associations).to_equal some_association: "Some_Field__c"
+      association = mapping.associations.first
+      expect(association).to_be_instance_of Restforce::DB::Associations::BelongsTo
+      expect(association.name).to_equal :some_association
+      expect(association.lookup).to_equal "Some_Field__c"
     end
   end
 
@@ -61,8 +64,11 @@ describe Restforce::DB::DSL do
       dsl.has_one :other_association, through: "Other_Field__c"
     end
 
-    it "sets the `through` attribute for the created mapping" do
-      expect(mapping.through).to_equal "Other_Field__c"
+    it "adds an association to the created mapping" do
+      association = mapping.associations.first
+      expect(association).to_be_instance_of Restforce::DB::Associations::HasOne
+      expect(association.name).to_equal :other_association
+      expect(association.lookup).to_equal "Other_Field__c"
     end
   end
 
