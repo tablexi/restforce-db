@@ -20,6 +20,30 @@ describe Restforce::DB::Synchronizer do
         mapping.convert(salesforce_model, attributes),
       )
     end
+    let(:changes) { { [salesforce_id, salesforce_model] => accumulator } }
+    let(:new_attributes) do
+      {
+        "Name" => "Some new name",
+        "Example_Field__c" => "New sample text",
+      }
+    end
+    let(:accumulator) do
+      Restforce::DB::Accumulator.new.tap do |accumulator|
+        accumulator.store(Time.now, new_attributes)
+      end
+    end
+
+    describe "given a Salesforce record with no associated database record" do
+      before do
+        salesforce_id
+        synchronizer.run(changes)
+      end
+
+      it "does nothing for this specific mapping" do
+        record = mapping.salesforce_record_type.find(salesforce_id)
+        expect(record.attributes).to_equal attributes
+      end
+    end
 
     describe "given a Salesforce record with an associated database record" do
       let(:database_attributes) do
@@ -31,19 +55,6 @@ describe Restforce::DB::Synchronizer do
       end
       let(:database_record) do
         database_model.create!(database_attributes.merge(salesforce_id: salesforce_id))
-      end
-
-      let(:changes) { { [salesforce_id, salesforce_model] => accumulator } }
-      let(:new_attributes) do
-        {
-          "Name" => "Some new name",
-          "Example_Field__c" => "New sample text",
-        }
-      end
-      let(:accumulator) do
-        Restforce::DB::Accumulator.new.tap do |accumulator|
-          accumulator.store(Time.now, new_attributes)
-        end
       end
 
       before do
