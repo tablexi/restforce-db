@@ -55,6 +55,17 @@ describe Restforce::DB::AttributeMap do
     it "performs no special conversion for database columns" do
       expect(attribute_map.convert(database_model, attributes)).to_equal(attributes)
     end
+
+    describe "when one of the attributes is a Date or Time" do
+      let(:timestamp) { Time.now }
+      let(:attributes) { { column_one: timestamp } }
+
+      it "converts the attribute to an ISO-8601 string for Salesforce" do
+        expect(attribute_map.convert(salesforce_model, attributes)).to_equal(
+          fields[attributes.keys.first] => timestamp.iso8601,
+        )
+      end
+    end
   end
 
   describe "#convert_from_salesforce" do
