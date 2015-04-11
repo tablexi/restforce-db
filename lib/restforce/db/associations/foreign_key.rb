@@ -4,10 +4,10 @@ module Restforce
 
     module Associations
 
-      # Restforce::DB::Associations::ForeignKey defines a handful of drop-in
-      # methods for Restforce::DB::Associations::Base, which allow for trivial
-      # detection of inverse mappings and construction of an associated record.
-      module ForeignKey
+      # Restforce::DB::Associations::ForeignKey defines a relationship in which
+      # the Salesforce IDs for any associated record(s) are present on a foreign
+      # record type.
+      class ForeignKey < Base
 
         # Public: Get a list of fields which should be included in the
         # Salesforce record's lookups for any mapping including this
@@ -27,7 +27,7 @@ module Restforce
         #
         # Returns a Restforce::DB::Mapping.
         def target_mapping(database_record)
-          inverse = inverse_association_name(database_record)
+          inverse = inverse_association_name(reflection(database_record))
           Registry[target_class(database_record)].detect do |mapping|
             mapping.associations.any? { |a| a.name == inverse }
           end
@@ -53,6 +53,22 @@ module Restforce
 
           associated.assign_attributes(attributes)
           associated
+        end
+
+        # Internal: Get the Salesforce ID belonging to the associated record
+        # for a supplied instance. Must be implemented per-association.
+        #
+        # instance - A Restforce::DB::Instances::Base
+        #
+        # Returns a String.
+        def associated_salesforce_id(instance)
+          query = "#{lookup} = '#{instance.id}'"
+
+          target_reflection = instance.mapping.database_model.reflect_on_association(name)
+          inverse_mapping = mapping_for(target_reflection)
+
+          salesforce_instance = inverse_mapping.salesforce_record_type.first(query)
+          salesforce_instance && salesforce_instance.id
         end
 
       end

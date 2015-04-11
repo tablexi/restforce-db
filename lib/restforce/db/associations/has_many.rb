@@ -7,9 +7,7 @@ module Restforce
       # Restforce::DB::Associations::HasMany defines a relationship in which
       # potentially several Salesforce records maintain a reference to the
       # Salesforce record on the current Mapping.
-      class HasMany < Base
-
-        include ForeignKey
+      class HasMany < ForeignKey
 
         # Public: Construct a database record for each Salesforce record
         # associated with the supplied parent Salesforce record.

@@ -7,9 +7,7 @@ module Restforce
       # Restforce::DB::Associations::HasOne defines a relationship in which a
       # Salesforce ID for this Mapping's database record exists on the named
       # database association's Mapping.
-      class HasOne < Base
-
-        include ForeignKey
+      class HasOne < ForeignKey
 
         # Public: Construct a database record from a single Salesforce record
         # associated with the supplied parent Salesforce record.

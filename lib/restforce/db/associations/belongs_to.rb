@@ -47,6 +47,20 @@ module Restforce
           mapping.convert(mapping.database_model, salesforce_instance.attributes)
         end
 
+        # Internal: Get the Salesforce ID belonging to the associated record
+        # for a supplied instance. Must be implemented per-association.
+        #
+        # instance - A Restforce::DB::Instances::Base
+        #
+        # Returns a String.
+        def associated_salesforce_id(instance)
+          target_reflection = instance.mapping.database_model.reflect_on_association(name)
+          inverse_association = association_for(target_reflection)
+
+          salesforce_instance = instance.mapping.salesforce_record_type.find(instance.id)
+          salesforce_instance && salesforce_instance.record[inverse_association.lookup]
+        end
+
       end
 
     end

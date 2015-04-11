@@ -18,7 +18,7 @@ describe Restforce::DB::Associations::HasOne do
     end
   end
 
-  describe "#build", :vcr do
+  describe "with an inverse mapping", :vcr do
     let(:inverse_mapping) do
       Restforce::DB::Mapping.new(User, "Contact").tap do |m|
         m.fields = { email: "Email" }
@@ -35,21 +35,46 @@ describe Restforce::DB::Associations::HasOne do
     let(:object_salesforce_id) do
       Salesforce.create!(mapping.salesforce_model, "Friend__c" => user_salesforce_id)
     end
-    let(:database_record) { User.new }
-    let(:salesforce_record) { inverse_mapping.salesforce_record_type.find(user_salesforce_id).record }
-    let(:associated) { association.build(database_record, salesforce_record) }
 
     before do
-      object_salesforce_id
-
       Restforce::DB::Registry << mapping
       Restforce::DB::Registry << inverse_mapping
       mapping.associations << Restforce::DB::Associations::BelongsTo.new(:user, through: "Friend__c")
+
+      object_salesforce_id
     end
 
-    it "returns an associated record, populated with the Salesforce attributes" do
-      expect(associated.user).to_equal database_record
-      expect(associated.salesforce_id).to_equal object_salesforce_id
+    describe "#synced_for?" do
+      let(:salesforce_instance) { inverse_mapping.salesforce_record_type.find(user_salesforce_id) }
+
+      describe "when no matching associated record has been synchronized" do
+
+        it "returns false" do
+          expect(association).to_not_be :synced_for?, salesforce_instance
+        end
+      end
+
+      describe "when a matching associated record has been synchronized" do
+        before do
+          mapping.database_model.create!(salesforce_id: object_salesforce_id)
+        end
+
+        it "returns true" do
+          expect(association).to_be :synced_for?, salesforce_instance
+        end
+      end
+    end
+
+    describe "#build" do
+      let(:database_record) { User.new }
+      let(:salesforce_record) { inverse_mapping.salesforce_record_type.find(user_salesforce_id).record }
+      let(:associated) { association.build(database_record, salesforce_record) }
+
+      it "returns an associated record, populated with the Salesforce attributes" do
+        expect(associated.user).to_equal database_record
+        expect(associated.salesforce_id).to_equal object_salesforce_id
+      end
     end
   end
+
 end

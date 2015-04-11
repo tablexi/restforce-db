@@ -36,6 +36,23 @@ module Restforce
           [*lookup]
         end
 
+        # Public: Has a record for this association already been synchronized
+        # for the supplied instance?
+        #
+        # instance - A Restforce::DB::Instances::Base.
+        #
+        # Returns a Boolean.
+        def synced_for?(instance)
+          base_class = instance.mapping.database_model
+          target_reflection = base_class.reflect_on_association(name)
+          association_id = associated_salesforce_id(instance)
+
+          return false unless association_id
+          target_reflection.klass.exists?(
+            mapping_for(target_reflection).lookup_column => association_id,
+          )
+        end
+
         private
 
         # Internal: Get the appropriate Salesforce Lookup ID field for the
@@ -46,7 +63,7 @@ module Restforce
         #
         # Returns a String.
         def lookup_field(mapping, database_record)
-          inverse = inverse_association_name(database_record)
+          inverse = inverse_association_name(reflection(database_record))
           mapping.associations.detect { |a| a.name == inverse }.lookup
         end
 
@@ -59,16 +76,6 @@ module Restforce
           reflection(database_record).klass
         end
 
-        # Internal: Get the name of the inverse association which corresponds
-        # to this one.
-        #
-        # database_record - An instance of an ActiveRecord::Base subclass.
-        #
-        # Returns a Symbol.
-        def inverse_association_name(database_record)
-          reflection(database_record).send(:inverse_name)
-        end
-
         # Internal: Get an AssociationReflection for this association on the
         # passed database record.
         #
@@ -79,6 +86,43 @@ module Restforce
           database_record.class.reflect_on_association(name)
         end
 
+        # Internal: Get the name of the inverse association which corresponds
+        # to this one.
+        #
+        # reflection - An ActiveRecord::AssociationReflection.
+        #
+        # Returns a Symbol.
+        def inverse_association_name(target_reflection)
+          target_reflection.send(:inverse_name)
+        end
+
+        # Internal: Get the first mapping which corresponds to an ActiveRecord
+        # reflection.
+        #
+        # reflection - An ActiveRecord::AssociationReflection.
+        #
+        # Returns a Restforce::DB::Mapping.
+        def mapping_for(target_reflection)
+          inverse = inverse_association_name(target_reflection)
+          Registry[target_reflection.klass].detect do |mapping|
+            mapping.associations.any? { |a| a.name == inverse }
+          end
+        end
+
+        # Internal: Get the first association which corresponds to an
+        # ActiveRecord reflection.
+        #
+        # reflection - An ActiveRecord::AssociationReflection.
+        #
+        # Returns a Restforce::DB::Associations::Base.
+        def association_for(target_reflection)
+          inverse = target_reflection.send(:inverse_name)
+          Registry[target_reflection.klass].detect do |mapping|
+            association = mapping.associations.detect { |a| a.name == inverse }
+            break association if association
+          end
+        end
+
         # Internal: Get an ActiveRecord::Relation scope for the passed record's
         # association.
         #
@@ -87,6 +131,16 @@ module Restforce
         # Returns an ActiveRecord scope.
         def association_scope(database_record)
           database_record.association(name).scope
+        end
+
+        # Internal: Get the Salesforce ID belonging to the associated record
+        # for a supplied instance. Must be implemented per-association.
+        #
+        # instance - A Restforce::DB::Instances::Base
+        #
+        # Returns a String.
+        def associated_salesforce_id(_instance)
+          raise NotImplementedError
         end
 
       end
