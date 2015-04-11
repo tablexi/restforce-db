@@ -76,7 +76,7 @@ class Dish < ActiveRecord::Base
   include Restforce::DB::Model
   belongs_to :restaurant, inverse_of: :dishes
 
-  sync_with("Dish__c", :passive) do
+  sync_with("Dish__c", :associated, with: :restaurant) do
     belongs_to :restaurant, through: "Restaurant__c"
     maps name: "Name"
   end
@@ -103,7 +103,9 @@ A `passive` synchronization strategy will update all modified records that alrea
 
 ##### `:associated`
 
-_Coming Soon_
+An `associated` synchronization strategy will create any new records it encounters _if and only if the named association for that record has already been synchronized_. The association is specified via the `:with` option. In the above example, new `Dish`/`Dish__c` records will be synchronized when the record identified by `Restaurant__c` has already been synchronized.
+
+This allows for the selective addition of "relevant" records to the system over time.
 
 #### Lookup Conditions
 

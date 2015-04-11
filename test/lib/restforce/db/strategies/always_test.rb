@@ -18,7 +18,7 @@ describe Restforce::DB::Strategies::Always do
       let(:record) { mapping.salesforce_record_type.find(salesforce_id) }
 
       it "wants to build a new matching record" do
-        expect(strategy.build?(record)).to_equal true
+        expect(strategy).to_be :build?, record
       end
 
       describe "with a corresponding database record" do
@@ -30,7 +30,7 @@ describe Restforce::DB::Strategies::Always do
         end
 
         it "does not want to build a new record" do
-          expect(strategy.build?(record)).to_equal false
+          expect(strategy).to_not_be :build?, record
         end
       end
     end

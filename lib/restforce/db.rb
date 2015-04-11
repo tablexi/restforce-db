@@ -24,6 +24,7 @@ require "restforce/db/record_types/active_record"
 require "restforce/db/record_types/salesforce"
 
 require "restforce/db/strategies/always"
+require "restforce/db/strategies/associated"
 require "restforce/db/strategies/passive"
 
 require "restforce/db/runner"
