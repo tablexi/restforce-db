@@ -80,6 +80,7 @@ class Dish < ActiveRecord::Base
     belongs_to :restaurant, through: "Restaurant__c"
     maps name: "Name"
   end
+  
 end
 ```
 

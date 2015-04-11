@@ -44,12 +44,12 @@ module Restforce
         # Returns a Boolean.
         def synced_for?(instance)
           base_class = instance.mapping.database_model
-          target_reflection = base_class.reflect_on_association(name)
+          reflection = base_class.reflect_on_association(name)
           association_id = associated_salesforce_id(instance)
 
           return false unless association_id
-          target_reflection.klass.exists?(
-            mapping_for(target_reflection).lookup_column => association_id,
+          reflection.klass.exists?(
+            mapping_for(reflection).lookup_column => association_id,
           )
         end
 
@@ -63,7 +63,7 @@ module Restforce
         #
         # Returns a String.
         def lookup_field(mapping, database_record)
-          inverse = inverse_association_name(reflection(database_record))
+          inverse = inverse_association_name(target_reflection(database_record))
           mapping.associations.detect { |a| a.name == inverse }.lookup
         end
 
@@ -73,7 +73,7 @@ module Restforce
         #
         # Returns a Class.
         def target_class(database_record)
-          reflection(database_record).klass
+          target_reflection(database_record).klass
         end
 
         # Internal: Get an AssociationReflection for this association on the
@@ -82,7 +82,7 @@ module Restforce
         # database_record - An instance of an ActiveRecord::Base subclass.
         #
         # Returns an ActiveRecord::AssociationReflection.
-        def reflection(database_record)
+        def target_reflection(database_record)
           database_record.class.reflect_on_association(name)
         end
 
@@ -92,8 +92,8 @@ module Restforce
         # reflection - An ActiveRecord::AssociationReflection.
         #
         # Returns a Symbol.
-        def inverse_association_name(target_reflection)
-          target_reflection.send(:inverse_name)
+        def inverse_association_name(reflection)
+          reflection.send(:inverse_name)
         end
 
         # Internal: Get the first mapping which corresponds to an ActiveRecord
@@ -102,9 +102,9 @@ module Restforce
         # reflection - An ActiveRecord::AssociationReflection.
         #
         # Returns a Restforce::DB::Mapping.
-        def mapping_for(target_reflection)
-          inverse = inverse_association_name(target_reflection)
-          Registry[target_reflection.klass].detect do |mapping|
+        def mapping_for(reflection)
+          inverse = inverse_association_name(reflection)
+          Registry[reflection.klass].detect do |mapping|
             mapping.associations.any? { |a| a.name == inverse }
           end
         end
@@ -115,9 +115,9 @@ module Restforce
         # reflection - An ActiveRecord::AssociationReflection.
         #
         # Returns a Restforce::DB::Associations::Base.
-        def association_for(target_reflection)
-          inverse = target_reflection.send(:inverse_name)
-          Registry[target_reflection.klass].detect do |mapping|
+        def association_for(reflection)
+          inverse = reflection.send(:inverse_name)
+          Registry[reflection.klass].detect do |mapping|
             association = mapping.associations.detect { |a| a.name == inverse }
             break association if association
           end

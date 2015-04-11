@@ -54,8 +54,8 @@ module Restforce
         #
         # Returns a String.
         def associated_salesforce_id(instance)
-          target_reflection = instance.mapping.database_model.reflect_on_association(name)
-          inverse_association = association_for(target_reflection)
+          reflection = instance.mapping.database_model.reflect_on_association(name)
+          inverse_association = association_for(reflection)
 
           salesforce_instance = instance.mapping.salesforce_record_type.find(instance.id)
           salesforce_instance && salesforce_instance.record[inverse_association.lookup]

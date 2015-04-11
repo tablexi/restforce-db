@@ -27,7 +27,7 @@ module Restforce
         #
         # Returns a Restforce::DB::Mapping.
         def target_mapping(database_record)
-          inverse = inverse_association_name(reflection(database_record))
+          inverse = inverse_association_name(target_reflection(database_record))
           Registry[target_class(database_record)].detect do |mapping|
             mapping.associations.any? { |a| a.name == inverse }
           end
@@ -64,8 +64,8 @@ module Restforce
         def associated_salesforce_id(instance)
           query = "#{lookup} = '#{instance.id}'"
 
-          target_reflection = instance.mapping.database_model.reflect_on_association(name)
-          inverse_mapping = mapping_for(target_reflection)
+          reflection = instance.mapping.database_model.reflect_on_association(name)
+          inverse_mapping = mapping_for(reflection)
 
           salesforce_instance = inverse_mapping.salesforce_record_type.first(query)
           salesforce_instance && salesforce_instance.id
