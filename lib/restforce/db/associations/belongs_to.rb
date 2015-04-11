@@ -58,7 +58,7 @@ module Restforce
           inverse_association = association_for(reflection)
 
           salesforce_instance = instance.mapping.salesforce_record_type.find(instance.id)
-          salesforce_instance && salesforce_instance.record[inverse_association.lookup]
+          salesforce_instance.record[inverse_association.lookup] if salesforce_instance
         end
 
       end

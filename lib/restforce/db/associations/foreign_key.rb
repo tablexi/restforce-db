@@ -68,7 +68,7 @@ module Restforce
           inverse_mapping = mapping_for(reflection)
 
           salesforce_instance = inverse_mapping.salesforce_record_type.first(query)
-          salesforce_instance && salesforce_instance.id
+          salesforce_instance.id if salesforce_instance
         end
 
       end
