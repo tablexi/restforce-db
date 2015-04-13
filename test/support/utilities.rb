@@ -6,6 +6,8 @@ def configure!
 
   after do
     Restforce::DB::Registry.clean!
+    Restforce::DB.last_run = nil
+
     DatabaseCleaner.clean
     Salesforce.clean!
   end
@@ -16,15 +18,11 @@ def mappings!
   let(:database_model) { CustomObject }
   let(:salesforce_model) { "CustomObject__c" }
   let(:fields) { { name: "Name", example: "Example_Field__c" } }
-  let(:associations) { {} }
   let(:conditions) { [] }
-  let(:through) { nil }
-  let!(:mapping) do
+  let(:mapping) do
     Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |m|
-      m.through      = through
-      m.conditions   = conditions
-      m.fields       = fields
-      m.associations = associations
+      m.conditions = conditions
+      m.fields     = fields
     end
   end
 end

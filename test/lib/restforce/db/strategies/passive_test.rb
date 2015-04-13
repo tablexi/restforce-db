@@ -11,7 +11,7 @@ describe Restforce::DB::Strategies::Passive do
 
     it "returns false for any record" do
       record = Object.new
-      expect(strategy.build?(record)).to_equal false
+      expect(strategy).to_not_be :build?, record
     end
   end
 end

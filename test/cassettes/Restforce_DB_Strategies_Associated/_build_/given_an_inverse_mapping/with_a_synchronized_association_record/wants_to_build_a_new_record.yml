@@ -1,0 +1,275 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://<host>/services/oauth2/token
+    body:
+      encoding: US-ASCII
+      string: grant_type=password&client_id=<client_id>&client_secret=<client_secret>&username=<username>&password=<password><security_token>
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 11 Apr 2015 06:42:49 GMT
+      Set-Cookie:
+      - BrowserId=rVlbGvXPT7qWc0wAZ9dDKA;Path=/;Domain=.salesforce.com;Expires=Wed,
+        10-Jun-2015 06:42:49 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache, no-store
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1428734569662","token_type":"Bearer","instance_url":"https://<host>","signature":"9ywQmIx1Es8WNVEkdv039RH5e4G8DGM53aUnGnPNLcA=","access_token":"00D1a000000H3O9!AQ4AQIyTuSKn1TCR6oX6k4qCgK2hb4xjUYNDY3Jrprus.eG.vfY9WTiqMBJovOXyNilB_lzfaHH0cbBzfmw1gYcg7_8PyEzx"}'
+    http_version: 
+  recorded_at: Sat, 11 Apr 2015 06:42:50 GMT
+- request:
+    method: post
+    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c
+    body:
+      encoding: UTF-8
+      string: '{"Name":"Sample object"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Content-Type:
+      - application/json
+      Authorization:
+      - OAuth 00D1a000000H3O9!AQ4AQIyTuSKn1TCR6oX6k4qCgK2hb4xjUYNDY3Jrprus.eG.vfY9WTiqMBJovOXyNilB_lzfaHH0cbBzfmw1gYcg7_8PyEzx
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Sat, 11 Apr 2015 06:42:50 GMT
+      Set-Cookie:
+      - BrowserId=1DNCHkUnSvO9FLOQv72lyQ;Path=/;Domain=.salesforce.com;Expires=Wed,
+        10-Jun-2015 06:42:50 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=153/15000
+      Location:
+      - "/services/data/v26.0/sobjects/CustomObject__c/a001a000001LXgaAAG"
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"a001a000001LXgaAAG","success":true,"errors":[]}'
+    http_version: 
+  recorded_at: Sat, 11 Apr 2015 06:42:51 GMT
+- request:
+    method: post
+    uri: https://<host>/services/data/v26.0/sobjects/CustomObjectDetail__c
+    body:
+      encoding: UTF-8
+      string: '{"CustomObject__c":"a001a000001LXgaAAG"}'
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Content-Type:
+      - application/json
+      Authorization:
+      - OAuth 00D1a000000H3O9!AQ4AQIyTuSKn1TCR6oX6k4qCgK2hb4xjUYNDY3Jrprus.eG.vfY9WTiqMBJovOXyNilB_lzfaHH0cbBzfmw1gYcg7_8PyEzx
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Sat, 11 Apr 2015 06:42:51 GMT
+      Set-Cookie:
+      - BrowserId=m3w01ba-S7uqFZKvxYImAQ;Path=/;Domain=.salesforce.com;Expires=Wed,
+        10-Jun-2015 06:42:51 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=153/15000
+      Location:
+      - "/services/data/v26.0/sobjects/CustomObjectDetail__c/a011a000000gyxHAAQ"
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"a011a000000gyxHAAQ","success":true,"errors":[]}'
+    http_version: 
+  recorded_at: Sat, 11 Apr 2015 06:42:52 GMT
+- request:
+    method: get
+    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Name,%20CustomObject__c%20from%20CustomObjectDetail__c%20where%20Id%20=%20%27a011a000000gyxHAAQ%27
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Authorization:
+      - OAuth 00D1a000000H3O9!AQ4AQIyTuSKn1TCR6oX6k4qCgK2hb4xjUYNDY3Jrprus.eG.vfY9WTiqMBJovOXyNilB_lzfaHH0cbBzfmw1gYcg7_8PyEzx
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 11 Apr 2015 06:42:52 GMT
+      Set-Cookie:
+      - BrowserId=y83CgH9BTcGvuTYM67oIVQ;Path=/;Domain=.salesforce.com;Expires=Wed,
+        10-Jun-2015 06:42:52 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=153/15000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObjectDetail__c","url":"/services/data/v26.0/sobjects/CustomObjectDetail__c/a011a000000gyxHAAQ"},"Id":"a011a000000gyxHAAQ","SystemModstamp":"2015-04-11T06:42:51.000+0000","Name":"a011a000000gyxH","CustomObject__c":"a001a000001LXgaAAG"}]}'
+    http_version: 
+  recorded_at: Sat, 11 Apr 2015 06:42:53 GMT
+- request:
+    method: get
+    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Name,%20CustomObject__c%20from%20CustomObjectDetail__c%20where%20Id%20=%20%27a011a000000gyxHAAQ%27
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Authorization:
+      - OAuth 00D1a000000H3O9!AQ4AQIyTuSKn1TCR6oX6k4qCgK2hb4xjUYNDY3Jrprus.eG.vfY9WTiqMBJovOXyNilB_lzfaHH0cbBzfmw1gYcg7_8PyEzx
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 11 Apr 2015 06:42:53 GMT
+      Set-Cookie:
+      - BrowserId=ctRxay3wQ7GMAqPQrFUgSw;Path=/;Domain=.salesforce.com;Expires=Wed,
+        10-Jun-2015 06:42:53 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=153/15000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObjectDetail__c","url":"/services/data/v26.0/sobjects/CustomObjectDetail__c/a011a000000gyxHAAQ"},"Id":"a011a000000gyxHAAQ","SystemModstamp":"2015-04-11T06:42:51.000+0000","Name":"a011a000000gyxH","CustomObject__c":"a001a000001LXgaAAG"}]}'
+    http_version: 
+  recorded_at: Sat, 11 Apr 2015 06:42:54 GMT
+- request:
+    method: delete
+    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c/a001a000001LXgaAAG
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Authorization:
+      - OAuth 00D1a000000H3O9!AQ4AQIyTuSKn1TCR6oX6k4qCgK2hb4xjUYNDY3Jrprus.eG.vfY9WTiqMBJovOXyNilB_lzfaHH0cbBzfmw1gYcg7_8PyEzx
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 204
+      message: No Content
+    headers:
+      Date:
+      - Sat, 11 Apr 2015 06:42:56 GMT
+      Set-Cookie:
+      - BrowserId=lQO0Yc0DQH2t_bd1UL1z7A;Path=/;Domain=.salesforce.com;Expires=Wed,
+        10-Jun-2015 06:42:56 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=154/15000
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sat, 11 Apr 2015 06:42:56 GMT
+- request:
+    method: delete
+    uri: https://<host>/services/data/v26.0/sobjects/CustomObjectDetail__c/a011a000000gyxHAAQ
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Authorization:
+      - OAuth 00D1a000000H3O9!AQ4AQIyTuSKn1TCR6oX6k4qCgK2hb4xjUYNDY3Jrprus.eG.vfY9WTiqMBJovOXyNilB_lzfaHH0cbBzfmw1gYcg7_8PyEzx
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Sat, 11 Apr 2015 06:42:57 GMT
+      Set-Cookie:
+      - BrowserId=CEWJ3S0oSt-5SOrlAjIx3w;Path=/;Domain=.salesforce.com;Expires=Wed,
+        10-Jun-2015 06:42:57 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=153/15000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: '[{"message":"entity is deleted","errorCode":"ENTITY_IS_DELETED","fields":[]}]'
+    http_version: 
+  recorded_at: Sat, 11 Apr 2015 06:42:58 GMT
+recorded_with: VCR 2.9.3

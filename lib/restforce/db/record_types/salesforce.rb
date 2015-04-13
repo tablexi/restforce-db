@@ -25,26 +25,40 @@ module Restforce
           find(record_id)
         end
 
+        # Public: Find the first Salesforce record which meets the passed
+        # conditions.
+        #
+        # conditions - One or more String query conditions
+        #
+        # Returns nil or a Restforce::DB::Instances::Salesforce instance.
+        def first(*conditions)
+          record = DB.client.query(query(conditions)).first
+          return unless record
+
+          Instances::Salesforce.new(@record_type, record, @mapping)
+        end
+
         # Public: Find the Salesforce record corresponding to the passed id.
         #
         # id - The id of the record in Salesforce.
         #
         # Returns nil or a Restforce::DB::Instances::Salesforce instance.
         def find(id)
-          record = DB.client.query(query("Id = '#{id}'")).first
-          return unless record
-
-          Instances::Salesforce.new(@record_type, record, @mapping)
+          first("Id = '#{id}'")
         end
 
         # Public: Iterate through all Salesforce records of this type.
         #
         # options - A Hash of options which should be applied to the set of
         #           fetched records. Allowed options are:
-        #           :before - A Time object defining the most recent update
-        #                     timestamp for which records should be returned.
-        #           :after  - A Time object defining the least recent update
-        #                     timestamp for which records should be returned.
+        #           :before     - A Time object defining the most recent update
+        #                         timestamp for which records should be
+        #                         returned.
+        #           :after      - A Time object defining the least recent update
+        #                         timestamp for which records should be
+        #                         returned.
+        #           :conditions - An Array of conditions to append to the lookup
+        #                         query.
         #
         # Yields a series of Restforce::DB::Instances::Salesforce instances.
         # Returns nothing.
@@ -52,6 +66,7 @@ module Restforce
           constraints = [
             ("SystemModstamp < #{options[:before].utc.iso8601}" if options[:before]),
             ("SystemModstamp >= #{options[:after].utc.iso8601}" if options[:after]),
+            *options[:conditions],
           ]
 
           DB.client.query(query(*constraints)).each do |record|

@@ -9,7 +9,11 @@ require "restforce/db/registry"
 require "restforce/db/strategy"
 require "restforce/db/dsl"
 
-require "restforce/db/associations/active_record"
+require "restforce/db/associations/base"
+require "restforce/db/associations/belongs_to"
+require "restforce/db/associations/foreign_key"
+require "restforce/db/associations/has_many"
+require "restforce/db/associations/has_one"
 
 require "restforce/db/instances/base"
 require "restforce/db/instances/active_record"
@@ -20,6 +24,7 @@ require "restforce/db/record_types/active_record"
 require "restforce/db/record_types/salesforce"
 
 require "restforce/db/strategies/always"
+require "restforce/db/strategies/associated"
 require "restforce/db/strategies/passive"
 
 require "restforce/db/runner"

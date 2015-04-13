@@ -35,31 +35,43 @@ module Restforce
       # Public: Define a relationship in which the current mapping contains the
       # lookup ID for another mapping.
       #
-      # TODO: This should eventually be implemented as a full-fledged
-      # association on the mapping. Something like:
-      # @mapping.associate(association, Associations::BelongsTo, options)
-      #
       # association - The name of the ActiveRecord association.
-      # options     - A Hash of options to pass to the association.
+      # through     - A String or Array of Strings representing the Lookup IDs.
       #
       # Returns nothing.
-      def belongs_to(association, options)
-        @mapping.associations[association] = options[:through]
+      def belongs_to(association, through:)
+        @mapping.associations << Associations::BelongsTo.new(
+          association,
+          through: through,
+        )
       end
 
       # Public: Define a relationship in which the current mapping is referenced
       # by one object through a lookup ID on another mapping.
       #
-      # TODO: This should eventually be implemented as a full-fledged
-      # association on the mapping. Something like:
-      # @mapping.associate(association, Associations::HasOne, options)
-      #
       # association - The name of the ActiveRecord association.
-      # options     - A Hash of options to pass to the association.
+      # through     - A String representing the Lookup ID.
       #
       # Returns nothing.
-      def has_one(_association, options) # rubocop:disable PredicateName
-        @mapping.through = options[:through]
+      def has_one(association, through:) # rubocop:disable PredicateName
+        @mapping.associations << Associations::HasOne.new(
+          association,
+          through: through,
+        )
+      end
+
+      # Public: Define a relationship in which the current mapping is referenced
+      # by many objects through a lookup ID on another mapping.
+      #
+      # association - The name of the ActiveRecord association.
+      # through     - A String representing the Lookup ID.
+      #
+      # Returns nothing.
+      def has_many(association, through:) # rubocop:disable PredicateName
+        @mapping.associations << Associations::HasMany.new(
+          association,
+          through: through,
+        )
       end
 
       # Public: Define a set of fields which should be synchronized between the

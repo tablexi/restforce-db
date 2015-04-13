@@ -17,17 +17,12 @@ module Restforce
         # Returns a Restforce::DB::Instances::ActiveRecord instance.
         # Raises on any validation or database error.
         def create!(from_record)
-          attributes = @mapping.convert(@record_type, from_record.attributes)
-
-          record = @record_type.new(attributes.merge(@mapping.lookup_column => from_record.id))
-
-          associations = @mapping.associations.map do |association, _|
-            Associations::ActiveRecord.new(record, association).build(from_record.record)
-          end
+          record = @record_type.find_or_initialize_by(@mapping.lookup_column => from_record.id)
+          record.assign_attributes(@mapping.convert(@record_type, from_record.attributes))
+          associations = @mapping.associations.flat_map { |a| a.build(record, from_record.record) }
 
           record.transaction do
             record.save!
-
             # We touch the synchronization timestamps here to ensure that they
             # exceed the last updated timestamp.
             associations.each { |association| association.touch(:synchronized_at) }

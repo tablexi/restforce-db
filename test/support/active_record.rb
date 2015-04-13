@@ -19,6 +19,16 @@ ActiveRecord::Schema.define do
 
   add_index :custom_objects, :salesforce_id
 
+  create_table :details do |table|
+    table.column :name,             :string
+    table.column :custom_object_id, :integer
+    table.column :salesforce_id,    :string
+    table.column :synchronized_at,  :datetime
+    table.timestamps null: false
+  end
+
+  add_index :details, :salesforce_id
+
   create_table :users do |table|
     table.column :email,           :string
     table.column :salesforce_id,   :string
@@ -33,8 +43,21 @@ end
 # :nodoc:
 class CustomObject < ActiveRecord::Base
 
-  belongs_to :user
+  belongs_to :user, inverse_of: :custom_object, autosave: true
+  has_many :details, inverse_of: :custom_object
 
 end
 
-class User < ActiveRecord::Base; end
+# :nodoc:
+class Detail < ActiveRecord::Base
+
+  belongs_to :custom_object, inverse_of: :details
+
+end
+
+# :nodoc:
+class User < ActiveRecord::Base
+
+  has_one :custom_object, inverse_of: :user
+
+end

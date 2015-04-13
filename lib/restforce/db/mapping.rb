@@ -28,7 +28,6 @@ module Restforce
         :fields,
         :associations,
         :conditions,
-        :through,
         :strategy,
       )
 
@@ -44,8 +43,8 @@ module Restforce
         @database_record_type = RecordTypes::ActiveRecord.new(database_model, self)
         @salesforce_record_type = RecordTypes::Salesforce.new(salesforce_model, self)
 
-        self.associations = {}
         self.fields = {}
+        self.associations = []
         self.conditions = []
         self.strategy = strategy
       end
@@ -55,7 +54,7 @@ module Restforce
       #
       # Returns an Array.
       def salesforce_fields
-        fields.values + associations.values.flatten
+        fields.values + associations.map(&:fields).flatten
       end
 
       # Public: Get a list of the relevant database column names for this

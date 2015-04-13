@@ -5,8 +5,6 @@ describe Restforce::DB::Tracker do
   let(:tracker) { Restforce::DB::Tracker.new(file.path) }
   let(:runtime) { Time.now }
 
-  after { Restforce::DB.last_run = nil }
-
   describe "#initialize" do
 
     describe "when no timestamp has been recorded" do

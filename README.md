@@ -39,11 +39,13 @@ To register a Salesforce mapping in an `ActiveRecord` model, you'll need to add 
 class Restaurant < ActiveRecord::Base
 
   include Restforce::DB::Model
-  has_one :specialty, class_name: "Dish"
+  has_one :chef, inverse_of: :restaurant
+  has_many :dishes, inverse_of: :restaurant
 
   sync_with("Restaurant__c", :always) do
     where "StarRating__c > 4"
-    belongs_to :specialty, through: %w(Specialty__c KeyIngredient__c)
+    has_many :dishes, through: "Restaurant__c"
+    belongs_to :chef, through: %w(Chef__c Cuisine__c)
     maps(
       name:  "Name",
       style: "Style__c",
@@ -52,26 +54,33 @@ class Restaurant < ActiveRecord::Base
 
 end
 
-class Dish < ActiveRecord::Base
+class Chef < ActiveRecord::Base
 
   include Restforce::DB::Model
-  belongs_to :restaurant
+  belongs_to :restaurant, inverse_of: :chef
 
-  sync_with("Dish__c", :passive) do
-    has_one :restaurant, through: "Specialty__c"
-    maps(
-      name:   "Name",
-      origin: "Origin__c",
-    )
+  sync_with("Contact", :passive) do
+    has_one :restaurant, through: "Chef__c"
+    maps name: "Name"
   end
 
-  sync_with("Ingredient__c", :passive) do
-    has_one :restaurant, through: "KeyIngredient__c"
-    maps(
-      key_ingredient: "Name",
-    )
+  sync_with("Cuisine__c", :passive) do
+    has_one :restaurant, through: "Cuisine__c"
+    maps style: "Name"
   end
 
+end
+
+class Dish < ActiveRecord::Base
+  
+  include Restforce::DB::Model
+  belongs_to :restaurant, inverse_of: :dishes
+
+  sync_with("Dish__c", :associated, with: :restaurant) do
+    belongs_to :restaurant, through: "Restaurant__c"
+    maps name: "Name"
+  end
+  
 end
 ```
 
@@ -95,7 +104,9 @@ A `passive` synchronization strategy will update all modified records that alrea
 
 ##### `:associated`
 
-_Coming Soon_
+An `associated` synchronization strategy will create any new records it encounters _if and only if the named association for that record has already been synchronized_. The association is specified via the `:with` option. In the above example, new `Dish`/`Dish__c` records will be synchronized when the record identified by `Restaurant__c` has already been synchronized.
+
+This allows for the selective addition of "relevant" records to the system over time.
 
 #### Lookup Conditions
 
@@ -117,22 +128,27 @@ If your Salesforce objects have parity with your ActiveRecord models, your assoc
 
 This defines an association type in which the Lookup (i.e., foreign key) _is on the mapped Salesforce model_. In the example above, the `Restaurant__c` object type in Salesforce has two Lookup fields:
 
-- `Specialty__c`, which corresponds to the `Dish__c` object type, and
-- `KeyIngredient__c`, which corresponds to the `Ingredient__c` object type
+- `Chef__c`, which corresponds to the `Contact` object type, and
+- `Cuisine__c`, which corresponds to the `Cuisine__c` object type
  
-Thus, the `Restaurant__c` mapping declares a `belongs_to` relationship to `:specialty`, with a `:through` argument referencing both of the Lookups used by the mappings on the associated `Dish` class.
+Thus, the `Restaurant__c` mapping declares a `belongs_to` relationship to `:chef`, with a `:through` argument referencing both of the Lookups used by the mappings on the associated `Chef` class.
 
 As shown above, the `:through` option may contain _an array of Lookup field names_, which may be useful if more than one mapping on the associated ActiveRecord model refers to a Lookup on the same Salesforce record.
 
 ##### `has_one`
 
-This defines an inverse relationship for a `belongs_to` relationship. In the example above, `Dish` defines _two_ `has_one` relationships with `:restaurant`, one for each mapping. The `:through` arguments for each call to `has_one` correspond to the relevant Lookup field on the parent object.
+This defines an inverse relationship for a `belongs_to` relationship. In the example above, `Chef` defines _two_ `has_one` relationships with `:restaurant`, one for each mapping. The `:through` arguments for each call to `has_one` correspond to the relevant Lookup field on the parent object.
 
-In the above example, given the relationships defined between our records, we can ascertain that `Restaurant__c.Specialty__c` is a `Lookup(Dish__c)` field in Salesforce, while ` Restaurant__c.KeyIngredient__c` is a `Lookup(Ingredient__c)`.
+In the above example, given the relationships defined between our records, we can ascertain that `Restaurant__c.Chef__c` is a `Lookup(Contact)` field in Salesforce, while `Restaurant__c.Cuisine__c` is a `Lookup(Cuisine__c)`.
 
 ##### `has_many`
 
-_Coming Soon_
+This _also_ defines an inverse relationship for a `belongs_to` relationship. The chief difference between this and `has_one` is that `has_many` relationships are one-to-many, rather than one-to-one.
+
+In the above example, `Dish__c` is a Salesforce object type which references the `Restaurant__c` object type through an aptly-named Lookup. There is no restriction on the number of `Dish__c` objects that may reference the same `Restaurant__c`, so we define this relationship as a `has_many` associaition in our `Restaurant` mapping.
+
+__NOTE__: Unlike `has_one` associations, `has_many` associations do not currently support multiple lookups from the same model. The Lookup is assumed
+to always refer to the `Id` of the parent object.
 
 ### Run the daemon
 
