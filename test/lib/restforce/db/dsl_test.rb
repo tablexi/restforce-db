@@ -98,17 +98,7 @@ describe Restforce::DB::DSL do
   end
 
   describe "#converts" do
-    let(:adapter) do
-      Object.new.tap do |object|
-        def object.to_database(value)
-          value == "Yes"
-        end
-
-        def object.to_salesforce(value)
-          value ? "Yes" : "No"
-        end
-      end
-    end
+    let(:adapter) { boolean_adapter }
     let(:conversions) { { some: adapter } }
 
     it "sets the conversions for the created mapping" do

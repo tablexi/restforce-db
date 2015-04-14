@@ -13,18 +13,6 @@ describe Restforce::DB::AttributeMap do
     }
   end
   let(:conversions) { {} }
-  let(:boolean_adapter) do
-    Object.new.tap do |object|
-      def object.to_database(value)
-        value == "Yes"
-      end
-
-      def object.to_salesforce(value)
-        value ? "Yes" : "No"
-      end
-    end
-  end
-
   let(:attribute_map) { Restforce::DB::AttributeMap.new(database_model, salesforce_model, fields, conversions) }
 
   describe "#attributes" do

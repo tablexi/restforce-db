@@ -26,3 +26,18 @@ def mappings!
     end
   end
 end
+
+# :nodoc:
+def boolean_adapter
+  Object.new.tap do |object|
+
+    def object.to_database(value)
+      value == "Yes"
+    end
+
+    def object.to_salesforce(value)
+      value ? "Yes" : "No"
+    end
+
+  end
+end
