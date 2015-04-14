@@ -42,13 +42,30 @@ class Restaurant < ActiveRecord::Base
   has_one :chef, inverse_of: :restaurant
   has_many :dishes, inverse_of: :restaurant
 
+  module StyleAdapter
+
+    def self.to_salesforce(value)
+      "#{value} in Salesforce"
+    end
+
+    def self.to_database(value)
+      value.chomp(" in Salesforce")
+    end
+
+  end
+
   sync_with("Restaurant__c", :always) do
     where "StarRating__c > 4"
     has_many :dishes, through: "Restaurant__c"
     belongs_to :chef, through: %w(Chef__c Cuisine__c)
+
     maps(
       name:  "Name",
       style: "Style__c",
+    )
+
+    converts(
+      style: StyleAdapter,
     )
   end
 
@@ -117,6 +134,10 @@ Individual conditions supplied to `where` will be appended together with `AND` c
 #### Field Mappings
 
 `maps` defines a set of direct field-to-field mappings. It takes a Hash as an argument; the keys should line up with your ActiveRecord attribute names, while the values should line up with the matching field names in Salesforce.
+
+#### Field Conversions
+
+`converts` defines a set of value adapters. It takes a Hash as an argument; the keys should line up with the ActiveRecord attribute names defined in your `maps` clause, while the values should be the corresponding adapter objects. The only requirement for an adapter is that it respond to the methods `#to_database` and `#to_salesforce`.
 
 #### Associations
 

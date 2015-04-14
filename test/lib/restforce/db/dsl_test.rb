@@ -96,4 +96,22 @@ describe Restforce::DB::DSL do
       expect(mapping.fields).to_equal fields
     end
   end
+
+  describe "#converts" do
+    let(:adapter) { boolean_adapter }
+    let(:conversions) { { some: adapter } }
+
+    it "sets the conversions for the created mapping" do
+      dsl.converts conversions
+      expect(mapping.conversions).to_equal conversions
+    end
+
+    describe "when the adapter does not define the expected methods" do
+      let(:adapter) { Object.new }
+
+      it "raises an ArgumentError" do
+        expect(-> { dsl.converts conversions }).to_raise ArgumentError
+      end
+    end
+  end
 end
