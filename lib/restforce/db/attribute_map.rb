@@ -30,10 +30,14 @@ module Restforce
       # salesforce_model - A String name of an object type in Salesforce.
       # fields           - A Hash of mappings between database columns and
       #                    fields in Salesforce.
-      def initialize(database_model, salesforce_model, fields = {})
+      # conversions      - A Hash of mappings between database columns and the
+      #                    corresponding adapter objects which should be used to
+      #                    convert between data formats.
+      def initialize(database_model, salesforce_model, fields = {}, conversions = {})
         @database_model = database_model
         @salesforce_model = salesforce_model
         @fields = fields
+        @conversions = conversions
 
         @types = {
           database_model   => :database,
@@ -57,7 +61,6 @@ module Restforce
             values[attribute] = adapter(attribute).to_database(yield(mapping))
           end
         when :database
-          # Generate a mapping of database column names to record attributes.
           @fields.keys.each_with_object({}) do |attribute, values|
             values[attribute] = yield(attribute)
           end
@@ -153,8 +156,8 @@ module Restforce
       # attribute.
       #
       # Returns an Object.
-      def adapter(_attribute)
-        DefaultAdapter
+      def adapter(attribute)
+        @conversions[attribute] || DefaultAdapter
       end
 
     end
