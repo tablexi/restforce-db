@@ -15,37 +15,31 @@ module Restforce
         # database_record   - An instance of an ActiveRecord::Base subclass.
         # salesforce_record - A Hashie::Mash representing a Salesforce object.
         #
-        # Returns the constructed association record.
+        # Returns an Array of constructed association records.
         def build(database_record, salesforce_record)
           lookups = {}
+          instances = []
 
           attributes = Registry[target_class(database_record)].inject({}) do |hash, mapping|
             lookup_id = salesforce_record[lookup_field(mapping, database_record)]
-
             lookups[mapping.lookup_column] = lookup_id
-            hash.merge(attributes_for(mapping, lookup_id))
+
+            instance = mapping.salesforce_record_type.find(lookup_id)
+            instances << instance
+
+            hash.merge(mapping.convert(mapping.database_model, instance.attributes))
           end
 
           associated = association_scope(database_record).find_by(lookups)
           associated ||= database_record.association(name).build(lookups)
 
           associated.assign_attributes(attributes)
-          associated
+          nested = instances.flat_map { |i| nested_records(database_record, associated, i) }
+
+          [associated, *nested]
         end
 
         private
-
-        # Internal: Get a database-ready Hash of attributes from the Salesforce
-        # record identified by the passed lookup ID.
-        #
-        # mapping   - A Restforce::DB::Mapping.
-        # lookup_id - A Lookup ID for the Salesforce record type in the Mapping.
-        #
-        # Returns a Hash.
-        def attributes_for(mapping, lookup_id)
-          salesforce_instance = mapping.salesforce_record_type.find(lookup_id)
-          mapping.convert(mapping.database_model, salesforce_instance.attributes)
-        end
 
         # Internal: Get the Salesforce ID belonging to the associated record
         # for a supplied instance. Must be implemented per-association.

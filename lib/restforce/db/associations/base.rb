@@ -116,7 +116,7 @@ module Restforce
         #
         # Returns a Restforce::DB::Associations::Base.
         def association_for(reflection)
-          inverse = reflection.send(:inverse_name)
+          inverse = inverse_association_name(reflection)
           Registry[reflection.klass].detect do |mapping|
             association = mapping.associations.detect { |a| a.name == inverse }
             break association if association
@@ -133,10 +133,33 @@ module Restforce
           database_record.association(name).scope
         end
 
+        # Internal: Construct all associated records for the passed database
+        # record, based on the mapping represented by the passed Salesforce
+        # instance.
+        #
+        # parent_record       - The parent of the associated_record; an instance
+        #                       of an ActiveRecord::Base subclass.
+        # associated_record   - The child of the parent_record; an instance of
+        #                       an ActiveRecord::Base subclass.
+        # salesforce_instance - A Restforce::DB::Instances::Salesforce which
+        #                       corresponds to the associated_record.
+        #
+        # Returns an Array of associated records.
+        def nested_records(parent_record, database_record, salesforce_instance)
+          # We need to identify _this_ association to prevent backtracking.
+          inverse = inverse_association_name(target_reflection(parent_record))
+          nested = salesforce_instance.mapping.associations.flat_map do |a|
+            next if a.name == inverse
+            a.build(database_record, salesforce_instance.record)
+          end
+
+          nested.compact
+        end
+
         # Internal: Get the Salesforce ID belonging to the associated record
         # for a supplied instance. Must be implemented per-association.
         #
-        # instance - A Restforce::DB::Instances::Base
+        # instance - A Restforce::DB::Instances::Base.
         #
         # Returns a String.
         def associated_salesforce_id(_instance)

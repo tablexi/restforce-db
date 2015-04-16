@@ -39,7 +39,7 @@ module Restforce
         # database_record     - An instance of an ActiveRecord::Base subclass.
         # salesforce_instance - A Restforce::DB::Instances::Salesforce.
         #
-        # Returns the constructed object.
+        # Returns an Array of constructed associated objects.
         def construct_for(database_record, salesforce_instance)
           mapping = salesforce_instance.mapping
           lookups = { mapping.lookup_column => salesforce_instance.id }
@@ -52,7 +52,7 @@ module Restforce
           )
 
           associated.assign_attributes(attributes)
-          associated
+          [associated, *nested_records(database_record, associated, salesforce_instance)]
         end
 
         # Internal: Get the Salesforce ID belonging to the associated record

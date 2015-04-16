@@ -69,7 +69,7 @@ describe Restforce::DB::Associations::BelongsTo do
     describe "#build" do
       let(:database_record) { CustomObject.new }
       let(:salesforce_record) { mapping.salesforce_record_type.find(object_salesforce_id).record }
-      let(:associated) { association.build(database_record, salesforce_record) }
+      let(:associated) { association.build(database_record, salesforce_record).first }
 
       it "returns an associated record, populated with the Salesforce attributes" do
         expect(associated.custom_object).to_equal database_record
