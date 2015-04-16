@@ -15,7 +15,7 @@ module Restforce
         # database_record   - An instance of an ActiveRecord::Base subclass.
         # salesforce_record - A Hashie::Mash representing a Salesforce object.
         #
-        # Returns the constructed association record.
+        # Returns an Array of constructed association records.
         def build(database_record, salesforce_record)
           target = target_mapping(database_record)
           query = "#{lookup_field(target, database_record)} = '#{salesforce_record.Id}'"

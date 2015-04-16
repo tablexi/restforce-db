@@ -145,6 +145,8 @@ Associations in `Restforce::DB` can be a little tricky, as they depend on your A
 
 If your Salesforce objects have parity with your ActiveRecord models, your association mappings will likely have parity, as well. But, as demonstrated above, you should define your association mappings based on your Salesforce schema.
 
+Associations can be nested arbitrarily, so it's not an issue to have several layers of `passive` record associations -- they'll all be created on initial sync.
+
 ##### `belongs_to`
 
 This defines an association type in which the Lookup (i.e., foreign key) _is on the mapped Salesforce model_. In the example above, the `Restaurant__c` object type in Salesforce has two Lookup fields:
