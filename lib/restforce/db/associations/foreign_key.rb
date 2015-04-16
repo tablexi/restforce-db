@@ -52,7 +52,7 @@ module Restforce
           )
 
           associated.assign_attributes(attributes)
-          associated
+          [associated, *nested_records(database_record, associated, salesforce_instance)]
         end
 
         # Internal: Get the Salesforce ID belonging to the associated record

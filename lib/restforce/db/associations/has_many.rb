@@ -25,7 +25,7 @@ module Restforce
             records << construct_for(database_record, instance)
           end
 
-          records
+          records.flatten
         end
 
       end

@@ -60,9 +60,10 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
 
         # Stub out the `#find` method on the record type
         def salesforce_record_type.find(id)
-          Struct.new(:id, :last_update, :attributes).new(
+          Struct.new(:id, :last_update, :mapping, :attributes).new(
             id,
             Time.now,
+            Restforce::DB::Registry[User].first,
             email: "somebody@example.com",
           )
         end

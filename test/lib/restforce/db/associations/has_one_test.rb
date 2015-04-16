@@ -71,8 +71,48 @@ describe Restforce::DB::Associations::HasOne do
       let(:associated) { association.build(database_record, salesforce_record) }
 
       it "returns an associated record, populated with the Salesforce attributes" do
-        expect(associated.user).to_equal database_record
-        expect(associated.salesforce_id).to_equal object_salesforce_id
+        object = associated.first
+        expect(object.user).to_equal database_record
+        expect(object.salesforce_id).to_equal object_salesforce_id
+      end
+
+      describe "and a nested association on the associated mapping" do
+        let(:nested_mapping) do
+          Restforce::DB::Mapping.new(Detail, "CustomObjectDetail__c").tap do |m|
+            m.fields = { name: "Name" }
+            m.associations << Restforce::DB::Associations::BelongsTo.new(
+              :custom_object,
+              through: "CustomObject__c",
+            )
+          end
+        end
+        let(:nested_association) do
+          Restforce::DB::Associations::HasMany.new(:details, through: "CustomObject__c")
+        end
+        let(:detail_salesforce_id) do
+          Salesforce.create!(
+            nested_mapping.salesforce_model,
+            "CustomObject__c" => object_salesforce_id,
+          )
+        end
+
+        before do
+          Restforce::DB::Registry << nested_mapping
+          mapping.associations << nested_association
+        end
+
+        it "recursively builds all associations" do
+          detail_salesforce_id
+          expect(associated.length).to_equal 2
+
+          object, detail = associated
+
+          expect(object).to_be_instance_of CustomObject
+          expect(object.user).to_equal database_record
+
+          expect(detail).to_be_instance_of Detail
+          expect(detail.custom_object).to_equal object
+        end
       end
     end
   end
