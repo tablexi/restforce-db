@@ -25,6 +25,11 @@ module Restforce
             lookups[mapping.lookup_column] = lookup_id
 
             instance = mapping.salesforce_record_type.find(lookup_id)
+
+            # If any of the mappings are invalid, short-circuit the creation of
+            # the associated record.
+            return [] unless instance
+
             instances << instance
 
             hash.merge(mapping.convert(mapping.database_model, instance.attributes))

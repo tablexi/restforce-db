@@ -76,6 +76,14 @@ describe Restforce::DB::Associations::HasOne do
         expect(object.salesforce_id).to_equal object_salesforce_id
       end
 
+      describe "when no salesforce record is found for the association" do
+        let(:object_salesforce_id) { nil }
+
+        it "proceeds without constructing any records" do
+          expect(associated).to_be :empty?
+        end
+      end
+
       describe "and a nested association on the associated mapping" do
         let(:nested_mapping) do
           Restforce::DB::Mapping.new(Detail, "CustomObjectDetail__c").tap do |m|

@@ -69,12 +69,22 @@ describe Restforce::DB::Associations::BelongsTo do
     describe "#build" do
       let(:database_record) { CustomObject.new }
       let(:salesforce_record) { mapping.salesforce_record_type.find(object_salesforce_id).record }
-      let(:associated) { association.build(database_record, salesforce_record).first }
+      let(:associated) { association.build(database_record, salesforce_record) }
 
       it "returns an associated record, populated with the Salesforce attributes" do
-        expect(associated.custom_object).to_equal database_record
-        expect(associated.email).to_equal "somebody@example.com"
-        expect(associated.salesforce_id).to_equal user_salesforce_id
+        record = associated.first
+
+        expect(record.custom_object).to_equal database_record
+        expect(record.email).to_equal "somebody@example.com"
+        expect(record.salesforce_id).to_equal user_salesforce_id
+      end
+
+      describe "when no salesforce record is found for the association" do
+        let(:user_salesforce_id) { nil }
+
+        it "proceeds without constructing any records" do
+          expect(associated).to_be :empty?
+        end
       end
     end
   end

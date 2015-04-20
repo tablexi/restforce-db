@@ -91,6 +91,15 @@ describe Restforce::DB::Associations::HasMany do
           expect(record.custom_object).to_equal database_record
         end
       end
+
+      describe "when no salesforce record is found for the association" do
+        let(:detail_salesforce_ids) { nil }
+
+        it "proceeds without constructing any records" do
+          detail_salesforce_ids
+          expect(associated).to_be :empty?
+        end
+      end
     end
   end
 end
