@@ -21,7 +21,7 @@ module Restforce
           query = "#{lookup_field(target, database_record)} = '#{salesforce_record.Id}'"
 
           instance = target.salesforce_record_type.first(query)
-          construct_for(database_record, instance)
+          instance ? construct_for(database_record, instance) : []
         end
 
       end
