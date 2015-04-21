@@ -8,13 +8,26 @@ module Restforce
     # is then applied to all objects synchronized with that Salesforce object.
     class Accumulator < Hash
 
+      # Public: Store the changeset under the given timestamp. If a changeset
+      # for that timestamp has already been registered, merge it with the newly
+      # passed changeset.
+      #
+      # timestamp - A Time object.
+      # changeset - A Hash mapping attribute names to values.
+      #
+      # Returns nothing.
+      def store(timestamp, changeset)
+        return super unless key?(timestamp)
+        self[timestamp].merge!(changeset)
+      end
+
       # Public: Get the accumulated list of attributes after all changes have
       # been applied.
       #
       # Returns a Hash.
       def attributes
-        sort.reverse.each_with_object({}) do |(_, changeset), final|
-          changeset.each { |attribute, value| final[attribute] ||= value }
+        sort.reverse.inject({}) do |final, (_, changeset)|
+          changeset.merge(final)
         end
       end
 
