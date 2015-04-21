@@ -14,6 +14,18 @@ describe Restforce::DB::Accumulator do
     it "stores the passed changeset in the accumulator" do
       expect(accumulator[timestamp]).to_equal changes
     end
+
+    describe "for a pre-existing timestamp" do
+      let(:new_changes) { { old_fish: "New Fish" } }
+
+      before do
+        accumulator.store(timestamp, new_changes)
+      end
+
+      it "updates the existing changeset in the accumulator" do
+        expect(accumulator[timestamp]).to_equal changes.merge(new_changes)
+      end
+    end
   end
 
   describe "#attributes" do
