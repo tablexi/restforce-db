@@ -86,6 +86,18 @@ describe Restforce::DB::Associations::BelongsTo do
           expect(associated).to_be :empty?
         end
       end
+
+      describe "when a mapping for the target association's class does not have a corresponding association" do
+        let(:extraneous_mapping) { Restforce::DB::Mapping.new(User, "Account") }
+
+        before do
+          Restforce::DB::Registry << extraneous_mapping
+        end
+
+        it "proceeds without raising an error" do
+          expect(associated).to_not_be :empty?
+        end
+      end
     end
   end
 
