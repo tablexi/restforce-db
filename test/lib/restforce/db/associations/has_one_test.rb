@@ -6,6 +6,7 @@ describe Restforce::DB::Associations::HasOne do
   mappings!
 
   let(:association) { Restforce::DB::Associations::HasOne.new(:custom_object, through: "Friend__c") }
+  let(:inverse_association) { Restforce::DB::Associations::BelongsTo.new(:user, through: %w(Id Friend__c)) }
 
   it "sets the lookup field" do
     expect(association.lookup).to_equal "Friend__c"
@@ -39,7 +40,7 @@ describe Restforce::DB::Associations::HasOne do
     before do
       Restforce::DB::Registry << mapping
       Restforce::DB::Registry << inverse_mapping
-      mapping.associations << Restforce::DB::Associations::BelongsTo.new(:user, through: "Friend__c")
+      mapping.associations << inverse_association
 
       object_salesforce_id
     end

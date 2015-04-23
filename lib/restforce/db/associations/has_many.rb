@@ -18,7 +18,7 @@ module Restforce
         # Returns an Array of constructed association records.
         def build(database_record, salesforce_record)
           target = target_mapping(database_record)
-          lookup_id = "#{lookup_field(target, database_record)} = '#{salesforce_record.Id}'"
+          lookup_id = "#{lookup} = '#{salesforce_record.Id}'"
 
           records = []
           target.salesforce_record_type.each(conditions: lookup_id) do |instance|
