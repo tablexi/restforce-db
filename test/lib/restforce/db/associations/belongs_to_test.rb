@@ -87,7 +87,7 @@ describe Restforce::DB::Associations::BelongsTo do
         end
       end
 
-      describe "when a mapping for the target association's class does not have a corresponding association" do
+      describe "with an unrelated association mapping" do
         let(:extraneous_mapping) { Restforce::DB::Mapping.new(User, "Account") }
 
         before do
