@@ -18,12 +18,12 @@ module Restforce
         # Returns an Array of constructed association records.
         def build(database_record, salesforce_record)
           lookups = {}
+          attributes = {}
           instances = []
 
-          attributes = Registry[target_class(database_record)].inject({}) do |hash, mapping|
-            lookup_id = salesforce_record[lookup_field(mapping, database_record)]
+          for_mappings(database_record) do |mapping, lookup|
+            lookup_id = salesforce_record[lookup]
             lookups[mapping.lookup_column] = lookup_id
-
             instance = mapping.salesforce_record_type.find(lookup_id)
 
             # If any of the mappings are invalid, short-circuit the creation of
@@ -31,8 +31,8 @@ module Restforce
             return [] unless instance
 
             instances << instance
-
-            hash.merge(mapping.convert(mapping.database_model, instance.attributes))
+            attrs = mapping.convert(mapping.database_model, instance.attributes)
+            attributes = attributes.merge(attrs)
           end
 
           associated = association_scope(database_record).find_by(lookups)
@@ -45,6 +45,21 @@ module Restforce
         end
 
         private
+
+        # Internal: Iterate through all relevant mappings for the target
+        # ActiveRecord class.
+        #
+        # database_record - An instance of an ActiveRecord::Base subclass.
+        #
+        # Yields the Restforce::DB::Mapping and the corresponding String lookup.
+        # Returns nothing.
+        def for_mappings(database_record)
+          Registry[target_class(database_record)].each do |mapping|
+            lookup = lookup_field(mapping, database_record)
+            next unless lookup
+            yield mapping, lookup
+          end
+        end
 
         # Internal: Get the Salesforce ID belonging to the associated record
         # for a supplied instance. Must be implemented per-association.
