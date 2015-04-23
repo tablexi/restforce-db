@@ -35,13 +35,9 @@ module Restforce
             attributes = attributes.merge(attrs)
           end
 
-          associated = association_scope(database_record).find_by(lookups)
-          associated ||= database_record.association(name).build(lookups)
-
-          associated.assign_attributes(attributes)
-          nested = instances.flat_map { |i| nested_records(database_record, associated, i) }
-
-          [associated, *nested]
+          constructed_records(database_record, lookups, attributes) do |associated|
+            instances.flat_map { |i| nested_records(database_record, associated, i) }
+          end
         end
 
         private

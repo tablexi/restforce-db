@@ -28,6 +28,17 @@ module Restforce
           records.flatten
         end
 
+        private
+
+        # Internal: Get the method by which an associated record should be
+        # assigned to this record. Replaces :writer with :concat, which appends
+        # records to an existing association, rather than replacing it.
+        #
+        # Returns a Symbol.
+        def construction_method
+          :concat
+        end
+
       end
 
     end
