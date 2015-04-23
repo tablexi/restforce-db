@@ -35,13 +35,9 @@ module Restforce
             attributes = attributes.merge(attrs)
           end
 
-          associated = association_scope(database_record).find_by(lookups)
-          associated ||= database_record.association(name).build(lookups)
-
-          associated.assign_attributes(attributes)
-          nested = instances.flat_map { |i| nested_records(database_record, associated, i) }
-
-          [associated, *nested]
+          constructed_records(database_record, lookups, attributes) do |associated|
+            instances.flat_map { |i| nested_records(database_record, associated, i) }
+          end
         end
 
         private
@@ -73,6 +69,21 @@ module Restforce
 
           salesforce_instance = instance.mapping.salesforce_record_type.find(instance.id)
           salesforce_instance.record[inverse_association.lookup] if salesforce_instance
+        end
+
+        # Internal: Get the appropriate Salesforce Lookup ID field for the
+        # passed mapping.
+        #
+        # mapping         - A Restforce::DB::Mapping.
+        # database_record - An instance of an ActiveRecord::Base subclass.
+        #
+        # Returns a String or nil.
+        def lookup_field(mapping, database_record)
+          inverse = inverse_association_name(target_reflection(database_record))
+          association = mapping.associations.detect { |a| a.name == inverse }
+          return unless association
+
+          association.lookup
         end
 
       end

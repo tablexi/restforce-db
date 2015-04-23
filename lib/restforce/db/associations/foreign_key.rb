@@ -43,16 +43,15 @@ module Restforce
         def construct_for(database_record, salesforce_instance)
           mapping = salesforce_instance.mapping
           lookups = { mapping.lookup_column => salesforce_instance.id }
-          associated = association_scope(database_record).find_by(lookups)
-          associated ||= database_record.association(name).build(lookups)
 
           attributes = mapping.convert(
-            associated.class,
+            mapping.database_model,
             salesforce_instance.attributes,
           )
 
-          associated.assign_attributes(attributes)
-          [associated, *nested_records(database_record, associated, salesforce_instance)]
+          constructed_records(database_record, lookups, attributes) do |associated|
+            nested_records(database_record, associated, salesforce_instance)
+          end
         end
 
         # Internal: Get the Salesforce ID belonging to the associated record

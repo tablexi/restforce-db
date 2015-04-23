@@ -55,19 +55,40 @@ module Restforce
 
         private
 
-        # Internal: Get the appropriate Salesforce Lookup ID field for the
-        # passed mapping.
+        # Internal: Get a list of all newly-constructed records based on this
+        # association, for a set of lookups.
         #
-        # mapping         - A Restforce::DB::Mapping.
         # database_record - An instance of an ActiveRecord::Base subclass.
+        # lookups         - A Hash mapping database columns to Salesforce IDs.
+        # attributes      - A Hash of attributes to assign to the new record.
         #
-        # Returns a String or nil.
-        def lookup_field(mapping, database_record)
-          inverse = inverse_association_name(target_reflection(database_record))
-          association = mapping.associations.detect { |a| a.name == inverse }
-          return unless association
+        # Yields the new database record if one is built.
+        # Returns an Array containing all newly-constructed records.
+        def constructed_records(database_record, lookups, attributes)
+          associated = target_class(database_record).find_by(lookups)
 
-          association.lookup
+          # If the association record already exists, we don't need to build out
+          # associations any further.
+          if associated
+            database_record.association(name).send(construction_method, associated)
+            return []
+          end
+
+          associated ||= database_record.association(name).build(lookups)
+          associated.assign_attributes(attributes)
+
+          nested = yield associated if block_given?
+
+          [associated, *nested]
+        end
+
+        # Internal: Get the method by which an associated record should be
+        # assigned to this record. Defaults to :writer, which overwrites the
+        # existing association, if one exists.
+        #
+        # Returns a Symbol.
+        def construction_method
+          :writer
         end
 
         # Internal: Get the class of the inverse ActiveRecord association.
@@ -124,16 +145,6 @@ module Restforce
             association = mapping.associations.detect { |a| a.name == inverse }
             break association if association
           end
-        end
-
-        # Internal: Get an ActiveRecord::Relation scope for the passed record's
-        # association.
-        #
-        # database_record - An instance of an ActiveRecord::Base subclass.
-        #
-        # Returns an ActiveRecord scope.
-        def association_scope(database_record)
-          database_record.association(name).scope
         end
 
         # Internal: Construct all associated records for the passed database

@@ -100,6 +100,18 @@ describe Restforce::DB::Associations::HasMany do
           expect(associated).to_be :empty?
         end
       end
+
+      describe "when the associated records have alrady been persisted" do
+        let(:database_record) { CustomObject.new }
+        let(:details) { detail_salesforce_ids.map { |id| Detail.create!(salesforce_id: id) } }
+
+        before { details }
+
+        it "constructs the association from the existing records" do
+          expect(associated).to_be :empty?
+          expect(database_record.details).to_match_array details
+        end
+      end
     end
   end
 end
