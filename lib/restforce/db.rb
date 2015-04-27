@@ -39,6 +39,8 @@ require "restforce/db/synchronizer"
 require "restforce/db/tracker"
 require "restforce/db/worker"
 
+require "restforce/db/railtie" if defined?(Rails)
+
 module Restforce
 
   # Restforce::DB exposes basic Restforce client configuration methods for use

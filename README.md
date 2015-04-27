@@ -173,6 +173,21 @@ In the above example, `Dish__c` is a Salesforce object type which references the
 __NOTE__: Unlike `has_one` associations, `has_many` associations do not currently support multiple lookups from the same model. The Lookup is assumed
 to always refer to the `Id` of the parent object.
 
+### Seed your data
+
+To populate your database with existing information from Salesforce (or vice-versa), you _could_ manually update each of the records you care about, and expect the Restforce::DB daemon to automatically pick them up when it runs. However, for any record type you need/want to _fully_ synchronize, this can be a very tedious process. 
+
+In these cases, you can run the `seed` rake task to synchronize the initial records between both systems.
+
+    $ bundle exec rake restforce:seed[<model>,<start_time>,<end_time>,<config>]
+
+The task takes several arguments, most of which are optional:
+
+- `model`: The name of the ActiveRecord model you wish to sync. This can be any model you've defined a mapping for in your application.
+- `start_time` (optional): The earliest point in time for which records should be gathered.
+- `end_time` (optional): The latest point in time for which records should be gathered.
+- `config` (optional): The path to the file containing your Restforce::DB credentials. If not explicitly provided, the default installation file path (see above) will be used.
+
 ### Run the daemon
 
 To actually perform this system synchronization, you'll want to run the binstub installed through the generator (see above). This will daemonize a process which loops repeatedly to continuously synchronize your database and your Salesforce account, according to the established mappings.

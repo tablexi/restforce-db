@@ -7,7 +7,8 @@ module Restforce
     # modified records within the context of a specific Mapping.
     class Runner
 
-      attr_reader :last_run, :before, :after
+      attr_reader :last_run
+      attr_accessor :before, :after
 
       # Public: Initialize a new Restforce::DB::Runner.
       #
