@@ -31,6 +31,7 @@ require "restforce/db/runner"
 
 require "restforce/db/accumulator"
 require "restforce/db/attribute_map"
+require "restforce/db/cleaner"
 require "restforce/db/collector"
 require "restforce/db/initializer"
 require "restforce/db/mapping"
