@@ -88,4 +88,16 @@ describe Restforce::DB::Mapping do
       end
     end
   end
+
+  describe "#unscoped" do
+    before do
+      mapping.conditions = ["Some_Condition__c = TRUE"]
+    end
+
+    it "removes the conditions from the mapping within the context of the block" do
+      expect(mapping.conditions).to_not_be :empty?
+      mapping.unscoped { |m| expect(m.conditions).to_be :empty? }
+      expect(mapping.conditions).to_not_be :empty?
+    end
+  end
 end
