@@ -92,4 +92,27 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
       expect(record_type.find("a001a000001E1vFAKE")).to_be_nil
     end
   end
+
+  describe "#destroy_all" do
+    before do
+      database_model.create!(salesforce_id: salesforce_id)
+      record_type.destroy_all(ids)
+    end
+
+    describe "when the passed ids include the Salesforce ID of an existing record" do
+      let(:ids) { [salesforce_id] }
+
+      it "eliminates the matching record(s)" do
+        expect(database_model.last).to_be_nil
+      end
+    end
+
+    describe "when the passed ids do not include the Salesforce ID of an existing record" do
+      let(:ids) { ["a001a000001E1vFAKE"] }
+
+      it "does not eliminate the matching record(s)" do
+        expect(database_model.last).to_not_be_nil
+      end
+    end
+  end
 end
