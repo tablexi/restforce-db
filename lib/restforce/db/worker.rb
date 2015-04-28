@@ -128,6 +128,7 @@ module Restforce
       # Returns nothing.
       def propagate(mapping)
         Initializer.new(mapping, runner).run
+        Cleaner.new(mapping, runner).run
       end
 
       # Internal: Collect a list of changes from recently-updated records for
