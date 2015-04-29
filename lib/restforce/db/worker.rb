@@ -77,6 +77,7 @@ module Restforce
 
           Restforce::DB::Registry.each do |mapping|
             task("PROPAGATING RECORDS", mapping) { propagate mapping }
+            task("CLEANING RECORDS", mapping) { clean mapping }
             task("COLLECTING CHANGES", mapping) { collect mapping }
           end
 
@@ -128,6 +129,15 @@ module Restforce
       # Returns nothing.
       def propagate(mapping)
         Initializer.new(mapping, runner).run
+      end
+
+      # Internal: Remove synchronized records from the database when the
+      # Salesforce record no longer meets the mapping's conditions.
+      #
+      # mapping - A Restforce::DB::Mapping.
+      #
+      # Returns nothing.
+      def clean(mapping)
         Cleaner.new(mapping, runner).run
       end
 
