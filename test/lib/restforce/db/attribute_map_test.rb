@@ -17,8 +17,8 @@ describe Restforce::DB::AttributeMap do
 
   describe "#attributes" do
     let(:mapping) do
-      Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |m|
-        m.fields = fields
+      Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |map|
+        map.fields = fields
       end
     end
 

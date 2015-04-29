@@ -15,9 +15,9 @@ describe Restforce::DB::Strategies::Associated do
 
     describe "given an inverse mapping" do
       let(:inverse_mapping) do
-        Restforce::DB::Mapping.new(Detail, "CustomObjectDetail__c").tap do |m|
-          m.fields = { name: "Name" }
-          m.associations << Restforce::DB::Associations::BelongsTo.new(
+        Restforce::DB::Mapping.new(Detail, "CustomObjectDetail__c").tap do |map|
+          map.fields = { name: "Name" }
+          map.associations << Restforce::DB::Associations::BelongsTo.new(
             :custom_object,
             through: "CustomObject__c",
           )

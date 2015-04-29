@@ -21,9 +21,9 @@ describe Restforce::DB::Associations::HasOne do
 
   describe "with an inverse mapping", :vcr do
     let(:inverse_mapping) do
-      Restforce::DB::Mapping.new(User, "Contact").tap do |m|
-        m.fields = { email: "Email" }
-        m.associations << association
+      Restforce::DB::Mapping.new(User, "Contact").tap do |map|
+        map.fields = { email: "Email" }
+        map.associations << association
       end
     end
     let(:user_salesforce_id) do
@@ -87,9 +87,9 @@ describe Restforce::DB::Associations::HasOne do
 
       describe "and a nested association on the associated mapping" do
         let(:nested_mapping) do
-          Restforce::DB::Mapping.new(Detail, "CustomObjectDetail__c").tap do |m|
-            m.fields = { name: "Name" }
-            m.associations << Restforce::DB::Associations::BelongsTo.new(
+          Restforce::DB::Mapping.new(Detail, "CustomObjectDetail__c").tap do |map|
+            map.fields = { name: "Name" }
+            map.associations << Restforce::DB::Associations::BelongsTo.new(
               :custom_object,
               through: "CustomObject__c",
             )

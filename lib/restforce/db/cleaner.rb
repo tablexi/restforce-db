@@ -42,8 +42,8 @@ module Restforce
       def all_salesforce_ids
         all_ids = []
 
-        @mapping.unscoped do |m|
-          @runner.run(m) do |run|
+        @mapping.unscoped do |map|
+          @runner.run(map) do |run|
             run.salesforce_records { |record| all_ids << record.id }
           end
         end
