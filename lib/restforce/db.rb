@@ -9,6 +9,7 @@ require "restforce/db/registry"
 require "restforce/db/strategy"
 require "restforce/db/dsl"
 
+require "restforce/db/association_cache"
 require "restforce/db/associations/base"
 require "restforce/db/associations/belongs_to"
 require "restforce/db/associations/foreign_key"
