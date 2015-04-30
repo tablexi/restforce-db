@@ -20,9 +20,9 @@ def mappings!
   let(:fields) { { name: "Name", example: "Example_Field__c" } }
   let(:conditions) { [] }
   let(:mapping) do
-    Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |m|
-      m.conditions = conditions
-      m.fields     = fields
+    Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |map|
+      map.conditions = conditions
+      map.fields     = fields
     end
   end
 end

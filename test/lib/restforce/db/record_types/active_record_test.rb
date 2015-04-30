@@ -47,9 +47,9 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
           through: "Friend__c",
         )
 
-        associated_mapping = Restforce::DB::Mapping.new(User, "Contact").tap do |m|
-          m.fields  = { email: "Email" }
-          m.associations << Restforce::DB::Associations::HasOne.new(
+        associated_mapping = Restforce::DB::Mapping.new(User, "Contact").tap do |map|
+          map.fields  = { email: "Email" }
+          map.associations << Restforce::DB::Associations::HasOne.new(
             :custom_object,
             through: "Friend__c",
           )
@@ -90,6 +90,29 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
 
     it "returns nil when no matching record exists" do
       expect(record_type.find("a001a000001E1vFAKE")).to_be_nil
+    end
+  end
+
+  describe "#destroy_all" do
+    before do
+      database_model.create!(salesforce_id: salesforce_id)
+      record_type.destroy_all(ids)
+    end
+
+    describe "when the passed ids include the Salesforce ID of an existing record" do
+      let(:ids) { [salesforce_id] }
+
+      it "eliminates the matching record(s)" do
+        expect(database_model.last).to_be_nil
+      end
+    end
+
+    describe "when the passed ids do not include the Salesforce ID of an existing record" do
+      let(:ids) { ["a001a000001E1vFAKE"] }
+
+      it "does not eliminate the matching record(s)" do
+        expect(database_model.last).to_not_be_nil
+      end
     end
   end
 end

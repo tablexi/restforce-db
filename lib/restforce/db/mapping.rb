@@ -87,6 +87,22 @@ module Restforce
         end
       end
 
+      # Public: Access the Mapping object without any conditions on the fetched
+      # records. Allows for a comparison of all modified records to only those
+      # modified records that still fit the `where` criteria.
+      #
+      # block - A block of code to execute in a condition-less context.
+      #
+      # Yields the Mapping with its conditions removed.
+      # Returns the result of the block.
+      def unscoped
+        criteria = @conditions
+        @conditions = []
+        yield self
+      ensure
+        @conditions = criteria
+      end
+
       private
 
       # Internal: Get an AttributeMap for the fields defined for this mapping.

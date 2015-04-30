@@ -66,6 +66,16 @@ module Restforce
           end
         end
 
+        # Public: Destroy all database records corresponding to the list of
+        # passed Salesforce IDs.
+        #
+        # ids - An Array of Salesforce IDs.
+        #
+        # Returns nothing.
+        def destroy_all(ids)
+          @record_type.where(@mapping.lookup_column => ids).destroy_all
+        end
+
         # Public: Does the model represented by this record type have a column
         # with the requested name?
         #

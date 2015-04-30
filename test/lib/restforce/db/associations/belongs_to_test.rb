@@ -20,9 +20,9 @@ describe Restforce::DB::Associations::BelongsTo do
 
   describe "with an inverse mapping", :vcr do
     let(:inverse_mapping) do
-      Restforce::DB::Mapping.new(User, "Contact").tap do |m|
-        m.fields = { email: "Email" }
-        m.associations << Restforce::DB::Associations::HasOne.new(
+      Restforce::DB::Mapping.new(User, "Contact").tap do |map|
+        map.fields = { email: "Email" }
+        map.associations << Restforce::DB::Associations::HasOne.new(
           :custom_object,
           through: "Friend__c",
         )

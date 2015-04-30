@@ -13,8 +13,8 @@ describe Restforce::DB::Mapping do
     }
   end
   let(:mapping) do
-    Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |m|
-      m.fields = fields
+    Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |map|
+      map.fields = fields
     end
   end
 
@@ -86,6 +86,18 @@ describe Restforce::DB::Mapping do
       it "raises an error" do
         expect(-> { mapping.lookup_column }).to_raise Restforce::DB::Mapping::InvalidMappingError
       end
+    end
+  end
+
+  describe "#unscoped" do
+    before do
+      mapping.conditions = ["Some_Condition__c = TRUE"]
+    end
+
+    it "removes the conditions from the mapping within the context of the block" do
+      expect(mapping.conditions).to_not_be :empty?
+      mapping.unscoped { |map| expect(map.conditions).to_be :empty? }
+      expect(mapping.conditions).to_not_be :empty?
     end
   end
 end
