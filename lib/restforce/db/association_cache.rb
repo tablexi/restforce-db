@@ -7,6 +7,8 @@ module Restforce
     # which match a specific set of Salesforce lookups.
     class AssociationCache
 
+      attr_reader :cache
+
       # Public: Initialize a new Restforce::DB::AssociationCache.
       def initialize
         @cache = Hash.new { |h, k| h[k] = [] }

@@ -8,9 +8,19 @@ describe Restforce::DB::AssociationCache do
   let(:database_model) { CustomObject }
   let(:lookups) { { salesforce_id: "a001a000001E1vREAL" } }
   let(:record) { database_model.new(lookups) }
-  let(:found) { cache.find(database_model, lookups) }
+
+  describe "#<<" do
+    before do
+      cache << record
+    end
+
+    it "caches the appended record by class" do
+      expect(cache.cache[database_model]).to_equal [record]
+    end
+  end
 
   describe "#find" do
+    let(:found) { cache.find(database_model, lookups) }
 
     describe "when the record has been added to the cache" do
       before do
@@ -32,21 +42,21 @@ describe Restforce::DB::AssociationCache do
       end
     end
 
-    describe "when no record has been added or persisted" do
+    describe "when a record of another class has been added with the same lookups" do
+      before do
+        cache << User.new(lookups)
+      end
 
       it "returns nil" do
         expect(found).to_be_nil
       end
     end
-  end
 
-  describe "#<<" do
-    before do
-      cache << record
-    end
+    describe "when no record has been added or persisted" do
 
-    it "adds the record to the cache" do
-      expect(found).to_equal record
+      it "returns nil" do
+        expect(found).to_be_nil
+      end
     end
   end
 
