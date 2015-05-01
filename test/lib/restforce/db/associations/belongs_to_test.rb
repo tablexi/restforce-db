@@ -99,13 +99,25 @@ describe Restforce::DB::Associations::BelongsTo do
         end
       end
 
-      describe "when the associated record has alrady been persisted" do
-        let(:database_record) { CustomObject.new }
+      describe "when the associated record has already been persisted" do
         let(:user) { User.create!(salesforce_id: user_salesforce_id) }
 
         before { user }
 
         it "assigns the existing record" do
+          expect(associated).to_be :empty?
+          expect(database_record.user).to_equal user
+        end
+      end
+
+      describe "when the associated record has been cached" do
+        let(:user) { User.new(salesforce_id: user_salesforce_id) }
+        let(:cache) { Restforce::DB::AssociationCache.new }
+        let(:associated) { association.build(database_record, salesforce_record, cache) }
+
+        before { cache << user }
+
+        it "uses the cached record" do
           expect(associated).to_be :empty?
           expect(database_record.user).to_equal user
         end

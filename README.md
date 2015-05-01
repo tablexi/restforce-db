@@ -39,7 +39,7 @@ To register a Salesforce mapping in an `ActiveRecord` model, you'll need to add 
 class Restaurant < ActiveRecord::Base
 
   include Restforce::DB::Model
-  has_one :chef, inverse_of: :restaurant
+  has_one :chef, inverse_of: :restaurant, autosave: true
   has_many :dishes, inverse_of: :restaurant
 
   module StyleAdapter
@@ -202,16 +202,26 @@ For additional information and a full set of options, you can run:
 
     $ bundle exec bin/restforce-db -h
 
+## Caveats
+
+- **API Usage.** 
+  This gem performs most of its functionality via the Salesforce API (by way of the [`restforce`](https://github.com/ejholmes/restforce) gem). If you're at risk of hitting your Salesforce API limits, this may not be the right approach for you.
+
+- **Update Prioritization.**
+  When synchronization occurs, the most recently updated record, Salesforce or database, gets to make the final call about the values of _all_ of the fields it observes. This means that race conditions can and probably will happen if both systems are updated within the same polling interval.
+  
+- **Record Persistence.** 
+  See the `autosave: true` option declared for the `has_one` relationship on `Restaurant`? `Restforce::DB` requires your ActiveRecord models to handle persistence propagation.
+
+  When inserting new records, `save!` will only be invoked on the _entry point_ record (typically a mapping with an `:always` synchronization strategy), so the persistence of any associated records must be chained through this "root" object.
+
+  You may want to consult [the ActiveRecord documentation](http://apidock.com/rails/ActiveRecord/Associations/ClassMethods) for your specific use case.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Caveats
-
-- **Update Prioritization.** When synchronization occurs, the most recently updated record, Salesforce or database, gets to make the final call about the values of _all_ of the fields it observes. This means that race conditions can and probably will happen if both systems are updated within the same polling interval.
-- **API Usage.** This gem performs most of its functionality via the Salesforce API (by way of the [`restforce`](https://github.com/ejholmes/restforce) gem). If you're at risk of hitting your Salesforce API limits, this may not be the right approach for you.
 
 ## Contributing
 

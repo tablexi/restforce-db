@@ -102,12 +102,28 @@ describe Restforce::DB::Associations::HasMany do
       end
 
       describe "when the associated records have alrady been persisted" do
-        let(:database_record) { CustomObject.new }
         let(:details) { detail_salesforce_ids.map { |id| Detail.create!(salesforce_id: id) } }
 
         before { details }
 
         it "constructs the association from the existing records" do
+          expect(associated).to_be :empty?
+          expect(database_record.details).to_match_array details
+        end
+      end
+
+      describe "when the associated records have been cached" do
+        let(:details) { detail_salesforce_ids.map { |id| Detail.new(salesforce_id: id) } }
+        let(:cache) { Restforce::DB::AssociationCache.new }
+        let(:associated) { association.build(database_record, salesforce_record, cache) }
+
+        before do
+          details.each do |detail|
+            cache << detail
+          end
+        end
+
+        it "uses the cached records" do
           expect(associated).to_be :empty?
           expect(database_record.details).to_match_array details
         end

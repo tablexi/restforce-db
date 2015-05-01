@@ -8,7 +8,7 @@ module Restforce
       # mappings in the Registry.
       class Base
 
-        attr_reader :name, :lookup
+        attr_reader :name, :lookup, :cache
 
         # Public: Initialize a new Restforce::DB::Associations::Base.
         #
@@ -23,7 +23,7 @@ module Restforce
         # defined by this class. Must be overridden in subclasses.
         #
         # Raises a NotImplementedError.
-        def build(_database_record, _salesforce_record)
+        def build(_database_record, _salesforce_record, _cache)
           raise NotImplementedError
         end
 
@@ -65,7 +65,7 @@ module Restforce
         # Yields the new database record if one is built.
         # Returns an Array containing all newly-constructed records.
         def constructed_records(database_record, lookups, attributes)
-          associated = target_class(database_record).find_by(lookups)
+          associated = cache.find(target_class(database_record), lookups)
 
           # If the association record already exists, we don't need to build out
           # associations any further.
@@ -74,7 +74,9 @@ module Restforce
             return []
           end
 
-          associated ||= database_record.association(name).build(lookups)
+          associated = database_record.association(name).build(lookups)
+          cache << associated
+
           associated.assign_attributes(attributes)
 
           nested = yield associated if block_given?
@@ -164,7 +166,7 @@ module Restforce
           inverse = inverse_association_name(target_reflection(parent_record))
           nested = salesforce_instance.mapping.associations.flat_map do |a|
             next if a.name == inverse
-            a.build(database_record, salesforce_instance.record)
+            a.build(database_record, salesforce_instance.record, cache)
           end
 
           nested.compact
