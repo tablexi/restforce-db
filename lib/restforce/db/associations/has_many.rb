@@ -14,9 +14,12 @@ module Restforce
         #
         # database_record   - An instance of an ActiveRecord::Base subclass.
         # salesforce_record - A Hashie::Mash representing a Salesforce object.
+        # cache             - A Restforce::DB::AssociationCache.
         #
         # Returns an Array of constructed association records.
-        def build(database_record, salesforce_record)
+        def build(database_record, salesforce_record, cache = AssociationCache.new)
+          @cache = cache
+
           target = target_mapping(database_record)
           lookup_id = "#{lookup} = '#{salesforce_record.Id}'"
 
@@ -26,6 +29,8 @@ module Restforce
           end
 
           records.flatten
+        ensure
+          @cache = nil
         end
 
         private

@@ -85,6 +85,30 @@ describe Restforce::DB::Associations::HasOne do
         end
       end
 
+      describe "when the associated record has already been persisted" do
+        let(:object) { CustomObject.create!(salesforce_id: object_salesforce_id) }
+
+        before { object }
+
+        it "assigns the existing record" do
+          expect(associated).to_be :empty?
+          expect(database_record.custom_object).to_equal object
+        end
+      end
+
+      describe "when the associated record has been cached" do
+        let(:object) { CustomObject.new(salesforce_id: object_salesforce_id) }
+        let(:cache) { Restforce::DB::AssociationCache.new }
+        let(:associated) { association.build(database_record, salesforce_record, cache) }
+
+        before { cache << object }
+
+        it "uses the cached record" do
+          expect(associated).to_be :empty?
+          expect(database_record.custom_object).to_equal object
+        end
+      end
+
       describe "and a nested association on the associated mapping" do
         let(:nested_mapping) do
           Restforce::DB::Mapping.new(Detail, "CustomObjectDetail__c").tap do |map|
