@@ -26,8 +26,8 @@ module Restforce
         return if belongs_to_associations.empty?
 
         @runner.run(@mapping) do |run|
-          run.salesforce_instances { |instance| verify_associations(instance) }
-          run.database_instances { |instance| verify_associations(instance) }
+          run.salesforce_instances.each { |instance| verify_associations(instance) }
+          run.database_instances.each { |instance| verify_associations(instance) }
         end
       end
 

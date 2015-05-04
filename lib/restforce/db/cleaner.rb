@@ -40,15 +40,11 @@ module Restforce
       #
       # Returns an Array of IDs.
       def all_salesforce_ids
-        all_ids = []
-
         @mapping.unscoped do |map|
           @runner.run(map) do |run|
-            run.salesforce_instances { |instance| all_ids << instance.id }
+            run.salesforce_instances.map(&:id)
           end
         end
-
-        all_ids
       end
 
       # Internal: Get the IDs of the recently-modified Salesforce records which
@@ -56,13 +52,9 @@ module Restforce
       #
       # Returns an Array of IDs.
       def valid_salesforce_ids
-        valid_ids = []
-
         @runner.run(@mapping) do |run|
-          run.salesforce_instances { |instance| valid_ids << instance.id }
+          run.salesforce_instances.map(&:id)
         end
-
-        valid_ids
       end
 
     end
