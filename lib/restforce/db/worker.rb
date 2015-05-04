@@ -82,6 +82,7 @@ module Restforce
             task("PROPAGATING RECORDS", mapping) { propagate mapping }
             task("CLEANING RECORDS", mapping) { clean mapping }
             task("COLLECTING CHANGES", mapping) { collect mapping }
+            task("UPDATING ASSOCIATIONS", mapping) { associate mapping }
           end
 
           # NOTE: We can only perform the synchronization after all record
@@ -152,6 +153,16 @@ module Restforce
       # Returns nothing.
       def collect(mapping)
         Collector.new(mapping, runner).run(@changes)
+      end
+
+      # Internal: Update the associated records and Salesforce lookups for
+      # records belonging to the passed mapping.
+      #
+      # mapping - A Restforce::DB::Mapping.
+      #
+      # Returns nothing.
+      def associate(mapping)
+        Associator.new(mapping, runner).run
       end
 
       # Internal: Apply the aggregated changes to the objects in both systems,
