@@ -10,8 +10,11 @@ module Restforce
       attr_reader :cache
 
       # Public: Initialize a new Restforce::DB::AssociationCache.
-      def initialize
+      #
+      # record - An instance of ActiveRecord::Base (optional).
+      def initialize(record = nil)
         @cache = Hash.new { |h, k| h[k] = [] }
+        self << record if record
       end
 
       # Public: Add a record to the cache.

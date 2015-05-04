@@ -8,8 +8,6 @@ module Restforce
     # locate recently-updated records and fetch their attributes.
     class Collector
 
-      attr_reader :last_run
-
       # Public: Initialize a new Restforce::DB::Collector.
       #
       # mapping - A Restforce::DB::Mapping instance.
@@ -30,8 +28,8 @@ module Restforce
         @accumulated_changes = accumulator || accumulated_changes
 
         @runner.run(@mapping) do |run|
-          run.salesforce_records { |record| accumulate(record) }
-          run.database_records { |record| accumulate(record) }
+          run.salesforce_instances { |instance| accumulate(instance) }
+          run.database_instances { |instance| accumulate(instance) }
         end
 
         accumulated_changes

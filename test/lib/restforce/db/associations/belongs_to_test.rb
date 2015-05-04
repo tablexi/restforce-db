@@ -45,6 +45,24 @@ describe Restforce::DB::Associations::BelongsTo do
       mapping.associations << association
     end
 
+    describe "#lookups" do
+      let(:user) { inverse_mapping.database_model.create!(salesforce_id: user_salesforce_id) }
+      let(:object) { mapping.database_model.create!(salesforce_id: object_salesforce_id, user: user) }
+
+      it "returns a hash of the associated records' lookup IDs" do
+        expect(association.lookups(object)).to_equal("Friend__c" => user_salesforce_id)
+      end
+
+      describe "when there is currently no associated record" do
+        let(:object_salesforce_id) { Salesforce.create!(mapping.salesforce_model) }
+        let(:object) { mapping.database_model.create!(salesforce_id: object_salesforce_id) }
+
+        it "returns a nil lookup value in the hash" do
+          expect(association.lookups(object)).to_equal("Friend__c" => nil)
+        end
+      end
+    end
+
     describe "#synced_for?" do
       let(:salesforce_instance) { mapping.salesforce_record_type.find(object_salesforce_id) }
 

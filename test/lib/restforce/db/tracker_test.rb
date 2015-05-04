@@ -1,6 +1,9 @@
 require_relative "../../../test_helper"
 
 describe Restforce::DB::Tracker do
+
+  configure!
+
   let(:file) { Tempfile.new(".restforce-db") }
   let(:tracker) { Restforce::DB::Tracker.new(file.path) }
   let(:runtime) { Time.now }

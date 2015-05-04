@@ -14,10 +14,10 @@ module Restforce
         #
         # database_record   - An instance of an ActiveRecord::Base subclass.
         # salesforce_record - A Hashie::Mash representing a Salesforce object.
-        # cache             - A Restforce::DB::AssociationCache.
+        # cache             - A Restforce::DB::AssociationCache (optional).
         #
         # Returns an Array of constructed association records.
-        def build(database_record, salesforce_record, cache = AssociationCache.new)
+        def build(database_record, salesforce_record, cache = AssociationCache.new(database_record))
           @cache = cache
 
           lookups = {}
@@ -45,6 +45,30 @@ module Restforce
           @cache = nil
         end
 
+        # Public: Get a Hash of Lookup IDs for a specified database record,
+        # based on the current record for this association.
+        #
+        # database_record - An instance of an ActiveRecord::Base subclass.
+        #
+        # Returns a Hash.
+        def lookups(database_record)
+          ids = {}
+
+          for_mappings(database_record) do |mapping, lookup|
+            associated = database_record.association(name).reader
+
+            ids[lookup] =
+              if associated
+                # It's possible to define a belongs_to association in a Mapping
+                # for what is actually a one-to-many association on the
+                # ActiveRecord object.
+                Array(associated).first.send(mapping.lookup_column)
+              end
+          end
+
+          ids
+        end
+
         private
 
         # Internal: Iterate through all relevant mappings for the target
@@ -65,7 +89,7 @@ module Restforce
         # Internal: Get the Salesforce ID belonging to the associated record
         # for a supplied instance. Must be implemented per-association.
         #
-        # instance - A Restforce::DB::Instances::Base
+        # instance - A Restforce::DB::Instances::Base.
         #
         # Returns a String.
         def associated_salesforce_id(instance)

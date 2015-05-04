@@ -1,6 +1,9 @@
 require_relative "../../../test_helper"
 
 describe Restforce::DB::Accumulator do
+
+  configure!
+
   let(:accumulator) { Restforce::DB::Accumulator.new }
 
   describe "#store" do

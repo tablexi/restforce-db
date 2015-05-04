@@ -1,6 +1,9 @@
 require_relative "../../../../test_helper"
 
 describe Restforce::DB::Strategies::Passive do
+
+  configure!
+
   let(:strategy) { Restforce::DB::Strategies::Passive.new }
 
   it "is a passive strategy" do

@@ -1,6 +1,9 @@
 require_relative "../../../test_helper"
 
 describe Restforce::DB::Configuration do
+
+  configure!
+
   let(:secrets) { Secrets["client"] }
   let(:secrets_file) { File.expand_path("../../../../config/secrets.yml", __FILE__) }
   let(:configuration) { Restforce::DB::Configuration.new }
