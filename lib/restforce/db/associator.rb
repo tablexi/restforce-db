@@ -23,7 +23,7 @@ module Restforce
       #
       # Returns nothing.
       def run
-        return if associations.empty?
+        return if belongs_to_associations.empty?
 
         @runner.run(@mapping) do |run|
           run.salesforce_instances { |instance| verify_associations(instance) }
@@ -61,14 +61,14 @@ module Restforce
       #
       # Returns nothing.
       def sync_associations(database_instance, salesforce_instance)
-        ids = association_ids(database_instance)
+        ids = belongs_to_association_ids(database_instance)
         return if ids.all? { |field, id| salesforce_instance.record[field] == id }
 
         if database_instance.last_update > salesforce_instance.last_update
           salesforce_instance.update!(ids)
         else
           database_record = database_instance.record
-          associations.each do |association|
+          belongs_to_associations.each do |association|
             association.build(database_record, salesforce_instance.record)
           end
           database_record.save!
@@ -81,8 +81,8 @@ module Restforce
       # database_instance - A Restforce::DB::Instances::ActiveRecord.
       #
       # Returns a Hash.
-      def association_ids(database_instance)
-        associations.inject({}) do |ids, association|
+      def belongs_to_association_ids(database_instance)
+        belongs_to_associations.inject({}) do |ids, association|
           ids.merge(association.lookups(database_instance.record))
         end
       end
@@ -91,8 +91,8 @@ module Restforce
       # target mapping.
       #
       # Returns an Array of Restforce::DB::Association::BelongsTo objects.
-      def associations
-        @associations ||= @mapping.associations.select do |association|
+      def belongs_to_associations
+        @belongs_to_associations ||= @mapping.associations.select do |association|
           association.is_a?(Restforce::DB::Associations::BelongsTo)
         end
       end
