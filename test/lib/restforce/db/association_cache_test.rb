@@ -9,6 +9,14 @@ describe Restforce::DB::AssociationCache do
   let(:lookups) { { salesforce_id: "a001a000001E1vREAL" } }
   let(:record) { database_model.new(lookups) }
 
+  describe "#initialize" do
+    let(:cache) { Restforce::DB::AssociationCache.new(record) }
+
+    it "caches the passed record when present" do
+      expect(cache.cache[database_model]).to_equal [record]
+    end
+  end
+
   describe "#<<" do
     before do
       cache << record
