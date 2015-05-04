@@ -2,6 +2,8 @@ require_relative "../../../test_helper"
 
 describe Restforce::DB::Strategy do
 
+  configure!
+
   describe ".for" do
     let(:strategy) { Restforce::DB::Strategy.for(type) }
 

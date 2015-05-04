@@ -1,6 +1,9 @@
 require_relative "../../../test_helper"
 
 describe Restforce::DB::Runner do
+
+  configure!
+
   let(:runner) { Restforce::DB::Runner.new }
 
   describe "#initialize" do

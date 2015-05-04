@@ -2,6 +2,8 @@ require_relative "../../../test_helper"
 
 describe Restforce::DB::DSL do
 
+  configure!
+
   let(:database_model) { CustomObject }
   let(:salesforce_model) { "CustomObject__c" }
   let(:strategy) { :always }
