@@ -55,6 +55,25 @@ module Restforce
 
         private
 
+        # Internal: Get the appropriate Salesforce Lookup ID field for the
+        # passed mapping.
+        #
+        # mapping         - A Restforce::DB::Mapping.
+        # database_record - An instance of an ActiveRecord::Base subclass.
+        #
+        # Returns a String or nil.
+        def lookup_field(mapping, database_record)
+          inverse = inverse_association_name(target_reflection(database_record))
+          association = mapping.associations.detect { |a| a.name == inverse }
+          return unless association
+
+          if lookup.is_a?(Array)
+            association.lookup
+          else
+            lookup
+          end
+        end
+
         # Internal: Get a list of all newly-constructed records based on this
         # association, for a set of lookups.
         #

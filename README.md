@@ -170,8 +170,7 @@ This _also_ defines an inverse relationship for a `belongs_to` relationship. The
 
 In the above example, `Dish__c` is a Salesforce object type which references the `Restaurant__c` object type through an aptly-named Lookup. There is no restriction on the number of `Dish__c` objects that may reference the same `Restaurant__c`, so we define this relationship as a `has_many` associaition in our `Restaurant` mapping.
 
-__NOTE__: Unlike `has_one` associations, `has_many` associations do not currently support multiple lookups from the same model. The Lookup is assumed
-to always refer to the `Id` of the parent object.
+__NOTE__: If one side of an association has multiple possible lookup fields, the other side of the association is expected to declare a _single_ lookup field, which will be treated as the canonical lookup for that relationship. The Lookup is assumed to always refer to the `Id` of the object declaring the `has_many`/`has_one` side of the association.
 
 ### Seed your data
 
