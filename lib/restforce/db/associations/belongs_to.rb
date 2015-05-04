@@ -57,10 +57,14 @@ module Restforce
           for_mappings(database_record) do |mapping, lookup|
             associated = database_record.association(name).reader
 
-            # It's possible to define a belongs_to association in a Mapping for
-            # what is actually a one-to-many association in ActiveRecord.
-            associated = associated.first if associated.respond_to?(:first)
-            ids[lookup] = associated.send(mapping.lookup_column)
+            if associated
+              # It's possible to define a belongs_to association in a Mapping
+              # for what is actually a one-to-many association in ActiveRecord.
+              associated = associated.first if associated.respond_to?(:first)
+              ids[lookup] = associated.send(mapping.lookup_column)
+            else
+              ids[lookup] = nil
+            end
           end
 
           ids
