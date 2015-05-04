@@ -45,6 +45,27 @@ module Restforce
           @cache = nil
         end
 
+        # Public: Get a Hash of Lookup IDs for a specified database record,
+        # based on the currently record for this association.
+        #
+        # database_record - An instance of an ActiveRecord::Base subclass.
+        #
+        # Returns a Hash.
+        def lookups(database_record)
+          ids = {}
+
+          for_mappings(database_record) do |mapping, lookup|
+            associated = database_record.association(name).reader
+
+            # It's possible to define a belongs_to association in a Mapping for
+            # what is actually a one-to-many association in ActiveRecord.
+            associated = associated.first if associated.respond_to?(:first)
+            ids[lookup] = associated.send(mapping.lookup_column)
+          end
+
+          ids
+        end
+
         private
 
         # Internal: Iterate through all relevant mappings for the target
