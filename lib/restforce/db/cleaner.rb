@@ -20,7 +20,7 @@ module Restforce
       #
       # Returns nothing.
       def run
-        return if @strategy.passive?
+        return if @mapping.conditions.empty? || @strategy.passive?
         @mapping.database_record_type.destroy_all(invalid_salesforce_ids)
       end
 
