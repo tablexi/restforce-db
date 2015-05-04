@@ -37,15 +37,7 @@ module Restforce
       #
       # Returns nothing.
       def start
-        trap("TERM") do
-          Thread.new { log "Exiting..." }
-          stop
-        end
-
-        trap("INT") do
-          Thread.new { log "Exiting..." }
-          stop
-        end
+        trap_signals
 
         loop do
           runtime = Benchmark.realtime { perform }
@@ -60,10 +52,21 @@ module Restforce
       #
       # Returns nothing.
       def stop
+        Thread.new { log "Exiting..." }
         @exit = true
       end
 
       private
+
+      # Internal: Configure the main loop to trap specific signals, triggering
+      # an exit once the loop completes.
+      #
+      # Return nothing.
+      def trap_signals
+        %w(TERM INT).each do |signal|
+          trap(signal) { stop }
+        end
+      end
 
       # Internal: Perform the synchronization loop, recording the time that the
       # run is performed so that future runs can pick up where the last run
