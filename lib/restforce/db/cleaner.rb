@@ -44,7 +44,7 @@ module Restforce
 
         @mapping.unscoped do |map|
           @runner.run(map) do |run|
-            run.salesforce_records { |record| all_ids << record.id }
+            run.salesforce_instances { |instance| all_ids << instance.id }
           end
         end
 
@@ -59,7 +59,7 @@ module Restforce
         valid_ids = []
 
         @runner.run(@mapping) do |run|
-          run.salesforce_records { |record| valid_ids << record.id }
+          run.salesforce_instances { |instance| valid_ids << instance.id }
         end
 
         valid_ids

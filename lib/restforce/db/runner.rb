@@ -52,8 +52,8 @@ module Restforce
       #
       # Yields a series of Restforce::DB::Instances::Salesforce objects.
       # Returns nothing.
-      def salesforce_records
-        @mapping.salesforce_record_type.each(options) { |record| yield record }
+      def salesforce_instances
+        @mapping.salesforce_record_type.each(options) { |instance| yield instance }
       end
 
       # Public: Iterate through recently-updated records for the database model
@@ -61,8 +61,8 @@ module Restforce
       #
       # Yields a series of Restforce::DB::Instances::ActiveRecord objects.
       # Returns nothing.
-      def database_records
-        @mapping.database_record_type.each(options) { |record| yield record }
+      def database_instances
+        @mapping.database_record_type.each(options) { |instance| yield instance }
       end
 
       private

@@ -25,8 +25,8 @@ module Restforce
         return if @strategy.passive?
 
         @runner.run(@mapping) do |run|
-          run.salesforce_records { |record| create_in_database(record) }
-          run.database_records { |record| create_in_salesforce(record) }
+          run.salesforce_instances { |instance| create_in_database(instance) }
+          run.database_instances { |instance| create_in_salesforce(instance) }
         end
       end
 
@@ -36,24 +36,24 @@ module Restforce
       # passed Salesforce record. Does nothing if the Salesforce record has
       # already been synchronized into the system at least once.
       #
-      # record - A Restforce::DB::Instances::Salesforce.
+      # instance - A Restforce::DB::Instances::Salesforce.
       #
       # Returns nothing.
-      def create_in_database(record)
-        return unless @strategy.build?(record)
-        @mapping.database_record_type.create!(record)
+      def create_in_database(instance)
+        return unless @strategy.build?(instance)
+        @mapping.database_record_type.create!(instance)
       end
 
       # Internal: Attempt to create a partner record in Salesforce for the
       # passed database record. Does nothing if the database record already has
       # an associated Salesforce record.
       #
-      # record - A Restforce::DB::Instances::ActiveRecord.
+      # instance - A Restforce::DB::Instances::ActiveRecord.
       #
       # Returns nothing.
-      def create_in_salesforce(record)
-        return if record.synced?
-        @mapping.salesforce_record_type.create!(record)
+      def create_in_salesforce(instance)
+        return if instance.synced?
+        @mapping.salesforce_record_type.create!(instance)
       end
 
     end
