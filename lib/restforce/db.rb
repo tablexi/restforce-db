@@ -31,6 +31,7 @@ require "restforce/db/strategies/passive"
 require "restforce/db/runner"
 
 require "restforce/db/accumulator"
+require "restforce/db/associator"
 require "restforce/db/attribute_map"
 require "restforce/db/cleaner"
 require "restforce/db/collector"

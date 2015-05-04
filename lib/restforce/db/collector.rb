@@ -8,8 +8,6 @@ module Restforce
     # locate recently-updated records and fetch their attributes.
     class Collector
 
-      attr_reader :last_run
-
       # Public: Initialize a new Restforce::DB::Collector.
       #
       # mapping - A Restforce::DB::Mapping instance.

@@ -90,7 +90,7 @@ module Restforce
         # Internal: Get the Salesforce ID belonging to the associated record
         # for a supplied instance. Must be implemented per-association.
         #
-        # instance - A Restforce::DB::Instances::Base
+        # instance - A Restforce::DB::Instances::Base.
         #
         # Returns a String.
         def associated_salesforce_id(instance)
