@@ -46,7 +46,7 @@ module Restforce
         end
 
         # Public: Get a Hash of Lookup IDs for a specified database record,
-        # based on the currently record for this association.
+        # based on the current record for this association.
         #
         # database_record - An instance of an ActiveRecord::Base subclass.
         #
