@@ -25,8 +25,8 @@ module Restforce
         return if @strategy.passive?
 
         @runner.run(@mapping) do |run|
-          run.salesforce_instances { |instance| create_in_database(instance) }
-          run.database_instances { |instance| create_in_salesforce(instance) }
+          run.salesforce_instances.each { |instance| create_in_database(instance) }
+          run.database_instances.each { |instance| create_in_salesforce(instance) }
         end
       end
 

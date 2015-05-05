@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.files         = `git ls-files`.split($RS)
   spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(/^exe\//) { |f| File.basename(f) }
+  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_dependency "activerecord"
@@ -30,11 +30,11 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.8"
   spec.add_development_dependency "database_cleaner"
-  spec.add_development_dependency "minitest"
+  spec.add_development_dependency "minitest", "5.4.3"
   spec.add_development_dependency "minitest-spec-expect"
   spec.add_development_dependency "minitest-vcr"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "rubocop", ">= 0.30.0"
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "webmock"
 end
