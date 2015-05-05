@@ -47,7 +47,8 @@ module Restforce
           first("Id = '#{id}'")
         end
 
-        # Public: Iterate through all Salesforce records of this type.
+        # Public: Get a collection of all Salesforce records of this type which
+        # match the passed criteria.
         #
         # options - A Hash of options which should be applied to the set of
         #           fetched records. Allowed options are:
@@ -60,17 +61,16 @@ module Restforce
         #           :conditions - An Array of conditions to append to the lookup
         #                         query.
         #
-        # Yields a series of Restforce::DB::Instances::Salesforce instances.
-        # Returns nothing.
-        def each(options = {})
+        # Returns an Array of Restforce::DB::Instances::Salesforce instances.
+        def all(options = {})
           constraints = [
             ("SystemModstamp < #{options[:before].utc.iso8601}" if options[:before]),
             ("SystemModstamp >= #{options[:after].utc.iso8601}" if options[:after]),
             *options[:conditions],
           ]
 
-          DB.client.query(query(*constraints)).each do |record|
-            yield Instances::Salesforce.new(@record_type, record, @mapping)
+          DB.client.query(query(*constraints)).map do |record|
+            Instances::Salesforce.new(@record_type, record, @mapping)
           end
         end
 

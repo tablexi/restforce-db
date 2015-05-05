@@ -62,14 +62,12 @@ describe Restforce::DB::RecordTypes::Salesforce do
     end
   end
 
-  describe "#each", :vcr do
+  describe "#all", :vcr do
     let(:id) { Salesforce.create!(salesforce_model) }
     before { id }
 
-    # Restforce::DB::RecordType::Salesforce actually implements Enumerable, so
-    # we're just going with a trivially testable portion of the Enumerable API.
-    it "loops through the existing records in Salesforce" do
-      record = record_type.first
+    it "returns a list of the existing records in Salesforce" do
+      record = record_type.all.first
       expect(record).to_be_instance_of(Restforce::DB::Instances::Salesforce)
       expect(record.id).to_equal(id)
     end

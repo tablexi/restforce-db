@@ -24,7 +24,7 @@ module Restforce
           lookup_id = "#{lookup_field(target, database_record)} = '#{salesforce_record.Id}'"
 
           records = []
-          target.salesforce_record_type.each(conditions: lookup_id) do |instance|
+          target.salesforce_record_type.all(conditions: lookup_id).each do |instance|
             records << construct_for(database_record, instance)
           end
 

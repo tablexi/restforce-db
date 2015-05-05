@@ -25,17 +25,8 @@ module Restforce
       #
       # Returns an Array of Restforce::DB::Instances::Base.
       def collection(mapping, record_type, options = {})
-        if cached?(mapping, record_type)
-          cached_value(mapping, record_type)
-        else
-          items = []
-
-          mapping.send(record_type).each(options) do |instance|
-            items << instance
-          end
-
-          @cache[record_type][key_for(mapping)] = items
-        end
+        return cached_value(mapping, record_type) if cached?(mapping, record_type)
+        cache(mapping, record_type, mapping.send(record_type).all(options))
       end
 
       # Public: Reset the cache. Should be invoked between runs to ensure that
@@ -47,6 +38,18 @@ module Restforce
       end
 
       private
+
+      # Internal: Store the supplied value in the cache for the passed mapping
+      # and record type.
+      #
+      # mapping     - A Restforce::DB::Mapping.
+      # record_type - A Symbol naming a mapping record type. Valid values are
+      #               :salesforce_record_type or :database_record_type.
+      #
+      # Returns the cached value.
+      def cache(mapping, record_type, value)
+        @cache[record_type][key_for(mapping)] = value
+      end
 
       # Internal: Get the cached collection for the passed mapping and record
       # type.

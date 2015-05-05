@@ -25,8 +25,8 @@ describe Restforce::DB::RunnerCache do
             [1, 2, 3]
           end
 
-          def collection.each(*_)
-            values.each { |i| yield i }
+          def collection.all(*_)
+            values
           end
         end
       end

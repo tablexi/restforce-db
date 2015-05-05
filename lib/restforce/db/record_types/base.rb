@@ -8,8 +8,6 @@ module Restforce
       # models defined in the Restforce::DB::RecordTypes namespace.
       class Base
 
-        include Enumerable
-
         # Public: Initialize a new Restforce::DB::RecordTypes::Base.
         #
         # record_type - The name or class of the system record type.

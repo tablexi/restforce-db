@@ -44,8 +44,8 @@ module Restforce
           Instances::ActiveRecord.new(@record_type, record, @mapping)
         end
 
-        # Public: Iterate through all recently-updated ActiveRecord records of
-        # this type.
+        # Public: Get a collection of all modified ActiveRecord records of this
+        # type which match the passed criteria.
         #
         # options - A Hash of options which should be applied to the set of
         #           fetched records. Allowed options are:
@@ -54,15 +54,14 @@ module Restforce
         #           :after  - A Time object defining the least recent update
         #                     timestamp for which records should be returned.
         #
-        # Yields a series of Restforce::DB::Instances::ActiveRecord instances.
-        # Returns nothing.
-        def each(options = {})
+        # Returns an Array of Restforce::DB::Instances::ActiveRecord instances.
+        def all(options = {})
           scope = @record_type.where("updated_at > synchronized_at OR synchronized_at IS NULL")
           scope = scope.where("updated_at < ?", options[:before]) if options[:before]
           scope = scope.where("updated_at >= ?", options[:after]) if options[:after]
 
-          scope.find_each do |record|
-            yield Instances::ActiveRecord.new(@record_type, record, @mapping)
+          scope.map do |record|
+            Instances::ActiveRecord.new(@record_type, record, @mapping)
           end
         end
 
