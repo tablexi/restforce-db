@@ -32,7 +32,7 @@ describe Restforce::DB::RunnerCache do
       end
 
       before do
-        cache.collection(mapping, :database_record_type) { next }
+        cache.collection(mapping, :database_record_type)
       end
 
       it "does not re-invoke the original method call" do
