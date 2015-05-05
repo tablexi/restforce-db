@@ -40,11 +40,7 @@ module Restforce
       #
       # Returns an Array of IDs.
       def all_salesforce_ids
-        @mapping.unscoped do |map|
-          @runner.run(map) do |run|
-            run.salesforce_instances.map(&:id)
-          end
-        end
+        @mapping.unscoped { valid_salesforce_ids }
       end
 
       # Internal: Get the IDs of the recently-modified Salesforce records which
