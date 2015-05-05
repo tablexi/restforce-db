@@ -21,7 +21,7 @@ module Restforce
       # mapping     - A Restforce::DB::Mapping.
       # record_type - A Symbol naming a mapping record type. Valid values are
       #               :salesforce_record_type or :database_record_type.
-      # options     - A Hash of options to pass to `each` (optional).
+      # options     - A Hash of options to pass to `all` (optional).
       #
       # Returns an Array of Restforce::DB::Instances::Base.
       def collection(mapping, record_type, options = {})
