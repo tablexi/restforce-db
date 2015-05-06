@@ -14,7 +14,7 @@ module Restforce
       #
       # Returns a Restforce::DB::Mapping.
       def self.[](model)
-        @collection[model]
+        collection[model]
       end
 
       # Public: Iterate through all registered Restforce::DB::Mappings.
@@ -22,7 +22,7 @@ module Restforce
       # Yields one Mapping for each database-to-Salesforce mapping.
       # Returns nothing.
       def self.each
-        @collection.each do |model, mappings|
+        collection.each do |model, mappings|
           # Since each mapping is inserted twice, we ignore the half which
           # were inserted via Salesforce model names.
           next unless model.is_a?(Class)
@@ -42,7 +42,7 @@ module Restforce
       # Returns nothing.
       def self.<<(mapping)
         [mapping.database_model, mapping.salesforce_model].each do |model|
-          @collection[model] << mapping
+          collection[model] << mapping
         end
       end
 
@@ -50,10 +50,15 @@ module Restforce
       #
       # Returns nothing.
       def self.clean!
-        @collection = Hash.new { |h, k| h[k] = [] }
+        @collection = nil
       end
 
-      clean!
+      # Public: Get the collection of currently-registered mappings.
+      #
+      # Returns a Hash.
+      def self.collection
+        @collection ||= Hash.new { |h, k| h[k] = [] }
+      end
 
     end
 
