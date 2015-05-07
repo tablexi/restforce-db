@@ -25,7 +25,7 @@ module Restforce
           instances = []
 
           for_mappings(database_record) do |mapping, lookup|
-            lookup_id = salesforce_record[lookup]
+            lookup_id = deep_lookup(salesforce_record, lookup)
             lookups[mapping.lookup_column] = lookup_id
             instance = mapping.salesforce_record_type.find(lookup_id)
 
@@ -97,7 +97,29 @@ module Restforce
           inverse_association = association_for(reflection)
 
           salesforce_instance = instance.mapping.salesforce_record_type.find(instance.id)
-          salesforce_instance.record[inverse_association.lookup] if salesforce_instance
+          deep_lookup(salesforce_instance.record, inverse_association.lookup) if salesforce_instance
+        end
+
+        # Internal: Get the value for a potentially nested lookup field.
+        #
+        # salesforce_record - A Hashie::Mash representing a Salesforce object.
+        # lookup            - A String value lookup.
+        #
+        # Example:
+        #
+        #   hash = { "Name" => "Chaplin", "Address_r" => { "City" => "Berlin" } }
+        #
+        #   deep_lookup(hash, "Name")
+        #   # => "Chaplin"
+        #
+        #   deep_lookup(hash, "Address_r.City")
+        #   # => "Berlin"
+        #
+        # Returns the value of the nested key.
+        def deep_lookup(salesforce_record, lookup)
+          lookup.split(".").inject(salesforce_record) do |hash, key|
+            hash[key]
+          end
         end
 
       end
