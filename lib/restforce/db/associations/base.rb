@@ -14,9 +14,12 @@ module Restforce
         #
         # name    - The name of the ActiveRecord association to construct.
         # through - The name of the lookup field on the Salesforce record.
-        def initialize(name, through: nil)
+        # build   - A Boolean indicating whether or not the association chain
+        #           should be built out for new records.
+        def initialize(name, through: nil, build: true)
           @name = name.to_sym
           @lookup = through.is_a?(Array) ? through.map(&:to_s) : through.to_s
+          @build = build
         end
 
         # Public: Build a record or series of records for the association
@@ -54,6 +57,14 @@ module Restforce
         end
 
         private
+
+        # Internal: Should records for this association be synchronized between
+        # the two systems when a new record is added for the base mapping?
+        #
+        # Returns a Boolean.
+        def build?
+          @build
+        end
 
         # Internal: Get the appropriate Salesforce Lookup ID field for the
         # passed mapping.

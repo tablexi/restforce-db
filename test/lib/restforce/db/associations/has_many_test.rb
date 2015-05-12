@@ -92,6 +92,14 @@ describe Restforce::DB::Associations::HasMany do
         end
       end
 
+      describe "when the association is non-building" do
+        let(:association) { Restforce::DB::Associations::HasMany.new(:details, through: "CustomObject__c", build: false) }
+
+        it "proceeds without constructing any records" do
+          expect(associated).to_be :empty?
+        end
+      end
+
       describe "when no salesforce record is found for the association" do
         let(:detail_salesforce_ids) { nil }
 

@@ -77,6 +77,14 @@ describe Restforce::DB::Associations::HasOne do
         expect(object.salesforce_id).to_equal object_salesforce_id
       end
 
+      describe "when the association is non-building" do
+        let(:association) { Restforce::DB::Associations::HasOne.new(:custom_object, through: "Friend__c", build: false) }
+
+        it "proceeds without constructing any records" do
+          expect(associated).to_be :empty?
+        end
+      end
+
       describe "when no salesforce record is found for the association" do
         let(:object_salesforce_id) { nil }
 
