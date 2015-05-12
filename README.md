@@ -170,7 +170,20 @@ This _also_ defines an inverse relationship for a `belongs_to` relationship. The
 
 In the above example, `Dish__c` is a Salesforce object type which references the `Restaurant__c` object type through an aptly-named Lookup. There is no restriction on the number of `Dish__c` objects that may reference the same `Restaurant__c`, so we define this relationship as a `has_many` associaition in our `Restaurant` mapping.
 
-__NOTE__: If one side of an association has multiple possible lookup fields, the other side of the association is expected to declare a _single_ lookup field, which will be treated as the canonical lookup for that relationship. The Lookup is assumed to always refer to the `Id` of the object declaring the `has_many`/`has_one` side of the association.
+##### Association Caveats
+
+- **Lookups.**
+  If one side of an association has multiple possible lookup fields, the other side of the association is expected to declare a _single_ lookup field, which will be treated as the canonical lookup for that relationship. The Lookup is assumed to always refer to the `Id` of the object declaring the `has_many`/`has_one` side of the association.
+  
+- **Record Construction.**
+  By default, _all_ associated records will be recursively constructed when a single record is synchronized into the system. This can result in a lot of unwanted/time-consuming record creation, particularly if your Salesforce account has a lot of irrelevant legacy data. You can turn off this behavior for specific associations by passing `build: false` when declaring the association in the DSL.
+
+- **Record Persistence.** 
+  See the `autosave: true` option declared for the `has_one` relationship on `Restaurant`? `Restforce::DB` requires your ActiveRecord models to handle persistence propagation.
+
+  When inserting new records, `save!` will only be invoked on the _entry point_ record (typically a mapping with an `:always` synchronization strategy), so the persistence of any associated records must be chained through this "root" object.
+
+  You may want to consult [the ActiveRecord documentation](http://apidock.com/rails/ActiveRecord/Associations/ClassMethods) for your specific use case.
 
 ### Seed your data
 
@@ -201,20 +214,13 @@ For additional information and a full set of options, you can run:
 
     $ bundle exec bin/restforce-db -h
 
-## Caveats
+## System Caveats
 
 - **API Usage.** 
   This gem performs most of its functionality via the Salesforce API (by way of the [`restforce`](https://github.com/ejholmes/restforce) gem). If you're at risk of hitting your Salesforce API limits, this may not be the right approach for you.
 
 - **Update Prioritization.**
   When synchronization occurs, the most recently updated record, Salesforce or database, gets to make the final call about the values of _all_ of the fields it observes. This means that race conditions can and probably will happen if both systems are updated within the same polling interval.
-  
-- **Record Persistence.** 
-  See the `autosave: true` option declared for the `has_one` relationship on `Restaurant`? `Restforce::DB` requires your ActiveRecord models to handle persistence propagation.
-
-  When inserting new records, `save!` will only be invoked on the _entry point_ record (typically a mapping with an `:always` synchronization strategy), so the persistence of any associated records must be chained through this "root" object.
-
-  You may want to consult [the ActiveRecord documentation](http://apidock.com/rails/ActiveRecord/Associations/ClassMethods) for your specific use case.
 
 ## Development
 

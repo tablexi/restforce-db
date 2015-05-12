@@ -37,12 +37,15 @@ module Restforce
       #
       # association - The name of the ActiveRecord association.
       # through     - A String or Array of Strings representing the Lookup IDs.
+      # build       - A Boolean indicating whether or not the association chain
+      #               should be built out for new records.
       #
       # Returns nothing.
-      def belongs_to(association, through:)
+      def belongs_to(association, through:, build: true)
         @mapping.associations << Associations::BelongsTo.new(
           association,
           through: through,
+          build: build,
         )
       end
 
@@ -51,12 +54,15 @@ module Restforce
       #
       # association - The name of the ActiveRecord association.
       # through     - A String representing the Lookup ID.
+      # build       - A Boolean indicating whether or not the association chain
+      #               should be built out for new records.
       #
       # Returns nothing.
-      def has_one(association, through:) # rubocop:disable PredicateName
+      def has_one(association, through:, build: true) # rubocop:disable PredicateName
         @mapping.associations << Associations::HasOne.new(
           association,
           through: through,
+          build: build,
         )
       end
 
@@ -65,12 +71,15 @@ module Restforce
       #
       # association - The name of the ActiveRecord association.
       # through     - A String representing the Lookup ID.
+      # build       - A Boolean indicating whether or not the association chain
+      #               should be built out for new records.
       #
       # Returns nothing.
-      def has_many(association, through:) # rubocop:disable PredicateName
+      def has_many(association, through:, build: true) # rubocop:disable PredicateName
         @mapping.associations << Associations::HasMany.new(
           association,
           through: through,
+          build: build,
         )
       end
 

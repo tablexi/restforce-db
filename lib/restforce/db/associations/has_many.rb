@@ -18,6 +18,8 @@ module Restforce
         #
         # Returns an Array of constructed association records.
         def build(database_record, salesforce_record, cache = AssociationCache.new(database_record))
+          return [] unless build?
+
           @cache = cache
 
           target = target_mapping(database_record)
