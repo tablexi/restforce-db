@@ -47,27 +47,27 @@ module Restforce
         @accumulated_changes ||= Hash.new { |h, k| h[k] = {} }
       end
 
-      # Internal: Append the passed record's attributes to its accumulated list
+      # Internal: Append the passed instance's attributes to its accumulated list
       # of changesets.
       #
-      # record - A Restforce::DB::Instances::Base.
+      # instance - A Restforce::DB::Instances::Base.
       #
       # Returns nothing.
-      def accumulate(record)
-        accumulated_changes[key_for(record)].store(
-          record.last_update,
-          @mapping.convert(@mapping.salesforce_model, record.attributes),
+      def accumulate(instance)
+        accumulated_changes[key_for(instance)].store(
+          instance.last_update,
+          instance.attributes,
         )
       end
 
       # Internal: Get a unique key with enough information to look up the passed
-      # record in Salesforce.
+      # instance in Salesforce.
       #
-      # record - A Restforce::DB::Instances::Base.
+      # instance - A Restforce::DB::Instances::Base.
       #
       # Returns an Object.
-      def key_for(record)
-        [record.id, record.mapping.salesforce_model]
+      def key_for(instance)
+        [instance.id, instance.mapping.salesforce_model]
       end
 
     end

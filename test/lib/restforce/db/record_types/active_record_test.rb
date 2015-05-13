@@ -11,8 +11,8 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
   describe "#create!" do
     let(:attributes) do
       {
-        name:    "Some name",
-        example: "Some text",
+        "Name"             => "Some name",
+        "Example_Field__c" => "Some text",
       }
     end
     let(:record) { nil }
@@ -32,8 +32,8 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
 
     it "creates a record in the database from the passed Salesforce record's attributes" do
       expect(instance.salesforce_id).to_equal salesforce_id
-      expect(instance.name).to_equal attributes[:name]
-      expect(instance.example).to_equal attributes[:example]
+      expect(instance.name).to_equal attributes["Name"]
+      expect(instance.example).to_equal attributes["Example_Field__c"]
       expect(instance.synchronized_at).to_not_be_nil
     end
 
@@ -64,7 +64,7 @@ describe Restforce::DB::RecordTypes::ActiveRecord do
             id,
             Time.now,
             Restforce::DB::Registry[User].first,
-            email: "somebody@example.com",
+            "Email" => "somebody@example.com",
           )
         end
       end

@@ -7,16 +7,16 @@ describe Restforce::DB::Adapter do
   let(:adapter) { Restforce::DB::Adapter.new }
   let(:attributes) { { where: "Here", when: Time.now } }
 
-  describe "#to_database" do
-    let(:results) { adapter.to_database(attributes) }
+  describe "#to" do
+    let(:results) { adapter.to(attributes) }
 
     it "returns the passed attributes, unchanged" do
       expect(results).to_equal attributes
     end
   end
 
-  describe "#to_salesforce" do
-    let(:results) { adapter.to_salesforce(attributes) }
+  describe "#from" do
+    let(:results) { adapter.from(attributes) }
 
     it "converts times to ISO-8601 timestamps" do
       expect(results[:when]).to_equal attributes[:when].utc.iso8601

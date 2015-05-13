@@ -50,7 +50,7 @@ module Restforce
       # Returns nothing.
       def update(instance, accumulator)
         diff = accumulator.diff(@mapping.convert(@mapping.salesforce_model, instance.attributes))
-        attributes = @mapping.convert_from_salesforce(instance.record_type, diff)
+        attributes = @mapping.convert(instance.record_type, diff)
 
         return if attributes.empty?
         instance.update!(attributes)

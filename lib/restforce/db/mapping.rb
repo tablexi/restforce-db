@@ -14,7 +14,6 @@ module Restforce
         :attribute_map,
         :attributes,
         :convert,
-        :convert_from_salesforce,
       )
 
       attr_reader(

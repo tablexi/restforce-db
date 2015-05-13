@@ -44,15 +44,15 @@ class Restaurant < ActiveRecord::Base
 
   module StyleAdapter
 
-    def self.to_salesforce(attributes)
+    def self.to(attributes)
       attributes.each_with_object do |(key, value), final|
-        final[k] = "#{value} in Salesforce"
+        final[k] = value.chomp(" in Salesforce")
       end
     end
 
-    def self.to_database(value)
+    def self.from(attributes)
       attributes.each_with_object do |(key, value), final|
-        final[k] = value.chomp(" in Salesforce")
+        final[k] = "#{value} in Salesforce"
       end
     end
 
@@ -137,9 +137,15 @@ Individual conditions supplied to `where` will be appended together with `AND` c
 
 `maps` defines a set of direct field-to-field mappings. It takes a Hash as an argument; the keys should line up with your ActiveRecord attribute names, while the values should line up with the matching field names in Salesforce.
 
+Your ActiveRecord class _must_ expose readers for each attribute in the mapping, and generally _should_ expose matching writers, though you can use an adapter object (see "Field Conversions" below) to obviate the need for the latter.
+
 #### Field Conversions
 
-`converts_with` defines a mapping conversion adapter. The only requirement for an adapter is that it respond to the methods `#to_database` and `#to_salesforce`. These methods will be handed a "normalized" mapping Hash as an argument, and should return a modified version of the Hash with values suited for the relevant system.
+`converts_with` defines a mapping conversion adapter. The only requirement for an adapter is that it respond to the methods `#to` and `#from`. 
+
+- `#to` will be handed a "normalized" Hash, with the standard Symbol mapped attributes as keys, and the values as they are stored in Salesforce. It should return a modified version of the Hash which can be passed to `assign_attributes` for a record.
+
+- `#from` will be handed a Hash with the standard Symbol mapped attributes as keys, and the values for those attributes as they are returned by the ActiveRecord object. It should return a modified version of the Hash with values suitable for storage in Salesforce.
 
 By default, `Restforce::DB::Adapter` will be used, which simply converts times into String ISO-8601 timestamps before passing them off to Salesforce.
 

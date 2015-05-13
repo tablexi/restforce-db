@@ -28,7 +28,7 @@ describe Restforce::DB::AttributeMap do
         attribute
       end
 
-      expect(attributes.keys).to_equal(mapping.database_fields)
+      expect(attributes.keys).to_equal(mapping.salesforce_fields)
       expect(attributes.values).to_equal(mapping.database_fields)
     end
 
@@ -38,70 +38,32 @@ describe Restforce::DB::AttributeMap do
         attribute
       end
 
-      expect(attributes.keys).to_equal(mapping.database_fields)
+      expect(attributes.keys).to_equal(mapping.salesforce_fields)
       expect(attributes.values).to_equal(mapping.salesforce_fields)
     end
   end
 
   describe "#convert" do
-    let(:attributes) { { column_one: "some value" } }
-
-    it "converts an attribute Hash to a Salesforce-compatible form" do
-      expect(attribute_map.convert(salesforce_model, attributes)).to_equal(
-        fields[attributes.keys.first] => attributes.values.first,
-      )
-    end
-
-    it "performs no special conversion for database columns" do
-      expect(attribute_map.convert(database_model, attributes)).to_equal(attributes)
-    end
-
-    describe "when one of the attributes is a Date or Time" do
-      let(:timestamp) { Time.now }
-      let(:attributes) { { column_one: timestamp } }
-
-      it "converts the attribute to an ISO-8601 string for Salesforce" do
-        expect(attribute_map.convert(salesforce_model, attributes)).to_equal(
-          fields[attributes.keys.first] => timestamp.utc.iso8601,
-        )
-      end
-    end
-
-    describe "when an adapter has been defined for an attribute" do
-      let(:adapter) { boolean_adapter }
-
-      it "uses the adapter to convert that attribute to a Salesforce-compatible form" do
-        expect(attribute_map.convert(salesforce_model, column_one: true)).to_equal(
-          "SF_Field_One__c" => "Yes",
-        )
-        expect(attribute_map.convert(salesforce_model, column_one: false)).to_equal(
-          "SF_Field_One__c" => "No",
-        )
-      end
-    end
-  end
-
-  describe "#convert_from_salesforce" do
     let(:attributes) { { "SF_Field_One__c" => "some value" } }
 
+    it "converts an attribute Hash to a Salesforce-compatible form" do
+      expect(attribute_map.convert(salesforce_model, attributes)).to_equal(attributes)
+    end
+
     it "converts an attribute Hash to a database-compatible form" do
-      expect(attribute_map.convert_from_salesforce(database_model, attributes)).to_equal(
+      expect(attribute_map.convert(database_model, attributes)).to_equal(
         fields.key(attributes.keys.first) => attributes.values.first,
       )
     end
 
-    it "performs no special conversion for Salesforce fields" do
-      expect(attribute_map.convert_from_salesforce(salesforce_model, attributes)).to_equal(attributes)
-    end
-
-    describe "when a special adapter has been defined" do
+    describe "when an adapter has been specified" do
       let(:adapter) { boolean_adapter }
 
       it "uses the adapter to convert attributes to a database-compatible form" do
-        expect(attribute_map.convert_from_salesforce(database_model, "SF_Field_One__c" => "Yes")).to_equal(
+        expect(attribute_map.convert(database_model, "SF_Field_One__c" => "Yes")).to_equal(
           column_one: true,
         )
-        expect(attribute_map.convert_from_salesforce(database_model, "SF_Field_One__c" => "No")).to_equal(
+        expect(attribute_map.convert(database_model, "SF_Field_One__c" => "No")).to_equal(
           column_one: false,
         )
       end
