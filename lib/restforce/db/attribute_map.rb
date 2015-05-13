@@ -6,38 +6,19 @@ module Restforce
     # various representations of attribute hashes.
     class AttributeMap
 
-      # DefaultAdapter defines the default data conversions between database and
-      # Salesforce formats. It translates Dates and Times to ISO-8601 format for
-      # storage in Salesforce.
-      module DefaultAdapter
-
-        # :nodoc:
-        def self.to_database(value)
-          value
-        end
-
-        # :nodoc:
-        def self.to_salesforce(value)
-          value = value.respond_to?(:utc) ? value.utc : value
-          value.respond_to?(:iso8601) ? value.iso8601 : value
-        end
-
-      end
-
       # Public: Initialize a Restforce::DB::AttributeMap.
       #
       # database_model   - A Class compatible with ActiveRecord::Base.
       # salesforce_model - A String name of an object type in Salesforce.
       # fields           - A Hash of mappings between database columns and
       #                    fields in Salesforce.
-      # conversions      - A Hash of mappings between database columns and the
-      #                    corresponding adapter objects which should be used to
-      #                    convert between data formats.
-      def initialize(database_model, salesforce_model, fields = {}, conversions = {})
+      # adapter          - An adapter object which should be used to convert
+      #                    between data formats.
+      def initialize(database_model, salesforce_model, fields = {}, adapter = Adapter.new)
         @database_model = database_model
         @salesforce_model = salesforce_model
         @fields = fields
-        @conversions = conversions
+        @adapter = adapter
 
         @types = {
           database_model   => :database,
@@ -58,7 +39,7 @@ module Restforce
         case @types[from_format]
         when :salesforce
           @fields.each_with_object({}) do |(attribute, mapping), values|
-            values[attribute] = adapter(attribute).to_database(yield(mapping))
+            values[attribute] = yield(mapping)
           end
         when :database
           @fields.keys.each_with_object({}) do |attribute, values|
@@ -95,12 +76,13 @@ module Restforce
       def convert(to_format, attributes)
         case @types[to_format]
         when :database
-          attributes.dup
+          @adapter.to_database(attributes)
         when :salesforce
+          attributes = @adapter.to_salesforce(attributes)
+
           @fields.each_with_object({}) do |(attribute, mapping), converted|
             next unless attributes.key?(attribute)
-            value = adapter(attribute).to_salesforce(attributes[attribute])
-            converted[mapping] = value
+            converted[mapping] = attributes[attribute]
           end
         else
           raise ArgumentError
@@ -139,25 +121,17 @@ module Restforce
       def convert_from_salesforce(to_format, attributes)
         case @types[to_format]
         when :database
-          @fields.each_with_object({}) do |(attribute, mapping), converted|
+          final = @fields.each_with_object({}) do |(attribute, mapping), converted|
             next unless attributes.key?(mapping)
-            value = adapter(attribute).to_database(attributes[mapping])
-            converted[attribute] = value
+            converted[attribute] = attributes[mapping]
           end
+
+          @adapter.to_database(final)
         when :salesforce
           attributes.dup
         else
           raise ArgumentError
         end
-      end
-
-      # Internal: Get the data format adapter for the passed attribute. Defaults
-      # to DefaultAdapter if no adapter has been explicitly assigned for the
-      # attribute.
-      #
-      # Returns an Object.
-      def adapter(attribute)
-        @conversions[attribute] || DefaultAdapter
       end
 
     end

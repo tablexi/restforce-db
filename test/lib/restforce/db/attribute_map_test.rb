@@ -12,8 +12,8 @@ describe Restforce::DB::AttributeMap do
       column_two: "SF_Field_Two__c",
     }
   end
-  let(:conversions) { {} }
-  let(:attribute_map) { Restforce::DB::AttributeMap.new(database_model, salesforce_model, fields, conversions) }
+  let(:adapter) { Restforce::DB::Adapter.new }
+  let(:attribute_map) { Restforce::DB::AttributeMap.new(database_model, salesforce_model, fields, adapter) }
 
   describe "#attributes" do
     let(:mapping) do
@@ -41,18 +41,6 @@ describe Restforce::DB::AttributeMap do
       expect(attributes.keys).to_equal(mapping.database_fields)
       expect(attributes.values).to_equal(mapping.salesforce_fields)
     end
-
-    describe "when an adapter has been defined for an attribute" do
-      let(:conversions) { { column_one: boolean_adapter } }
-
-      it "uses the adapter to convert the value returned by the block" do
-        attributes = attribute_map.attributes(salesforce_model) { |_| "Yes" }
-        expect(attributes).to_equal(
-          column_one: true,
-          column_two: "Yes",
-        )
-      end
-    end
   end
 
   describe "#convert" do
@@ -74,13 +62,13 @@ describe Restforce::DB::AttributeMap do
 
       it "converts the attribute to an ISO-8601 string for Salesforce" do
         expect(attribute_map.convert(salesforce_model, attributes)).to_equal(
-          fields[attributes.keys.first] => timestamp.iso8601,
+          fields[attributes.keys.first] => timestamp.utc.iso8601,
         )
       end
     end
 
     describe "when an adapter has been defined for an attribute" do
-      let(:conversions) { { column_one: boolean_adapter } }
+      let(:adapter) { boolean_adapter }
 
       it "uses the adapter to convert that attribute to a Salesforce-compatible form" do
         expect(attribute_map.convert(salesforce_model, column_one: true)).to_equal(
@@ -106,10 +94,10 @@ describe Restforce::DB::AttributeMap do
       expect(attribute_map.convert_from_salesforce(salesforce_model, attributes)).to_equal(attributes)
     end
 
-    describe "when an adapter has been defined for an attribute" do
-      let(:conversions) { { column_one: boolean_adapter } }
+    describe "when a special adapter has been defined" do
+      let(:adapter) { boolean_adapter }
 
-      it "uses the adapter to convert that attribute to a database-compatible form" do
+      it "uses the adapter to convert attributes to a database-compatible form" do
         expect(attribute_map.convert_from_salesforce(database_model, "SF_Field_One__c" => "Yes")).to_equal(
           column_one: true,
         )

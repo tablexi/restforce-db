@@ -44,12 +44,16 @@ class Restaurant < ActiveRecord::Base
 
   module StyleAdapter
 
-    def self.to_salesforce(value)
-      "#{value} in Salesforce"
+    def self.to_salesforce(attributes)
+      attributes.each_with_object do |(key, value), final|
+        final[k] = "#{value} in Salesforce"
+      end
     end
 
     def self.to_database(value)
-      value.chomp(" in Salesforce")
+      attributes.each_with_object do |(key, value), final|
+        final[k] = value.chomp(" in Salesforce")
+      end
     end
 
   end
@@ -59,13 +63,11 @@ class Restaurant < ActiveRecord::Base
     has_many :dishes, through: "Restaurant__c"
     belongs_to :chef, through: %w(Chef__c Cuisine__c)
 
+    converts_with StyleAdapter
+
     maps(
       name:  "Name",
       style: "Style__c",
-    )
-
-    converts(
-      style: StyleAdapter,
     )
   end
 
@@ -137,7 +139,9 @@ Individual conditions supplied to `where` will be appended together with `AND` c
 
 #### Field Conversions
 
-`converts` defines a set of value adapters. It takes a Hash as an argument; the keys should line up with the ActiveRecord attribute names defined in your `maps` clause, while the values should be the corresponding adapter objects. The only requirement for an adapter is that it respond to the methods `#to_database` and `#to_salesforce`.
+`converts_with` defines a mapping conversion adapter. The only requirement for an adapter is that it respond to the methods `#to_database` and `#to_salesforce`. These methods will be handed a "normalized" mapping Hash as an argument, and should return a modified version of the Hash with values suited for the relevant system.
+
+By default, `Restforce::DB::Adapter` will be used, which simply converts times into String ISO-8601 timestamps before passing them off to Salesforce.
 
 #### Associations
 

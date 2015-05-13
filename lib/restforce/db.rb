@@ -32,6 +32,7 @@ require "restforce/db/runner_cache"
 require "restforce/db/runner"
 
 require "restforce/db/accumulator"
+require "restforce/db/adapter"
 require "restforce/db/associator"
 require "restforce/db/attribute_map"
 require "restforce/db/cleaner"
