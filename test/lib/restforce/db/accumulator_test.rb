@@ -65,6 +65,22 @@ describe Restforce::DB::Accumulator do
     end
   end
 
+  describe "#current" do
+    let(:attributes) { { wocket: "Pocket", jertain: "Curtain", zelf: "Shelf" } }
+
+    before do
+      accumulator.store(Time.now, attributes)
+    end
+
+    it "returns the current values for all attributes in the passed hash" do
+      expect(accumulator.current(wocket: "Locket")).to_equal(wocket: "Pocket")
+      expect(accumulator.current(jertain: "Curtain", zelf: "Belfrey")).to_equal(
+        jertain: "Curtain",
+        zelf: "Shelf",
+      )
+    end
+  end
+
   describe "#diff" do
     let(:attributes) { { wocket: "Pocket", jertain: "Curtain", zelf: "Shelf" } }
 
