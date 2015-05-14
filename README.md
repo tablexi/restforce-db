@@ -45,14 +45,14 @@ class Restaurant < ActiveRecord::Base
   module StyleAdapter
 
     def self.to_database(attributes)
-      attributes.each_with_object do |(key, value), final|
-        final[k] = value.chomp(" in Salesforce")
+      attributes.each_with_object({}) do |(key, value), final|
+        final[key] = value.chomp(" in Salesforce")
       end
     end
 
     def self.from_database(attributes)
-      attributes.each_with_object do |(key, value), final|
-        final[k] = "#{value} in Salesforce"
+      attributes.each_with_object({}) do |(key, value), final|
+        final[key] = "#{value} in Salesforce"
       end
     end
 
