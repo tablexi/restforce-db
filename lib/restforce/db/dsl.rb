@@ -97,17 +97,17 @@ module Restforce
       # Public: Define a set of adapters which should be used to translate data
       # between the database and Salesforce.
       #
-      # fields - A Hash, with keys corresponding to attributes of the database
-      #          record, and adapter objects as values.
+      # adapter - An adapter object, which converts an attribute Hash between
+      #           normalized and database-ready formats.
       #
-      # Raises ArgumentError if any adapter object has an incomplete interface.
+      # Raises ArgumentError if the adapter object has an incomplete interface.
       # Returns nothing.
-      def converts(conversions)
-        unless conversions.values.all? { |c| c.respond_to?(:to_database) && c.respond_to?(:to_salesforce) }
-          raise ArgumentError, "All adapters must implement `to_database` and `to_salesforce` methods"
+      def converts_with(adapter)
+        unless adapter.respond_to?(:to_database) && adapter.respond_to?(:from_database)
+          raise ArgumentError, "Your adapter must implement `to_database` and `from_database` methods"
         end
 
-        @mapping.conversions = conversions
+        @mapping.adapter = adapter
       end
 
     end

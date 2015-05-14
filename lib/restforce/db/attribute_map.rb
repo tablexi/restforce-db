@@ -4,25 +4,11 @@ module Restforce
 
     # Restforce::DB::AttributeMap encapsulates the logic for converting between
     # various representations of attribute hashes.
+    #
+    # For the purposes of our mappings, a "normalized" attribute Hash maps the
+    # Salesforce field names to Salesforce-compatible values. Value conversion
+    # into and out of the database occurs through a lightweight Adapter object.
     class AttributeMap
-
-      # DefaultAdapter defines the default data conversions between database and
-      # Salesforce formats. It translates Dates and Times to ISO-8601 format for
-      # storage in Salesforce.
-      module DefaultAdapter
-
-        # :nodoc:
-        def self.to_database(value)
-          value
-        end
-
-        # :nodoc:
-        def self.to_salesforce(value)
-          value = value.respond_to?(:utc) ? value.utc : value
-          value.respond_to?(:iso8601) ? value.iso8601 : value
-        end
-
-      end
 
       # Public: Initialize a Restforce::DB::AttributeMap.
       #
@@ -30,14 +16,13 @@ module Restforce
       # salesforce_model - A String name of an object type in Salesforce.
       # fields           - A Hash of mappings between database columns and
       #                    fields in Salesforce.
-      # conversions      - A Hash of mappings between database columns and the
-      #                    corresponding adapter objects which should be used to
-      #                    convert between data formats.
-      def initialize(database_model, salesforce_model, fields = {}, conversions = {})
+      # adapter          - An adapter object which should be used to convert
+      #                    between data formats.
+      def initialize(database_model, salesforce_model, fields = {}, adapter = Adapter.new)
         @database_model = database_model
         @salesforce_model = salesforce_model
         @fields = fields
-        @conversions = conversions
+        @adapter = adapter
 
         @types = {
           database_model   => :database,
@@ -47,7 +32,7 @@ module Restforce
 
       # Public: Build a normalized Hash of attributes from the appropriate set
       # of mappings. The keys of the resulting mapping Hash will correspond to
-      # the database column names.
+      # the Salesforce field names.
       #
       # from_format - A String or Class reflecting the record type from which
       #               the attribute Hash is being compiled.
@@ -57,12 +42,17 @@ module Restforce
       def attributes(from_format)
         case @types[from_format]
         when :salesforce
-          @fields.each_with_object({}) do |(attribute, mapping), values|
-            values[attribute] = adapter(attribute).to_database(yield(mapping))
+          @fields.values.each_with_object({}) do |mapping, values|
+            values[mapping] = yield(mapping)
           end
         when :database
-          @fields.keys.each_with_object({}) do |attribute, values|
+          attributes = @fields.keys.each_with_object({}) do |attribute, values|
             values[attribute] = yield(attribute)
+          end
+          attributes = @adapter.from_database(attributes)
+
+          @fields.each_with_object({}) do |(attribute, mapping), final|
+            final[mapping] = attributes[attribute]
           end
         else
           raise ArgumentError
@@ -85,79 +75,27 @@ module Restforce
       #     some_key: "SomeField__c",
       #   )
       #
-      #   mapping.convert("Object__c", some_key: "some value")
-      #   # => { "Some_Field__c" => "some value" }
+      #   mapping.convert(MyClass, "Some_Field__c" => "some value")
+      #   # => { some_key: "some value" }
       #
-      #   mapping.convert(MyClass, some_key: "some other value")
-      #   # => { some_key: "some other value" }
+      #   mapping.convert("Object__c", "Some_Field__c" => "some other value")
+      #   # => { "Some_Field__c" => "some other value" }
       #
       # Returns a Hash.
       def convert(to_format, attributes)
         case @types[to_format]
         when :database
-          attributes.dup
-        when :salesforce
-          @fields.each_with_object({}) do |(attribute, mapping), converted|
-            next unless attributes.key?(attribute)
-            value = adapter(attribute).to_salesforce(attributes[attribute])
-            converted[mapping] = value
-          end
-        else
-          raise ArgumentError
-        end
-      end
-
-      # Public: Convert a Hash of Salesforce attributes to a format compatible
-      # with a specific platform.
-      #
-      # to_format  - A String or Class reflecting the record type for which the
-      #              attribute Hash is being compiled.
-      # attributes - A Hash of attributes, with keys corresponding to the
-      #              Salesforce attribute names.
-      #
-      # Examples
-      #
-      #   map = AttributeMap.new(
-      #     MyClass,
-      #     "Object__c",
-      #     some_key: "SomeField__c",
-      #   )
-      #
-      #   map.convert_from_salesforce(
-      #     "Object__c",
-      #     "Some_Field__c" => "some value",
-      #   )
-      #   # => { "Some_Field__c" => "some value" }
-      #
-      #   map.convert_from_salesforce(
-      #     MyClass,
-      #     "Some_Field__c" => "some other value",
-      #   )
-      #   # => { some_key: "some other value" }
-      #
-      # Returns a Hash.
-      def convert_from_salesforce(to_format, attributes)
-        case @types[to_format]
-        when :database
-          @fields.each_with_object({}) do |(attribute, mapping), converted|
+          attributes = @fields.each_with_object({}) do |(attribute, mapping), converted|
             next unless attributes.key?(mapping)
-            value = adapter(attribute).to_database(attributes[mapping])
-            converted[attribute] = value
+            converted[attribute] = attributes[mapping]
           end
+
+          @adapter.to_database(attributes)
         when :salesforce
           attributes.dup
         else
           raise ArgumentError
         end
-      end
-
-      # Internal: Get the data format adapter for the passed attribute. Defaults
-      # to DefaultAdapter if no adapter has been explicitly assigned for the
-      # attribute.
-      #
-      # Returns an Object.
-      def adapter(attribute)
-        @conversions[attribute] || DefaultAdapter
       end
 
     end

@@ -31,12 +31,16 @@ end
 def boolean_adapter
   Object.new.tap do |object|
 
-    def object.to_database(value)
-      value == "Yes"
+    def object.to_database(attributes)
+      attributes.each_with_object({}) do |(k, v), final|
+        final[k] = (v == "Yes")
+      end
     end
 
-    def object.to_salesforce(value)
-      value ? "Yes" : "No"
+    def object.from_database(attributes)
+      attributes.each_with_object({}) do |(k, v), final|
+        final[k] = v ? "Yes" : "No"
+      end
     end
 
   end

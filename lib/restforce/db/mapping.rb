@@ -14,7 +14,6 @@ module Restforce
         :attribute_map,
         :attributes,
         :convert,
-        :convert_from_salesforce,
       )
 
       attr_reader(
@@ -25,8 +24,8 @@ module Restforce
       )
 
       attr_accessor(
+        :adapter,
         :fields,
-        :conversions,
         :associations,
         :conditions,
         :strategy,
@@ -44,8 +43,8 @@ module Restforce
         @database_record_type = RecordTypes::ActiveRecord.new(database_model, self)
         @salesforce_record_type = RecordTypes::Salesforce.new(salesforce_model, self)
 
+        self.adapter = Adapter.new
         self.fields = {}
-        self.conversions = {}
         self.associations = []
         self.conditions = []
         self.strategy = strategy
@@ -109,7 +108,7 @@ module Restforce
       #
       # Returns a Restforce::DB::AttributeMap.
       def attribute_map
-        @attribute_map ||= AttributeMap.new(database_model, salesforce_model, fields, conversions)
+        @attribute_map ||= AttributeMap.new(database_model, salesforce_model, fields, adapter)
       end
 
     end

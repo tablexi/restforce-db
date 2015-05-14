@@ -10,20 +10,15 @@ describe Restforce::DB::Synchronizer do
   describe "#run", vcr: { match_requests_on: [:method, VCR.request_matchers.uri_without_param(:q)] } do
     let(:attributes) do
       {
-        name:    "Custom object",
-        example: "Some sample text",
+        "Name"             => "Custom object",
+        "Example_Field__c" => "Some sample text",
       }
     end
-    let(:salesforce_id) do
-      Salesforce.create!(
-        salesforce_model,
-        mapping.convert(salesforce_model, attributes),
-      )
-    end
+    let(:salesforce_id) { Salesforce.create!(salesforce_model, attributes) }
     let(:changes) { { [salesforce_id, salesforce_model] => accumulator } }
     let(:new_attributes) do
       {
-        "Name" => "Some new name",
+        "Name"             => "Some new name",
         "Example_Field__c" => "New sample text",
       }
     end
