@@ -1,0 +1,20 @@
+checkout:
+  post:
+    - mkdir -p test/config
+    - cp lib/generators/templates/config.yml test/config/secrets.yml
+machine:
+  ruby:
+    version: 2.2.2
+dependencies:
+  pre:
+    # Get the most recent bundler
+    - gem install bundler
+database:
+  override:
+    # Do nothing; we don't need any database setup.
+    - echo "SKIPPING"
+test:
+  override:
+    - bundle exec rubocop
+    - bundle exec rake test
+
