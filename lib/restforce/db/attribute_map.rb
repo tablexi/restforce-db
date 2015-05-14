@@ -49,7 +49,7 @@ module Restforce
           attributes = @fields.keys.each_with_object({}) do |attribute, values|
             values[attribute] = yield(attribute)
           end
-          attributes = @adapter.from(attributes)
+          attributes = @adapter.from_database(attributes)
 
           @fields.each_with_object({}) do |(attribute, mapping), final|
             final[mapping] = attributes[attribute]
@@ -90,7 +90,7 @@ module Restforce
             converted[attribute] = attributes[mapping]
           end
 
-          @adapter.to(attributes)
+          @adapter.to_database(attributes)
         when :salesforce
           attributes.dup
         else

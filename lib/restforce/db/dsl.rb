@@ -103,8 +103,8 @@ module Restforce
       # Raises ArgumentError if the adapter object has an incomplete interface.
       # Returns nothing.
       def converts_with(adapter)
-        unless adapter.respond_to?(:to) && adapter.respond_to?(:from)
-          raise ArgumentError, "Your adapter must implement `to` and `from` methods"
+        unless adapter.respond_to?(:to_database) && adapter.respond_to?(:from_database)
+          raise ArgumentError, "Your adapter must implement `to_database` and `from_database` methods"
         end
 
         @mapping.adapter = adapter

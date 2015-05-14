@@ -13,7 +13,7 @@ module Restforce
       # attributes - A Hash of attributes, with keys corresponding to a Mapping.
       #
       # Returns a Hash.
-      def to(attributes)
+      def to_database(attributes)
         attributes.dup
       end
 
@@ -23,7 +23,7 @@ module Restforce
       # attributes - A Hash of attributes, with keys corresponding to a Mapping.
       #
       # Returns a Hash.
-      def from(attributes)
+      def from_database(attributes)
         attributes.each_with_object({}) do |(key, value), final|
           value = value.utc if value.respond_to?(:utc)
           value = value.iso8601 if value.respond_to?(:iso8601)
