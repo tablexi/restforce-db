@@ -17,8 +17,8 @@ module Restforce
         # Returns a Restforce::DB::Instances::Salesforce instance.
         # Raises on any error from Salesforce.
         def create!(from_record)
-          attributes = @mapping.convert(@record_type, from_record.attributes)
-          record_id = DB.client.create!(@record_type, attributes)
+          from_attributes = FieldProcessor.new.process(@record_type, from_record.attributes)
+          record_id = DB.client.create!(@record_type, from_attributes)
 
           from_record.update!(@mapping.lookup_column => record_id).after_sync
 

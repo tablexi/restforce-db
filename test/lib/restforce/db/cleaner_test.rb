@@ -10,24 +10,30 @@ describe Restforce::DB::Cleaner do
   describe "#run", vcr: { match_requests_on: [:method, VCR.request_matchers.uri_without_param(:q)] } do
     let(:attributes) do
       {
-        name: "Are you going to Scarborough Fair?",
-        example: "Parsley, Sage, Rosemary, and Thyme.",
+        "Name"             => "Are you going to Scarborough Fair?",
+        "Example_Field__c" => "Parsley, Sage, Rosemary, and Thyme.",
       }
     end
-    let(:salesforce_id) do
-      Salesforce.create!(
-        salesforce_model,
-        mapping.convert(salesforce_model, attributes),
-      )
-    end
+    let(:salesforce_id) { Salesforce.create!(salesforce_model, attributes) }
 
     describe "given a synchronized Salesforce record" do
       before do
         database_model.create!(salesforce_id: salesforce_id)
       end
 
+      describe "when the mapping has no conditions" do
+        before do
+          cleaner.run
+        end
+
+        it "does not drop the synchronized database record" do
+          expect(database_model.last).to_not_be_nil
+        end
+      end
+
       describe "when the record meets the mapping conditions" do
         before do
+          mapping.conditions = ["Name = '#{attributes['Name']}'"]
           cleaner.run
         end
 
@@ -38,7 +44,7 @@ describe Restforce::DB::Cleaner do
 
       describe "when the record does not meet the mapping conditions" do
         before do
-          mapping.conditions = ["Name != '#{attributes[:name]}'"]
+          mapping.conditions = ["Name != '#{attributes['Name']}'"]
         end
 
         describe "for a non-Passive strategy" do

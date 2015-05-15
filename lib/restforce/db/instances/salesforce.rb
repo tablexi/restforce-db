@@ -21,6 +21,19 @@ module Restforce
           @record.Id
         end
 
+        # Public: Update the instance with the passed attributes.
+        #
+        # attributes - A Hash mapping attribute names to values.
+        #
+        # Returns self.
+        # Raises if the update fails for any reason.
+        def update!(attributes)
+          processor = DB::FieldProcessor.new
+          attributes = processor.process(@record_type, attributes)
+
+          super attributes
+        end
+
         # Public: Get the time of the last update to this record.
         #
         # Returns a Time-compatible object.

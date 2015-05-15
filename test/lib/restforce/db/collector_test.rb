@@ -10,16 +10,11 @@ describe Restforce::DB::Collector do
   describe "#run", vcr: { match_requests_on: [:method, VCR.request_matchers.uri_without_param(:q)] } do
     let(:attributes) do
       {
-        name:    "Custom object",
-        example: "Some sample text",
+        "Name"             => "Custom object",
+        "Example_Field__c" => "Some sample text",
       }
     end
-    let(:salesforce_id) do
-      Salesforce.create!(
-        salesforce_model,
-        mapping.convert(salesforce_model, attributes),
-      )
-    end
+    let(:salesforce_id) { Salesforce.create!(salesforce_model, attributes) }
     let(:key) { [salesforce_id, salesforce_model] }
 
     subject { collector.run }
@@ -32,8 +27,8 @@ describe Restforce::DB::Collector do
 
         expect(subject[key]).to_equal(
           record.last_update => {
-            "Name" => attributes[:name],
-            "Example_Field__c" => attributes[:example],
+            "Name" => attributes["Name"],
+            "Example_Field__c" => attributes["Example_Field__c"],
           },
         )
       end
@@ -42,7 +37,10 @@ describe Restforce::DB::Collector do
     describe "given an existing database record" do
       let(:salesforce_id) { "a001a000001E1vREAL" }
       let(:database_metadata) { { salesforce_id: salesforce_id, synchronized_at: Time.now } }
-      let(:database_record) { database_model.create!(attributes.merge(database_metadata)) }
+      let(:database_record) do
+        database_attributes = mapping.convert(database_model, attributes)
+        database_model.create!(database_attributes.merge(database_metadata))
+      end
 
       before { database_record }
 
@@ -51,8 +49,8 @@ describe Restforce::DB::Collector do
 
         expect(subject[key]).to_equal(
           record.last_update => {
-            "Name" => attributes[:name],
-            "Example_Field__c" => attributes[:example],
+            "Name" => attributes["Name"],
+            "Example_Field__c" => attributes["Example_Field__c"],
           },
         )
       end
@@ -76,8 +74,8 @@ describe Restforce::DB::Collector do
 
         expect(subject[key]).to_equal(
           sf_record.last_update => {
-            "Name" => attributes[:name],
-            "Example_Field__c" => attributes[:example],
+            "Name" => attributes["Name"],
+            "Example_Field__c" => attributes["Example_Field__c"],
           },
           db_record.last_update => {
             "Name" => database_attributes[:name],
