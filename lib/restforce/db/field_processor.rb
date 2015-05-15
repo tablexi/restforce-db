@@ -9,7 +9,7 @@ module Restforce
       # Internal: Get a global cache with which to store/fetch the writable
       # fields for each Salesforce SObject Type.
       #
-      # Rturns a Hash.
+      # Returns a Hash.
       def self.field_cache
         @field_cache ||= {}
       end
@@ -21,7 +21,7 @@ module Restforce
         @field_cache = {}
       end
 
-      # Pubic: Get a restricted version of the passed attributes Hash, with
+      # Public: Get a restricted version of the passed attributes Hash, with
       # unwritable fields stripped out.
       #
       # sobject_type - A String name of an SObject Type in Salesforce.
