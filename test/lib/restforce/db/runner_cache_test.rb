@@ -28,6 +28,7 @@ describe Restforce::DB::RunnerCache do
           def collection.all(*_)
             values
           end
+
         end
       end
 

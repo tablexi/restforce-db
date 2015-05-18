@@ -25,6 +25,7 @@ describe Restforce::DB::FieldProcessor do
             { "name" => "Id", "updateable" => false },
           ])
         end
+
       end
     end
 

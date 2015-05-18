@@ -28,10 +28,7 @@ module Restforce
         # Returns self.
         # Raises if the update fails for any reason.
         def update!(attributes)
-          processor = DB::FieldProcessor.new
-          attributes = processor.process(@record_type, attributes)
-
-          super attributes
+          super FieldProcessor.new.process(@record_type, attributes)
         end
 
         # Public: Get the time of the last update to this record.
