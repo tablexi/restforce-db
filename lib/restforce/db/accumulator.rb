@@ -44,19 +44,16 @@ module Restforce
         end
       end
 
-      # Public: Get a Hash representing the changes that would need to be
-      # applied to make a passed Hash a subset of this Accumulator's derived
-      # attributes Hash.
+      # Public: Do the canonical attributes stored in this Accumulator differ
+      # from those in the passed comparison Hash?
       #
       # comparison - A Hash mapping of attributes to values.
       #
-      # Returns a Hash.
-      def diff(comparison)
-        attributes.each_with_object({}) do |(attribute, value), diff|
+      # Returns a Boolean.
+      def changed?(comparison)
+        attributes.any? do |attribute, value|
           next unless comparison.key?(attribute)
-          next if comparison[attribute] == value
-
-          diff[attribute] = value
+          comparison[attribute] != value
         end
       end
 

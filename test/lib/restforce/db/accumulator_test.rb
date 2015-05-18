@@ -81,22 +81,19 @@ describe Restforce::DB::Accumulator do
     end
   end
 
-  describe "#diff" do
+  describe "#changed?" do
     let(:attributes) { { wocket: "Pocket", jertain: "Curtain", zelf: "Shelf" } }
 
     before do
       accumulator.store(Time.now, attributes)
     end
 
-    it "returns the differences from the attributes hash" do
-      expect(accumulator.diff(wocket: "Locket", zelf: "Belfrey")).to_equal(
-        wocket: "Pocket",
-        zelf: "Shelf",
-      )
+    it "returns true if there are changes in the passed attributes hash" do
+      expect(accumulator).to_be :changed?, wocket: "Locket", zelf: "Shelf"
     end
 
-    it "ignores attributes not set in the Accumulator" do
-      expect(accumulator.diff(yottle: "Bottle")).to_be :empty?
+    it "ignores attributes not set in both the Accumulator and the passed Hash" do
+      expect(accumulator).to_not_be :changed?, yottle: "Bottle"
     end
   end
 end
