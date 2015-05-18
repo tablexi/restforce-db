@@ -38,11 +38,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1431652895803","token_type":"Bearer","instance_url":"https://<host>","signature":"yr5PJJM+uMppHWQ3IDul6FOK9ofJZTvM750pL/4ajSc=","access_token":"00D1a000000H3O9!AQ4AQOOuLg_qT_KH0d7e0MZl9eLqLOVkelXCvogl6uoC11zAr2MxSfN.Kp.FGeGl6RwwgcLORuGYbL2Rk2tznb5e22BOVEcb"}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:35 GMT
 - request:
     method: post
-    uri: https://<host>/services/data/v26.0/sobjects/Contact
+    uri: https://<host>/services/data/<api_version>/sobjects/Contact
     body:
       encoding: UTF-8
       string: '{"Email":"somebody@example.com","LastName":"Somebody"}'
@@ -72,7 +72,7 @@ http_interactions:
       Sforce-Limit-Info:
       - api-usage=718/15000
       Location:
-      - "/services/data/v26.0/sobjects/Contact/0031a000003QISkAAO"
+      - "/services/data/<api_version>/sobjects/Contact/0031a000003QISkAAO"
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
@@ -80,11 +80,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"0031a000003QISkAAO","success":true,"errors":[]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:36 GMT
 - request:
     method: post
-    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c
     body:
       encoding: UTF-8
       string: '{"Friend__c":"0031a000003QISkAAO"}'
@@ -114,7 +114,7 @@ http_interactions:
       Sforce-Limit-Info:
       - api-usage=719/15000
       Location:
-      - "/services/data/v26.0/sobjects/CustomObject__c/a001a000001ZoEUAA0"
+      - "/services/data/<api_version>/sobjects/CustomObject__c/a001a000001ZoEUAA0"
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
@@ -122,11 +122,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"a001a000001ZoEUAA0","success":true,"errors":[]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:37 GMT
 - request:
     method: post
-    uri: https://<host>/services/data/v26.0/sobjects/Contact
+    uri: https://<host>/services/data/<api_version>/sobjects/Contact
     body:
       encoding: UTF-8
       string: '{"Email":"somebody+else@example.com","LastName":"Somebody"}'
@@ -156,7 +156,7 @@ http_interactions:
       Sforce-Limit-Info:
       - api-usage=722/15000
       Location:
-      - "/services/data/v26.0/sobjects/Contact/0031a000003QISpAAO"
+      - "/services/data/<api_version>/sobjects/Contact/0031a000003QISpAAO"
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
@@ -164,11 +164,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"0031a000003QISpAAO","success":true,"errors":[]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:38 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c,%20Friend__c%20from%20CustomObject__c%20where%20Id%20=%20%27a001a000001ZoEUAA0%27
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c,%20Friend__c%20from%20CustomObject__c%20where%20Id%20=%20%27a001a000001ZoEUAA0%27
     body:
       encoding: US-ASCII
       string: ''
@@ -201,12 +201,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/v26.0/sobjects/CustomObject__c/a001a000001ZoEUAA0"},"Id":"a001a000001ZoEUAA0","SystemModstamp":"2015-05-15T01:21:37.000+0000","Name":"a001a000001ZoEU","Example_Field__c":null,"Friend__c":"0031a000003QISkAAO"}]}'
-    http_version: 
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001ZoEUAA0"},"Id":"a001a000001ZoEUAA0","SystemModstamp":"2015-05-15T01:21:37.000+0000","Name":"a001a000001ZoEU","Example_Field__c":null,"Friend__c":"0031a000003QISkAAO"}]}'
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:40 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c/describe
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/describe
     body:
       encoding: US-ASCII
       string: ''
@@ -254,12 +254,12 @@ http_interactions:
         Modified Date","length":0,"name":"LastModifiedDate","nameField":false,"namePointing":false,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:dateTime","sortable":true,"type":"datetime","unique":false,"updateable":false,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":18,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":false,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Last
         Modified By ID","length":18,"name":"LastModifiedById","nameField":false,"namePointing":false,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":["User"],"relationshipName":"LastModifiedBy","relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"tns:ID","sortable":true,"type":"reference","unique":false,"updateable":false,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":0,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":false,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":false,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"System
         Modstamp","length":0,"name":"SystemModstamp","nameField":false,"namePointing":false,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:dateTime","sortable":true,"type":"datetime","unique":false,"updateable":false,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":765,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":true,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":false,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Example
-        Field","length":255,"name":"Example_Field__c","nameField":false,"namePointing":false,"nillable":true,"permissionable":true,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:string","sortable":true,"type":"string","unique":false,"updateable":true,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":18,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":true,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":false,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Friend","length":18,"name":"Friend__c","nameField":false,"namePointing":false,"nillable":true,"permissionable":true,"picklistValues":[],"precision":0,"referenceTo":["Contact"],"relationshipName":"Friend__r","relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"tns:ID","sortable":true,"type":"reference","unique":false,"updateable":true,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":0,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":true,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Visible","length":0,"name":"Visible__c","nameField":false,"namePointing":false,"nillable":false,"permissionable":true,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:boolean","sortable":true,"type":"boolean","unique":false,"updateable":true,"writeRequiresMasterRead":false}],"keyPrefix":"a00","label":"CustomObject","labelPlural":"CustomObjects","layoutable":true,"listviewable":null,"lookupLayoutable":null,"mergeable":false,"name":"CustomObject__c","queryable":true,"recordTypeInfos":[{"available":true,"defaultRecordTypeMapping":true,"name":"Master","recordTypeId":"012000000000000AAA"}],"replicateable":true,"retrieveable":true,"searchLayoutable":null,"searchable":true,"triggerable":true,"undeletable":true,"updateable":true,"urls":{"uiEditTemplate":"https://<host>/{ID}/e","sobject":"/services/data/v26.0/sobjects/CustomObject__c","uiDetailTemplate":"https://<host>/{ID}","describe":"/services/data/v26.0/sobjects/CustomObject__c/describe","rowTemplate":"/services/data/v26.0/sobjects/CustomObject__c/{ID}","uiNewRecord":"https://<host>/a00/e"}}'
-    http_version: 
+        Field","length":255,"name":"Example_Field__c","nameField":false,"namePointing":false,"nillable":true,"permissionable":true,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:string","sortable":true,"type":"string","unique":false,"updateable":true,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":18,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":true,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":false,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Friend","length":18,"name":"Friend__c","nameField":false,"namePointing":false,"nillable":true,"permissionable":true,"picklistValues":[],"precision":0,"referenceTo":["Contact"],"relationshipName":"Friend__r","relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"tns:ID","sortable":true,"type":"reference","unique":false,"updateable":true,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":0,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":true,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Visible","length":0,"name":"Visible__c","nameField":false,"namePointing":false,"nillable":false,"permissionable":true,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:boolean","sortable":true,"type":"boolean","unique":false,"updateable":true,"writeRequiresMasterRead":false}],"keyPrefix":"a00","label":"CustomObject","labelPlural":"CustomObjects","layoutable":true,"listviewable":null,"lookupLayoutable":null,"mergeable":false,"name":"CustomObject__c","queryable":true,"recordTypeInfos":[{"available":true,"defaultRecordTypeMapping":true,"name":"Master","recordTypeId":"012000000000000AAA"}],"replicateable":true,"retrieveable":true,"searchLayoutable":null,"searchable":true,"triggerable":true,"undeletable":true,"updateable":true,"urls":{"uiEditTemplate":"https://<host>/{ID}/e","sobject":"/services/data/<api_version>/sobjects/CustomObject__c","uiDetailTemplate":"https://<host>/{ID}","describe":"/services/data/<api_version>/sobjects/CustomObject__c/describe","rowTemplate":"/services/data/<api_version>/sobjects/CustomObject__c/{ID}","uiNewRecord":"https://<host>/a00/e"}}'
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:41 GMT
 - request:
     method: patch
-    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c/a001a000001ZoEUAA0
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/a001a000001ZoEUAA0
     body:
       encoding: UTF-8
       string: '{"Friend__c":"0031a000003QISpAAO"}'
@@ -291,11 +291,11 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:42 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c,%20Friend__c%20from%20CustomObject__c
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c,%20Friend__c%20from%20CustomObject__c
     body:
       encoding: US-ASCII
       string: ''
@@ -328,12 +328,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/v26.0/sobjects/CustomObject__c/a001a000001ZoEUAA0"},"Id":"a001a000001ZoEUAA0","SystemModstamp":"2015-05-15T01:21:41.000+0000","Name":"a001a000001ZoEU","Example_Field__c":null,"Friend__c":"0031a000003QISpAAO"}]}'
-    http_version: 
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001ZoEUAA0"},"Id":"a001a000001ZoEUAA0","SystemModstamp":"2015-05-15T01:21:41.000+0000","Name":"a001a000001ZoEU","Example_Field__c":null,"Friend__c":"0031a000003QISpAAO"}]}'
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:43 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Email%20from%20Contact%20where%20Id%20=%20%270031a000003QISpAAO%27
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Email%20from%20Contact%20where%20Id%20=%20%270031a000003QISpAAO%27
     body:
       encoding: US-ASCII
       string: ''
@@ -366,12 +366,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Contact","url":"/services/data/v26.0/sobjects/Contact/0031a000003QISpAAO"},"Id":"0031a000003QISpAAO","SystemModstamp":"2015-05-15T01:21:38.000+0000","Email":"somebody+else@example.com"}]}'
-    http_version: 
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"Contact","url":"/services/data/<api_version>/sobjects/Contact/0031a000003QISpAAO"},"Id":"0031a000003QISpAAO","SystemModstamp":"2015-05-15T01:21:38.000+0000","Email":"somebody+else@example.com"}]}'
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:44 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c,%20Friend__c%20from%20CustomObject__c%20where%20Id%20=%20%27a001a000001ZoEUAA0%27
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c,%20Friend__c%20from%20CustomObject__c%20where%20Id%20=%20%27a001a000001ZoEUAA0%27
     body:
       encoding: US-ASCII
       string: ''
@@ -404,12 +404,12 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/v26.0/sobjects/CustomObject__c/a001a000001ZoEUAA0"},"Id":"a001a000001ZoEUAA0","SystemModstamp":"2015-05-15T01:21:41.000+0000","Name":"a001a000001ZoEU","Example_Field__c":null,"Friend__c":"0031a000003QISpAAO"}]}'
-    http_version: 
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001ZoEUAA0"},"Id":"a001a000001ZoEUAA0","SystemModstamp":"2015-05-15T01:21:41.000+0000","Name":"a001a000001ZoEU","Example_Field__c":null,"Friend__c":"0031a000003QISpAAO"}]}'
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:45 GMT
 - request:
     method: delete
-    uri: https://<host>/services/data/v26.0/sobjects/Contact/0031a000003QISkAAO
+    uri: https://<host>/services/data/<api_version>/sobjects/Contact/0031a000003QISkAAO
     body:
       encoding: US-ASCII
       string: ''
@@ -439,11 +439,11 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:46 GMT
 - request:
     method: delete
-    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c/a001a000001ZoEUAA0
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/a001a000001ZoEUAA0
     body:
       encoding: US-ASCII
       string: ''
@@ -473,11 +473,11 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:47 GMT
 - request:
     method: delete
-    uri: https://<host>/services/data/v26.0/sobjects/Contact/0031a000003QISpAAO
+    uri: https://<host>/services/data/<api_version>/sobjects/Contact/0031a000003QISpAAO
     body:
       encoding: US-ASCII
       string: ''
@@ -507,6 +507,6 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:48 GMT
 recorded_with: VCR 2.9.3

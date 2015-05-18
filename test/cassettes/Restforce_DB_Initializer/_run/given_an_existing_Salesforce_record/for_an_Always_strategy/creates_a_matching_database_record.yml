@@ -38,11 +38,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1428526409339","token_type":"Bearer","instance_url":"https://<host>","signature":"EkDl2eLtEFsBSHRtR+7FoXVgwtAsCzKztj+g9CCKYM4=","access_token":"00D1a000000H3O9!AQ4AQNyTp4z9oP2.J3Cn7NYTEhEEQDKps55QWmUhH0v3eAk6P1DoAUmVHKUnCITNabWF1iOMeT46TMEQTZdyM7pnT5JNIYfj"}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 08 Apr 2015 20:53:28 GMT
 - request:
     method: post
-    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c
     body:
       encoding: UTF-8
       string: '{"Name":"Custom object","Example_Field__c":"Some sample text"}'
@@ -72,7 +72,7 @@ http_interactions:
       Sforce-Limit-Info:
       - api-usage=16/15000
       Location:
-      - "/services/data/v26.0/sobjects/CustomObject__c/a001a000001LNKZAA4"
+      - "/services/data/<api_version>/sobjects/CustomObject__c/a001a000001LNKZAA4"
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
@@ -80,11 +80,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"a001a000001LNKZAA4","success":true,"errors":[]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 08 Apr 2015 20:53:28 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c
     body:
       encoding: US-ASCII
       string: ''
@@ -117,14 +117,14 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/v26.0/sobjects/CustomObject__c/a001a000001LNK5AAO"},"Id":"a001a000001LNK5AAO","SystemModstamp":"2015-04-08T20:49:02.000+0000","Name":"Custom
-        object","Example_Field__c":"Some sample text"},{"attributes":{"type":"CustomObject__c","url":"/services/data/v26.0/sobjects/CustomObject__c/a001a000001LNKZAA4"},"Id":"a001a000001LNKZAA4","SystemModstamp":"2015-04-08T20:53:29.000+0000","Name":"Custom
+      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001LNK5AAO"},"Id":"a001a000001LNK5AAO","SystemModstamp":"2015-04-08T20:49:02.000+0000","Name":"Custom
+        object","Example_Field__c":"Some sample text"},{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001LNKZAA4"},"Id":"a001a000001LNKZAA4","SystemModstamp":"2015-04-08T20:53:29.000+0000","Name":"Custom
         object","Example_Field__c":"Some sample text"}]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 08 Apr 2015 20:53:28 GMT
 - request:
     method: delete
-    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c/a001a000001LNKZAA4
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/a001a000001LNKZAA4
     body:
       encoding: US-ASCII
       string: ''
@@ -154,6 +154,6 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Wed, 08 Apr 2015 20:53:29 GMT
 recorded_with: VCR 2.9.3

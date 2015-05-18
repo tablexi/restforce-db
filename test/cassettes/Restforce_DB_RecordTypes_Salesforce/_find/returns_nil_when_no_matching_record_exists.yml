@@ -38,11 +38,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1427365210282","token_type":"Bearer","instance_url":"https://<host>","signature":"1SLB9/QWDmq3AVQgeB8YKrzTdsqbLN8vSCZi8+bmhN0=","access_token":"00D1a000000H3O9!AQ4AQFqDs34WtnS6RDwxyGdLSPYE_cFTuNjjnDvX2HbNhGMu917m6JyqchGFbdiOruyd5Z.w7uN.ogsJF4_8TMMzdt2fw7OZ"}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 26 Mar 2015 10:20:10 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c%20where%20Id%20=%20%27a001a000001E1vFAKE%27
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c%20where%20Id%20=%20%27a001a000001E1vFAKE%27
     body:
       encoding: US-ASCII
       string: ''
@@ -76,6 +76,6 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"totalSize":0,"done":true,"records":[]}'
-    http_version: 
+    http_version:
   recorded_at: Thu, 26 Mar 2015 10:20:11 GMT
 recorded_with: VCR 2.9.3

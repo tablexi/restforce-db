@@ -78,6 +78,7 @@ module Restforce
         client_id:      configuration.client_id,
         client_secret:  configuration.client_secret,
         host:           configuration.host,
+        api_version:    configuration.api_version,
       )
     end
 

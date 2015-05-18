@@ -18,6 +18,14 @@ VCR.configure do |c|
       CGI.escape(Secrets["client"][secret])
     end
   end
+
+  c.filter_sensitive_data("<api_version>") do
+    api_version = Secrets["client"].fetch("api_version") do
+      Restforce::DB::Configuration::DEFAULT_API_VERSION
+    end
+
+    "v#{api_version}"
+  end
 end
 
 MinitestVcr::Spec.configure!
