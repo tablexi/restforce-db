@@ -49,10 +49,11 @@ module Restforce
       #
       # Returns nothing.
       def update(instance, accumulator)
+        return unless accumulator.changed?(instance.attributes)
+
         current_attributes = accumulator.current(instance.attributes)
         attributes = @mapping.convert(instance.record_type, current_attributes)
 
-        return if attributes.empty?
         instance.update!(attributes)
       end
 

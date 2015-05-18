@@ -44,6 +44,19 @@ module Restforce
         end
       end
 
+      # Public: Do the canonical attributes stored in this Accumulator differ
+      # from those in the passed comparison Hash?
+      #
+      # comparison - A Hash mapping of attributes to values.
+      #
+      # Returns a Boolean.
+      def changed?(comparison)
+        attributes.any? do |attribute, value|
+          next unless comparison.key?(attribute)
+          comparison[attribute] != value
+        end
+      end
+
     end
 
   end

@@ -10,16 +10,11 @@ describe Restforce::DB::Initializer do
   describe "#run", vcr: { match_requests_on: [:method, VCR.request_matchers.uri_without_param(:q)] } do
     let(:attributes) do
       {
-        name:    "Custom object",
-        example: "Some sample text",
+        "Name"             => "Custom object",
+        "Example_Field__c" => "Some sample text",
       }
     end
-    let(:salesforce_id) do
-      Salesforce.create!(
-        salesforce_model,
-        mapping.convert(salesforce_model, attributes),
-      )
-    end
+    let(:salesforce_id) { Salesforce.create!(salesforce_model, attributes) }
 
     describe "given an existing Salesforce record" do
       before do
@@ -35,8 +30,8 @@ describe Restforce::DB::Initializer do
         it "creates a matching database record" do
           record = database_model.last
 
-          expect(record.name).to_equal attributes[:name]
-          expect(record.example).to_equal attributes[:example]
+          expect(record.name).to_equal attributes["Name"]
+          expect(record.example).to_equal attributes["Example_Field__c"]
           expect(record.salesforce_id).to_equal salesforce_id
         end
       end
@@ -54,7 +49,9 @@ describe Restforce::DB::Initializer do
     end
 
     describe "given an existing database record" do
-      let(:database_record) { database_model.create!(attributes) }
+      let(:database_record) do
+        database_model.create!(mapping.convert(database_model, attributes))
+      end
       let(:salesforce_id) { database_record.reload.salesforce_id }
 
       before do
@@ -71,8 +68,8 @@ describe Restforce::DB::Initializer do
         it "populates Salesforce with the new record" do
           record = mapping.salesforce_record_type.find(salesforce_id).record
 
-          expect(record.Name).to_equal attributes[:name]
-          expect(record.Example_Field__c).to_equal attributes[:example]
+          expect(record.Name).to_equal attributes["Name"]
+          expect(record.Example_Field__c).to_equal attributes["Example_Field__c"]
         end
       end
 

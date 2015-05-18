@@ -80,4 +80,20 @@ describe Restforce::DB::Accumulator do
       )
     end
   end
+
+  describe "#changed?" do
+    let(:attributes) { { wocket: "Pocket", jertain: "Curtain", zelf: "Shelf" } }
+
+    before do
+      accumulator.store(Time.now, attributes)
+    end
+
+    it "returns true if there are changes in the passed attributes hash" do
+      expect(accumulator).to_be :changed?, wocket: "Locket", zelf: "Shelf"
+    end
+
+    it "ignores attributes not set in both the Accumulator and the passed Hash" do
+      expect(accumulator).to_not_be :changed?, yottle: "Bottle"
+    end
+  end
 end
