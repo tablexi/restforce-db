@@ -40,16 +40,38 @@ module Restforce
       #
       # Returns an Array of IDs.
       def all_salesforce_ids
-        @mapping.unscoped { valid_salesforce_ids }
+        @mapping.unscoped { salesforce_ids(@mapping) }
+      end
+
+      # Internal: Get the IDs of the recently-modified Salesforce records for
+      # mappings between the same object types.
+      #
+      # Returns an Array of IDs.
+      def valid_salesforce_ids
+        parallel_mappings.flat_map { |mapping| salesforce_ids(mapping) }
       end
 
       # Internal: Get the IDs of the recently-modified Salesforce records which
       # meet the conditions for this mapping.
       #
+      # mapping - A Restforce::DB::Mapping.
+      #
       # Returns an Array of IDs.
-      def valid_salesforce_ids
-        @runner.run(@mapping) do |run|
+      def salesforce_ids(mapping)
+        @runner.run(mapping) do |run|
           run.salesforce_instances.map(&:id)
+        end
+      end
+
+      # Internal: Get a list of mappings between identical Salesforce and
+      # database record types. This allows us to protect against inadvertently
+      # removing records which belong to a parallel mapping on the same
+      # ActiveRecord class.
+      #
+      # Rturns an Array of Mappings.
+      def parallel_mappings
+        Registry[@mapping.database_model].select do |mapping|
+          mapping.salesforce_model == @mapping.salesforce_model
         end
       end
 

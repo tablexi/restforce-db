@@ -16,6 +16,10 @@ describe Restforce::DB::Cleaner do
     end
     let(:salesforce_id) { Salesforce.create!(salesforce_model, attributes) }
 
+    before do
+      Restforce::DB::Registry << mapping
+    end
+
     describe "given a synchronized Salesforce record" do
       before do
         database_model.create!(salesforce_id: salesforce_id)
@@ -47,13 +51,25 @@ describe Restforce::DB::Cleaner do
           mapping.conditions = ["Name != '#{attributes['Name']}'"]
         end
 
-        describe "for a non-Passive strategy" do
-          before do
-            cleaner.run
+        it "drops the synchronized database record" do
+          cleaner.run
+          expect(database_model.last).to_be_nil
+        end
+
+        describe "but meets conditions for a parallel mapping" do
+          let(:parallel_mapping) do
+            Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |map|
+              map.conditions = ["Name = '#{attributes['Name']}'"]
+            end
           end
 
-          it "drops the synchronized database record" do
-            expect(database_model.last).to_be_nil
+          before do
+            Restforce::DB::Registry << parallel_mapping
+          end
+
+          it "does not drop the synchronized database record" do
+            cleaner.run
+            expect(database_model.last).to_not_be_nil
           end
         end
       end
