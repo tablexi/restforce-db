@@ -229,6 +229,9 @@ For additional information and a full set of options, you can run:
 - **API Usage.** 
   This gem performs most of its functionality via the Salesforce API (by way of the [`restforce`](https://github.com/ejholmes/restforce) gem). If you're at risk of hitting your Salesforce API limits, this may not be the right approach for you.
 
+- **API Version.**
+  Restforce::DB defaults to version 29.0 of the Salesforce API. If you need a more (or less, for whatever reason) recent version of the API for your use case, you can specify an `api_version` key in your restforce-db.yml configuration. Version 29.0 or above is required for full gem functionality.
+
 - **Update Prioritization.**
   When synchronization occurs, the most recently updated record, Salesforce or database, gets to make the final call about the values of _all_ of the fields it observes. This means that race conditions can and probably will happen if both systems are updated within the same polling interval.
 
