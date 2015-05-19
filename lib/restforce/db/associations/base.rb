@@ -46,11 +46,11 @@ module Restforce
         #
         # Returns a Boolean.
         def synced_for?(instance)
+          association_id = associated_salesforce_id(instance)
+          return false unless association_id
+
           base_class = instance.mapping.database_model
           reflection = base_class.reflect_on_association(name)
-          association_id = associated_salesforce_id(instance)
-
-          return false unless association_id
           reflection.klass.exists?(
             mapping_for(reflection).lookup_column => association_id,
           )
@@ -69,12 +69,12 @@ module Restforce
         # Internal: Get the appropriate Salesforce Lookup ID field for the
         # passed mapping.
         #
-        # mapping         - A Restforce::DB::Mapping.
-        # database_record - An instance of an ActiveRecord::Base subclass.
+        # mapping    - A Restforce::DB::Mapping.
+        # reflection - An ActiveRecord::AssociationReflection.
         #
         # Returns a String or nil.
-        def lookup_field(mapping, database_record)
-          inverse = inverse_association_name(target_reflection(database_record))
+        def lookup_field(mapping, reflection)
+          inverse = inverse_association_name(reflection)
           association = mapping.associations.detect { |a| a.name == inverse }
           return unless association
 

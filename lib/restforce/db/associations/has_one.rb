@@ -23,7 +23,8 @@ module Restforce
           @cache = cache
 
           target = target_mapping(database_record)
-          query = "#{lookup_field(target, database_record)} = '#{salesforce_record.Id}'"
+          reflection = target_reflection(database_record)
+          query = "#{lookup_field(target, reflection)} = '#{salesforce_record.Id}'"
 
           instance = target.salesforce_record_type.first(query)
           instance ? construct_for(database_record, instance) : []

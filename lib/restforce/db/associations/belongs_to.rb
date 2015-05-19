@@ -78,7 +78,7 @@ module Restforce
         # Returns nothing.
         def for_mappings(database_record)
           Registry[target_class(database_record)].each do |mapping|
-            lookup = lookup_field(mapping, database_record)
+            lookup = lookup_field(mapping, target_reflection(database_record))
             next unless lookup
             yield mapping, lookup
           end
