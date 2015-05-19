@@ -38,11 +38,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1428526407882","token_type":"Bearer","instance_url":"https://<host>","signature":"b8JiQgpUdbWK4ZF5QL688+niNH2pYF3BCX6iynboWVI=","access_token":"00D1a000000H3O9!AQ4AQNyTp4z9oP2.J3Cn7NYTEhEEQDKps55QWmUhH0v3eAk6P1DoAUmVHKUnCITNabWF1iOMeT46TMEQTZdyM7pnT5JNIYfj"}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 08 Apr 2015 20:53:26 GMT
 - request:
     method: post
-    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c
     body:
       encoding: UTF-8
       string: '{"Name":"Custom object","Example_Field__c":"Some sample text"}'
@@ -72,7 +72,7 @@ http_interactions:
       Sforce-Limit-Info:
       - api-usage=16/15000
       Location:
-      - "/services/data/v26.0/sobjects/CustomObject__c/a001a000001LNKUAA4"
+      - "/services/data/<api_version>/sobjects/CustomObject__c/a001a000001LNKUAA4"
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
@@ -80,11 +80,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"a001a000001LNKUAA4","success":true,"errors":[]}'
-    http_version: 
+    http_version:
   recorded_at: Wed, 08 Apr 2015 20:53:27 GMT
 - request:
     method: delete
-    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c/a001a000001LNKUAA4
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/a001a000001LNKUAA4
     body:
       encoding: US-ASCII
       string: ''
@@ -114,6 +114,6 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Wed, 08 Apr 2015 20:53:27 GMT
 recorded_with: VCR 2.9.3

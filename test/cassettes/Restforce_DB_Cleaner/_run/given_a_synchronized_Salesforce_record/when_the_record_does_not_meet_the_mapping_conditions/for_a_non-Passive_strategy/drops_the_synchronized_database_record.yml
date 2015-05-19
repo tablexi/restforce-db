@@ -38,11 +38,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1431652890698","token_type":"Bearer","instance_url":"https://<host>","signature":"0evU70RDGPagRqFniwNzBo1tfyh5vTuYv+0/JBWjpuk=","access_token":"00D1a000000H3O9!AQ4AQOOuLg_qT_KH0d7e0MZl9eLqLOVkelXCvogl6uoC11zAr2MxSfN.Kp.FGeGl6RwwgcLORuGYbL2Rk2tznb5e22BOVEcb"}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:30 GMT
 - request:
     method: post
-    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c
     body:
       encoding: UTF-8
       string: '{"Name":"Are you going to Scarborough Fair?","Example_Field__c":"Parsley,
@@ -73,7 +73,7 @@ http_interactions:
       Sforce-Limit-Info:
       - api-usage=716/15000
       Location:
-      - "/services/data/v26.0/sobjects/CustomObject__c/a001a000001ZoEPAA0"
+      - "/services/data/<api_version>/sobjects/CustomObject__c/a001a000001ZoEPAA0"
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
@@ -81,11 +81,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"id":"a001a000001ZoEPAA0","success":true,"errors":[]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:31 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c
     body:
       encoding: US-ASCII
       string: ''
@@ -118,14 +118,14 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/v26.0/sobjects/CustomObject__c/a001a000001ZoEPAA0"},"Id":"a001a000001ZoEPAA0","SystemModstamp":"2015-05-15T01:21:31.000+0000","Name":"Are
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001ZoEPAA0"},"Id":"a001a000001ZoEPAA0","SystemModstamp":"2015-05-15T01:21:31.000+0000","Name":"Are
         you going to Scarborough Fair?","Example_Field__c":"Parsley, Sage, Rosemary,
         and Thyme."}]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:32 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/v26.0/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c%20where%20Name%20!=%20%27Are%20you%20going%20to%20Scarborough%20Fair?%27
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c%20where%20Name%20!=%20%27Are%20you%20going%20to%20Scarborough%20Fair?%27
     body:
       encoding: US-ASCII
       string: ''
@@ -159,11 +159,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"totalSize":0,"done":true,"records":[]}'
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:33 GMT
 - request:
     method: delete
-    uri: https://<host>/services/data/v26.0/sobjects/CustomObject__c/a001a000001ZoEPAA0
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/a001a000001ZoEPAA0
     body:
       encoding: US-ASCII
       string: ''
@@ -193,6 +193,6 @@ http_interactions:
     body:
       encoding: UTF-8
       string: ''
-    http_version: 
+    http_version:
   recorded_at: Fri, 15 May 2015 01:21:34 GMT
 recorded_with: VCR 2.9.3

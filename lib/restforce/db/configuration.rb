@@ -8,6 +8,8 @@ module Restforce
     # and read methods to allow users to configure Restforce::DB.
     class Configuration
 
+      DEFAULT_API_VERSION = "29.0".freeze
+
       attr_accessor(*%i(
         username
         password
@@ -15,6 +17,7 @@ module Restforce
         client_id
         client_secret
         host
+        api_version
       ))
 
       # Public: Parse a supplied YAML file for a set of credentials, and use
@@ -41,6 +44,10 @@ module Restforce
         self.client_id      = parsed(configurations, "client_id")
         self.client_secret  = parsed(configurations, "client_secret")
         self.host           = parsed(configurations, "host")
+
+        # We want to default to 29.0 or later, so we can support the API
+        # endpoint for recently deleted records.
+        self.api_version    = configurations["api_version"] || DEFAULT_API_VERSION
       end
 
       private
