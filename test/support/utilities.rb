@@ -8,6 +8,7 @@ def configure!
     Restforce::DB::FieldProcessor.reset
     Restforce::DB::Registry.clean!
     Restforce::DB.last_run = nil
+    Restforce::DB.logger = nil
 
     DatabaseCleaner.clean
     Salesforce.clean!

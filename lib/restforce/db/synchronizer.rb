@@ -55,6 +55,8 @@ module Restforce
         attributes = @mapping.convert(instance.record_type, current_attributes)
 
         instance.update!(attributes)
+      rescue ActiveRecord::ActiveRecordError, Faraday::Error::ClientError => e
+        DB.logger.error("#{e.message}\n#{e.backtrace.join("\n")}")
       end
 
     end

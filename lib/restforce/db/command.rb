@@ -57,6 +57,7 @@ module Restforce
         Dir.chdir(Rails.root)
 
         Restforce::DB::Worker.after_fork
+        Restforce::DB.logger = logger
 
         worker = Restforce::DB::Worker.new(options)
         worker.logger = logger
