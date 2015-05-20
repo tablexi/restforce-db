@@ -19,7 +19,11 @@ module Restforce
         def create!(from_record)
           record = @record_type.find_or_initialize_by(@mapping.lookup_column => from_record.id)
           record.assign_attributes(@mapping.convert(@record_type, from_record.attributes))
-          associations = @mapping.associations.flat_map { |a| a.build(record, from_record.record) }
+
+          cache = AssociationCache.new(record)
+          associations = @mapping.associations.flat_map do |association|
+            association.build(record, from_record.record, cache)
+          end
 
           record.transaction do
             record.save!
