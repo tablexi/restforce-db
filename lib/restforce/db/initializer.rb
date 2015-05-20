@@ -42,7 +42,7 @@ module Restforce
       def create_in_database(instance)
         return unless @strategy.build?(instance)
         @mapping.database_record_type.create!(instance)
-      rescue ActiveRecord::RecordInvalid => e
+      rescue ActiveRecord::ActiveRecordError => e
         DB.logger.error("#{e.message}\n#{e.backtrace.join("\n")}")
       end
 
