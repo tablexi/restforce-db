@@ -42,6 +42,8 @@ module Restforce
       def create_in_database(instance)
         return unless @strategy.build?(instance)
         @mapping.database_record_type.create!(instance)
+      rescue ActiveRecord::RecordInvalid => e
+        DB.logger.error("#{e.message}\n#{e.backtrace.join("\n")}")
       end
 
       # Internal: Attempt to create a partner record in Salesforce for the
@@ -54,6 +56,8 @@ module Restforce
       def create_in_salesforce(instance)
         return if instance.synced?
         @mapping.salesforce_record_type.create!(instance)
+      rescue Faraday::Error::ClientError => e
+        DB.logger.error("#{e.message}\n#{e.backtrace.join("\n")}")
       end
 
     end

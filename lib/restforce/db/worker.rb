@@ -186,11 +186,11 @@ module Restforce
         runtime = Benchmark.realtime { yield }
         log format("  COMPLETE after %.4f", runtime)
 
-        return true
+        true
       rescue => e
         error(e)
 
-        return false
+        false
       end
 
       # Internal: Has this worker been instructed to stop?
