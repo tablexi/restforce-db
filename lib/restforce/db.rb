@@ -4,6 +4,7 @@ require "restforce"
 require "restforce/extensions"
 
 require "restforce/db/version"
+require "restforce/db/client"
 require "restforce/db/configuration"
 require "restforce/db/registry"
 require "restforce/db/strategy"
@@ -78,7 +79,7 @@ module Restforce
     #
     # Returns a Restforce::Data::Client instance.
     def self.client
-      @client ||= Restforce.new(
+      @client ||= DB::Client.new(
         username:       configuration.username,
         password:       configuration.password,
         security_token: configuration.security_token,
