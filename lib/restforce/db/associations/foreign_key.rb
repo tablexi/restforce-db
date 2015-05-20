@@ -61,11 +61,10 @@ module Restforce
         #
         # Returns a String.
         def associated_salesforce_id(instance)
-          query = "#{lookup} = '#{instance.id}'"
-
           reflection = instance.mapping.database_model.reflect_on_association(name)
           inverse_mapping = mapping_for(reflection)
 
+          query = "#{lookup_field(inverse_mapping, reflection)} = '#{instance.id}'"
           salesforce_instance = inverse_mapping.salesforce_record_type.first(query)
           salesforce_instance.id if salesforce_instance
         end

@@ -23,7 +23,8 @@ module Restforce
           @cache = cache
 
           target = target_mapping(database_record)
-          lookup_id = "#{lookup_field(target, database_record)} = '#{salesforce_record.Id}'"
+          reflection = target_reflection(database_record)
+          lookup_id = "#{lookup_field(target, reflection)} = '#{salesforce_record.Id}'"
 
           records = []
           target.salesforce_record_type.all(conditions: lookup_id).each do |instance|

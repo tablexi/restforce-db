@@ -57,15 +57,11 @@ module Restforce
           ids = {}
 
           for_mappings(database_record) do |mapping, lookup|
-            associated = database_record.association(name).reader
-
-            ids[lookup] =
-              if associated
-                # It's possible to define a belongs_to association in a Mapping
-                # for what is actually a one-to-many association on the
-                # ActiveRecord object.
-                Array(associated).first.send(mapping.lookup_column)
-              end
+            # It's possible to define a belongs_to association in a Mapping
+            # for what is actually a one-to-many association on the
+            # ActiveRecord object, so we always treat the result as an Array.
+            associated = Array(database_record.association(name).reader)
+            ids[lookup] = associated.empty? ? nil : associated.first.send(mapping.lookup_column)
           end
 
           ids
@@ -82,7 +78,7 @@ module Restforce
         # Returns nothing.
         def for_mappings(database_record)
           Registry[target_class(database_record)].each do |mapping|
-            lookup = lookup_field(mapping, database_record)
+            lookup = lookup_field(mapping, target_reflection(database_record))
             next unless lookup
             yield mapping, lookup
           end

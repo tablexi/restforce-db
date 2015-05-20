@@ -31,6 +31,7 @@ ActiveRecord::Schema.define do
 
   create_table :users do |table|
     table.column :email,           :string
+    table.column :favorite_id,     :integer
     table.column :salesforce_id,   :string
     table.column :synchronized_at, :datetime
     table.timestamps null: false
@@ -44,6 +45,7 @@ end
 class CustomObject < ActiveRecord::Base
 
   belongs_to :user, inverse_of: :custom_object, autosave: true
+  has_many :admirers, class_name: "User", inverse_of: :favorite, foreign_key: :favorite_id
   has_many :details, inverse_of: :custom_object
 
 end
@@ -59,5 +61,6 @@ end
 class User < ActiveRecord::Base
 
   has_one :custom_object, inverse_of: :user
+  belongs_to :favorite, class_name: "CustomObject", inverse_of: :admirers, foreign_key: :favorite_id
 
 end

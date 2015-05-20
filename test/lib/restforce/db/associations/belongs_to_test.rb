@@ -60,6 +60,23 @@ describe Restforce::DB::Associations::BelongsTo do
         it "returns a nil lookup value in the hash" do
           expect(association.lookups(object)).to_equal("Friend__c" => nil)
         end
+
+        describe "and the underlying association is one-to-many" do
+          let(:association) { Restforce::DB::Associations::BelongsTo.new(:admirers, through: "Friend__c") }
+          let(:inverse_mapping) do
+            Restforce::DB::Mapping.new(User, "Contact").tap do |map|
+              map.fields = { email: "Email" }
+              map.associations << Restforce::DB::Associations::HasOne.new(
+                :favorite,
+                through: "Friend__c",
+              )
+            end
+          end
+
+          it "still returns a nil lookup value in the hash" do
+            expect(association.lookups(object)).to_equal("Friend__c" => nil)
+          end
+        end
       end
     end
 
