@@ -56,7 +56,7 @@ module Restforce
     class << self
 
       attr_accessor :last_run
-      attr_writer :configuration
+      attr_writer :configuration, :logger
 
     end
 
@@ -65,6 +65,13 @@ module Restforce
     # Returns a Restforce::DB::Configuration instance.
     def self.configuration
       @configuration ||= Configuration.new
+    end
+
+    # Public: Get the current logger for Restforce::DB.
+    #
+    # Returns a Logger instance.
+    def self.logger
+      @logger ||= Logger.new("/dev/null")
     end
 
     # Public: Get a Restforce client based on the currently configured settings.
