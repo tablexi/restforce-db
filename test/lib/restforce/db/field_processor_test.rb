@@ -9,8 +9,9 @@ describe Restforce::DB::FieldProcessor do
   describe "#process" do
     let(:attributes) do
       {
-        "Name" => "This field can be updated.",
-        "Id"   => "But... but... this field is read-only!",
+        "Creatable"  => "This field is create-only!",
+        "Updateable" => "And... this field is update-only!",
+        "Both"       => "But... this field allows both!",
       }
     end
     let(:dummy_client) do
@@ -21,18 +22,29 @@ describe Restforce::DB::FieldProcessor do
           @already_run = true
 
           Struct.new(:fields).new([
-            { "name" => "Name", "updateable" => true },
-            { "name" => "Id", "updateable" => false },
+            { "name" => "Creatable", "createable" => true, "updateable" => false },
+            { "name" => "Updateable", "createable" => false, "updateable" => true },
+            { "name" => "Both", "createable" => true, "updateable" => true },
           ])
         end
 
       end
     end
 
-    it "removes the read-only fields from the passed attribute Hash" do
+    it "removes the read-only fields from the passed attribute Hash on :create" do
       Restforce::DB.stub(:client, dummy_client) do
-        expect(processor.process("CustomObject__c", attributes)).to_equal(
-          "Name" => attributes["Name"],
+        expect(processor.process("CustomObject__c", attributes, :create)).to_equal(
+          "Creatable" => attributes["Creatable"],
+          "Both"      => attributes["Both"],
+        )
+      end
+    end
+
+    it "removes the read-only fields from the passed attribute Hash on :update" do
+      Restforce::DB.stub(:client, dummy_client) do
+        expect(processor.process("CustomObject__c", attributes, :update)).to_equal(
+          "Updateable" => attributes["Updateable"],
+          "Both"       => attributes["Both"],
         )
       end
     end
