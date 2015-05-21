@@ -26,29 +26,17 @@ module Restforce
       #
       # Returns nothing.
       def run
-        drop_deleted_records
-        drop_invalid_records
+        @mapping.database_record_type.destroy_all(dropped_salesforce_ids)
       end
 
       private
 
-      # Internal: Destroy any database records corresponding to Salesforce
-      # records which have been deleted within the Salesforce environment.
+      # Internal: Get a comprehensive list of Salesforce IDs corresponding to
+      # records which should be dropped from synchronization for this mapping.
       #
-      # Returns nothing.
-      def drop_deleted_records
-        return unless @runner.after
-        @mapping.database_record_type.destroy_all(deleted_salesforce_ids)
-      end
-
-      # Internal: Destroy any database records corresponding to Salesforce
-      # records which have been modified such that they no longer meet the
-      # conditions defined for this mapping.
-      #
-      # Returns nothing.
-      def drop_invalid_records
-        return if @mapping.conditions.empty? || @strategy.passive?
-        @mapping.database_record_type.destroy_all(invalid_salesforce_ids)
+      # Returns an Array of IDs.
+      def dropped_salesforce_ids
+        deleted_salesforce_ids + invalid_salesforce_ids
       end
 
       # Internal: Get the IDs of records which have been removed from Salesforce
@@ -56,6 +44,8 @@ module Restforce
       #
       # Returns an Array of IDs.
       def deleted_salesforce_ids
+        return [] unless @runner.after
+
         response = Restforce::DB.client.get_deleted_between(
           @mapping.salesforce_model,
           @runner.after - DELETION_READ_BUFFER,
@@ -71,6 +61,8 @@ module Restforce
       #
       # Returns an Array of IDs.
       def invalid_salesforce_ids
+        return [] if @mapping.conditions.empty? || @strategy.passive?
+
         all_salesforce_ids - valid_salesforce_ids
       end
 
