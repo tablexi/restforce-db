@@ -3,8 +3,8 @@ module Restforce
   module DB
 
     # Restforce::DB::Client is a thin abstraction on top of the default
-    # Restforce::Data::Client class, which adds support for a handful of useful
-    # endpoints not yet supported by the base gem.
+    # Restforce::Data::Client class, which adds support for an API endpoint
+    # not yet supported by the base gem.
     class Client < ::Restforce::Data::Client
 
       # Public: Get a list of Salesforce records which have been deleted between

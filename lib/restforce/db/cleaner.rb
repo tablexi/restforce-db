@@ -3,8 +3,8 @@ module Restforce
   module DB
 
     # Restforce::DB::Cleaner is responsible for culling the matching database
-    # records when a Salesforce record has been deleted or otherwise no longer
-    # meets the sync conditions for a mapping.
+    # records when a Salesforce record is no longer available to synchronize
+    # for a specific mapping.
     class Cleaner
 
       # Salesforce can take a few minutes to register record deletion. This
