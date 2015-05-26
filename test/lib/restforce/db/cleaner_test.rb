@@ -73,6 +73,28 @@ describe Restforce::DB::Cleaner do
           end
         end
       end
+
+      describe "when the record has been deleted in Salesforce" do
+        let(:runner) { Restforce::DB::Runner.new(0, Time.now - 300) }
+        let(:cleaner) { Restforce::DB::Cleaner.new(mapping, runner) }
+        let(:dummy_response) do
+          Struct.new(:deletedRecords).new([
+            Restforce::Mash.new(id: salesforce_id),
+          ])
+        end
+
+        before do
+          runner.tick!
+        end
+
+        it "drops the synchronized database record" do
+          Restforce::DB::Client.stub_any_instance(:get_deleted_between, dummy_response) do
+            cleaner.run
+          end
+
+          expect(database_model.last).to_be_nil
+        end
+      end
     end
   end
 end
