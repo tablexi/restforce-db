@@ -224,6 +224,18 @@ For additional information and a full set of options, you can run:
 
     $ bundle exec bin/restforce-db -h
 
+#### Configuring the daemon's runtime environment
+
+Restforce::DB allows you to configure up a block of code which will execute when the daemon process forks. In an initializer (or any other piece of code which will run as your application spins up), you can use `config.after_fork` to set up this hook:
+
+```ruby
+Restforce::DB.configure do |config|
+  config.after_fork { ActiveRecord::Base.logger = nil }
+end
+```
+
+The example above would disable the default ActiveRecord logging specifically for activity triggered by the Restforce::DB daemon.
+
 ## System Caveats
 
 - **API Usage.** 
