@@ -8,6 +8,39 @@ describe Restforce::DB::Configuration do
   let(:secrets_file) { File.expand_path("../../../../config/secrets.yml", __FILE__) }
   let(:configuration) { Restforce::DB::Configuration.new }
 
+  describe "#after_fork" do
+
+    it "does nothing if invoked without a block" do
+      # NOTE: We're asserting that this invocation doesn't raise an error.
+      configuration.after_fork
+    end
+
+    it "does not invoke the block on configuration" do
+      a = 1
+
+      configuration.after_fork { a += 1 }
+
+      expect(a).to_equal 1
+    end
+
+    it "invokes the configured block when called without arguments" do
+      a = 1
+
+      configuration.after_fork { a += 1 }
+      configuration.after_fork
+
+      expect(a).to_equal 2
+    end
+  end
+
+  describe "#logger" do
+
+    it "defaults to a null logger" do
+      log_device = configuration.logger.instance_variable_get("@logdev")
+      expect(log_device.dev.path).to_equal "/dev/null"
+    end
+  end
+
   describe "#load" do
 
     describe "when all configurations are supplied" do

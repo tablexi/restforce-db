@@ -4,20 +4,6 @@ describe Restforce::DB do
 
   configure!
 
-  describe "#logger" do
-
-    it "defaults to a null logger" do
-      log_device = Restforce::DB.logger.instance_variable_get("@logdev")
-      expect(log_device.dev.path).to_equal "/dev/null"
-    end
-
-    it "allows assignment of a new logger" do
-      logger = Logger.new("/dev/null")
-      Restforce::DB.logger = logger
-      expect(Restforce::DB.logger).to_equal logger
-    end
-  end
-
   describe "#configure" do
 
     it "yields a Configuration" do
