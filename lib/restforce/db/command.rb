@@ -118,8 +118,21 @@ module Restforce
       # Returns a Logger.
       def logger
         @logger ||= Logger.new(@options[:logfile]).tap do |logger|
-          logger.formatter = proc do |severity, datetime, _progname, msg|
-            "#{severity} [#{datetime.strftime('%Y-%m-%d %H:%M:%S')}] #{msg}\n"
+          logger.formatter = proc do |severity, datetime, _progname, message|
+            # Implementation taken from Ruby's msg2str.
+            # See: http://apidock.com/ruby/Logger/Formatter/msg2str
+            formatted =
+              case message
+              when ::String
+                message
+              when ::Exception
+                backtrace = message.backtrace || []
+                "#{message.message} (#{message.class})\n#{backtrace.join("\n")}"
+              else
+                message.inspect
+              end
+
+            "#{severity} [#{datetime.strftime('%Y-%m-%d %H:%M:%S')}] #{formatted}\n"
           end
         end
       end
