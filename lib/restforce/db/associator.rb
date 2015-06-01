@@ -74,7 +74,7 @@ module Restforce
           database_record.save!
         end
       rescue ActiveRecord::ActiveRecordError, Faraday::Error::ClientError => e
-        DB.logger.error("#{e.message}\n#{e.backtrace.join("\n")}")
+        DB.logger.error(e)
       end
 
       # Internal: Get a Hash of associated lookup IDs for the passed database

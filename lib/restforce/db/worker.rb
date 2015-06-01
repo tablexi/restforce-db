@@ -220,7 +220,7 @@ module Restforce
       #
       # Returns nothing.
       def error(exception)
-        log "#{exception.message}\n#{exception.backtrace.join("\n")}", :error
+        logger.error(exception)
       end
 
     end

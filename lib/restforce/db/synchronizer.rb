@@ -56,7 +56,7 @@ module Restforce
 
         instance.update!(attributes)
       rescue ActiveRecord::ActiveRecordError, Faraday::Error::ClientError => e
-        DB.logger.error("#{e.message}\n#{e.backtrace.join("\n")}")
+        DB.logger.error(e)
       end
 
     end
