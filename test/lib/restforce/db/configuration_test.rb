@@ -8,6 +8,14 @@ describe Restforce::DB::Configuration do
   let(:secrets_file) { File.expand_path("../../../../config/secrets.yml", __FILE__) }
   let(:configuration) { Restforce::DB::Configuration.new }
 
+  describe "#logger" do
+
+    it "defaults to a null logger" do
+      log_device = configuration.logger.instance_variable_get("@logdev")
+      expect(log_device.dev.path).to_equal "/dev/null"
+    end
+  end
+
   describe "#load" do
 
     describe "when all configurations are supplied" do

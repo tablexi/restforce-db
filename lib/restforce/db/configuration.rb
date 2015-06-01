@@ -18,7 +18,16 @@ module Restforce
         client_secret
         host
         api_version
+        logger
       ))
+
+      # Public: Get the configured logger. Returns a null logger if no logger
+      # has been configured yet.
+      #
+      # Returns a Logger.
+      def logger
+        @logger ||= Logger.new("/dev/null")
+      end
 
       # Public: Parse a supplied YAML file for a set of credentials, and use
       # them to populate the attributes on this configuraton object.
