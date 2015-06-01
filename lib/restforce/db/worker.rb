@@ -79,8 +79,8 @@ module Restforce
           @changes = Hash.new { |h, k| h[k] = Accumulator.new }
 
           Restforce::DB::Registry.each do |mapping|
-            task("PROPAGATING RECORDS", mapping) { propagate mapping }
             task("CLEANING RECORDS", mapping) { clean mapping }
+            task("PROPAGATING RECORDS", mapping) { propagate mapping }
             task("COLLECTING CHANGES", mapping) { collect mapping }
             task("UPDATING ASSOCIATIONS", mapping) { associate mapping }
           end
