@@ -21,17 +21,19 @@ module Restforce
         logger
       ))
 
-      # Public: Allow an after_fork callback to be configured or run. Runs the
-      # previously-configured block if called without arguments.
+      # Public: Allow a `before` callback to be configured or run. Runs the
+      # previously-configured block with any passed objects if called without a
+      # block.
       #
+      # args  - An arbitrary collection of arguments to pass to the hook.
       # block - A block of code to execute after process forking.
       #
       # Returns nothing.
-      def after_fork(&block)
+      def before(*args, &block)
         if block_given?
-          @after_fork ||= block
+          @before_hook = block
         else
-          @after_fork.call if @after_fork
+          @before_hook.call(*args) if @before_hook
         end
       end
 

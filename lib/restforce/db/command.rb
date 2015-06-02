@@ -56,19 +56,17 @@ module Restforce
       def run(options = {})
         Dir.chdir(Rails.root)
 
-        Restforce::DB.logger = logger
-
         # This hook comes from the FileDaemon module, and keeps file descriptors
         # opened after the process forks.
         Restforce::DB::Worker.after_fork
 
-        # This hook can be configured in an initializer, and allows changes to
-        # the runtime environment after the process forks.
-        Restforce::DB.after_fork
-
         worker = Restforce::DB::Worker.new(options)
         worker.logger = logger
         worker.tracker = tracker
+
+        # This hook can be configured in an initializer, and allows changes to
+        # the worker before the daemon loop begins processing.
+        Restforce::DB.before(worker)
 
         worker.start
       rescue => e

@@ -8,28 +8,37 @@ describe Restforce::DB::Configuration do
   let(:secrets_file) { File.expand_path("../../../../config/secrets.yml", __FILE__) }
   let(:configuration) { Restforce::DB::Configuration.new }
 
-  describe "#after_fork" do
+  describe "#before" do
 
     it "does nothing if invoked without a block" do
       # NOTE: We're asserting that this invocation doesn't raise an error.
-      configuration.after_fork
+      configuration.before
     end
 
-    it "does not invoke the block on configuration" do
+    it "does not invoke the hook on configuration" do
       a = 1
 
-      configuration.after_fork { a += 1 }
+      configuration.before { a += 1 }
 
       expect(a).to_equal 1
     end
 
-    it "invokes the configured block when called without arguments" do
+    it "invokes the configured hook when called without a block" do
       a = 1
 
-      configuration.after_fork { a += 1 }
-      configuration.after_fork
+      configuration.before { a += 1 }
+      configuration.before
 
       expect(a).to_equal 2
+    end
+
+    it "invokes the configured hook with passed arguments" do
+      a = 1
+
+      configuration.before { |b| a += b }
+      configuration.before(2)
+
+      expect(a).to_equal 3
     end
   end
 
