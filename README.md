@@ -226,11 +226,11 @@ For additional information and a full set of options, you can run:
 
 #### Configuring the daemon's runtime environment
 
-Restforce::DB allows you to configure up a block of code which will execute when the daemon process forks. In an initializer (or any other piece of code which will run as your application spins up), you can use `config.after_fork` to set up this hook:
+Restforce::DB allows you to configure a block of code which will execute before the daemon process's polling loop initiates. In an initializer (or any other piece of code which will run as your application spins up), you can use `config.before` to set up this hook:
 
 ```ruby
 Restforce::DB.configure do |config|
-  config.after_fork { ActiveRecord::Base.logger = nil }
+  config.before { |_worker| ActiveRecord::Base.logger = nil }
 end
 ```
 
