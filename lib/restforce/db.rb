@@ -64,7 +64,7 @@ module Restforce
         :configuration,
         :logger,
         :logger=,
-        :after_fork,
+        :before,
       )
 
     end
