@@ -37,6 +37,8 @@ module Restforce
       #
       # Returns nothing.
       def start
+        DB.configure { |config| config.logger = logger }
+
         trap_signals
 
         loop do
