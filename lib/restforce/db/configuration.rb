@@ -31,9 +31,9 @@ module Restforce
       # Returns nothing.
       def before(*args, &block)
         if block_given?
-          @before_hook = block
+          Thread.current[:before_hook] = block
         else
-          @before_hook.call(*args) if @before_hook
+          Thread.current[:before_hook].call(*args) if Thread.current[:before_hook]
         end
       end
 
