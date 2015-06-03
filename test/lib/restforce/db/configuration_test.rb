@@ -9,6 +9,9 @@ describe Restforce::DB::Configuration do
   let(:configuration) { Restforce::DB::Configuration.new }
 
   describe "#before" do
+    after do
+      Thread.current[:before_hook] = nil
+    end
 
     it "does nothing if invoked without a block" do
       # NOTE: We're asserting that this invocation doesn't raise an error.
