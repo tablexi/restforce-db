@@ -5,6 +5,7 @@ ActiveRecord::Base.establish_connection(
   adapter: "sqlite3",
   database: ":memory:",
 )
+ActiveSupport::TestCase.test_order = :random
 
 ActiveRecord::Schema.define do
 
