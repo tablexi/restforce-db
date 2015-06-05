@@ -96,4 +96,21 @@ describe Restforce::DB::Accumulator do
       expect(accumulator).to_not_be :changed?, yottle: "Bottle"
     end
   end
+
+  describe "#more_recent_than?" do
+    let(:timestamp) { Time.now }
+
+    before do
+      accumulator.store(timestamp, some: "set", of: "attributes")
+    end
+
+    it "returns true if the passed timestamp is less recent than the stored time" do
+      expect(accumulator).to_be :more_recent_than?, timestamp - 1
+    end
+
+    it "returns false if the passed timestamp is more recent than the stored time" do
+      expect(accumulator).to_not_be :more_recent_than?, timestamp + 1
+    end
+  end
+
 end
