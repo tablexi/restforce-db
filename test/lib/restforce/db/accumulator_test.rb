@@ -97,7 +97,7 @@ describe Restforce::DB::Accumulator do
     end
   end
 
-  describe "#more_recent_than?" do
+  describe "#up_to_date_for?" do
     let(:timestamp) { Time.now }
 
     before do
@@ -105,11 +105,15 @@ describe Restforce::DB::Accumulator do
     end
 
     it "returns true if the passed timestamp is less recent than the stored time" do
-      expect(accumulator).to_be :more_recent_than?, timestamp - 1
+      expect(accumulator).to_be :up_to_date_for?, timestamp - 1
+    end
+
+    it "returns true if the passed timestamp is identical to the stored time" do
+      expect(accumulator).to_be :up_to_date_for?, timestamp
     end
 
     it "returns false if the passed timestamp is more recent than the stored time" do
-      expect(accumulator).to_not_be :more_recent_than?, timestamp + 1
+      expect(accumulator).to_not_be :up_to_date_for?, timestamp + 1
     end
   end
 

@@ -38,7 +38,7 @@ module Restforce
             database_instance.last_update,
             salesforce_instance.last_update,
           ].max
-          next unless accumulator.more_recent_than?(most_recent_timestamp)
+          next unless accumulator.up_to_date_for?(most_recent_timestamp)
 
           update(database_instance, accumulator)
           update(salesforce_instance, accumulator)

@@ -57,14 +57,14 @@ module Restforce
         end
       end
 
-      # Public: Does the timestamp of the most recent change exceed the
+      # Public: Does the timestamp of the most recent change meet or exceed the
       # specified timestamp?
       #
       # timestamp - A Time object.
       #
       # Returns a Boolean.
-      def more_recent_than?(timestamp)
-        keys.sort.last > timestamp
+      def up_to_date_for?(timestamp)
+        keys.sort.last >= timestamp
       end
 
     end
