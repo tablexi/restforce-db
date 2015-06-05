@@ -15,6 +15,7 @@ describe Restforce::DB::Synchronizer do
       }
     end
     let(:salesforce_id) { Salesforce.create!(salesforce_model, attributes) }
+    let(:timestamp) { Time.now }
     let(:changes) { { [salesforce_id, salesforce_model] => accumulator } }
     let(:new_attributes) do
       {
@@ -24,7 +25,7 @@ describe Restforce::DB::Synchronizer do
     end
     let(:accumulator) do
       Restforce::DB::Accumulator.new.tap do |accumulator|
-        accumulator.store(Time.now, new_attributes)
+        accumulator.store(timestamp, new_attributes)
       end
     end
 
@@ -70,7 +71,29 @@ describe Restforce::DB::Synchronizer do
         expect(record.Name).to_equal new_attributes["Name"]
         expect(record.Example_Field__c).to_equal new_attributes["Example_Field__c"]
       end
+
+      describe "when the change timestamp is stale" do
+        let(:timestamp) do
+          mapping.salesforce_record_type.find(salesforce_id).last_update - 1
+        end
+
+        it "does not update the database record" do
+          record = database_record.reload
+
+          expect(record.name).to_equal database_attributes[:name]
+          expect(record.example).to_equal database_attributes[:example]
+        end
+
+        it "does not update the salesforce record" do
+          record = mapping.salesforce_record_type.find(salesforce_id).record
+
+          expect(record.Name).to_equal attributes["Name"]
+          expect(record.Example_Field__c).to_equal attributes["Example_Field__c"]
+        end
+      end
+
     end
 
   end
+
 end
