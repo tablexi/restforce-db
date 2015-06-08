@@ -74,7 +74,7 @@ module Restforce
           database_record.save!
         end
       rescue ActiveRecord::ActiveRecordError, Faraday::Error::ClientError => e
-        DB.logger.error(e)
+        DB.logger.error(SynchronizationError.new(e, salesforce_instance))
       end
 
       # Internal: Get a Hash of associated lookup IDs for the passed database

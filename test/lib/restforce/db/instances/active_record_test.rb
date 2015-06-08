@@ -10,6 +10,27 @@ describe Restforce::DB::Instances::ActiveRecord do
     Restforce::DB::Instances::ActiveRecord.new(database_model, record, mapping)
   end
 
+  describe "#id" do
+
+    describe "when the record has no synchronized Salesforce ID" do
+
+      it "returns the record's ID" do
+        expect(instance.id).to_equal "CustomObject::#{record.id}"
+      end
+    end
+
+    describe "when the record has a synchronized Salesforce ID" do
+      let(:salesforce_id) { "a001a000001E1vREAL" }
+      before do
+        record.update!(salesforce_id: salesforce_id)
+      end
+
+      it "returns the Salesforce ID" do
+        expect(instance.id).to_equal salesforce_id
+      end
+    end
+  end
+
   describe "#update!" do
     let(:text) { "Some new text" }
 
