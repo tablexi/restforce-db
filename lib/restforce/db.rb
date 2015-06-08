@@ -91,6 +91,14 @@ module Restforce
       )
     end
 
+    # Public: Get the ID of the Salesforce user which is being used to access
+    # the Salesforce API.
+    #
+    # Returns a String.
+    def self.user_id
+      @user_id ||= client.user_info.user_id
+    end
+
     # Public: Configure Restforce::DB by assigning values to the current
     # configuration.
     #

@@ -54,4 +54,24 @@ describe Restforce::DB::Instances::Salesforce do
     end
   end
 
+  describe "#updated_internally?", :vcr do
+
+    describe "when our client made the last change" do
+
+      it "returns true" do
+        expect(instance).to_be :updated_internally?
+      end
+    end
+
+    describe "when another user made the last change" do
+      let(:user_id) { "a001a000001E1vFAKE" }
+      let(:record) { Struct.new(:LastModifiedById).new(user_id) }
+      let(:instance) { Restforce::DB::Instances::Salesforce.new(salesforce_model, record) }
+
+      it "returns false" do
+        expect(instance).to_not_be :updated_internally?
+      end
+    end
+  end
+
 end

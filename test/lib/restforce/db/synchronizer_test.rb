@@ -53,28 +53,40 @@ describe Restforce::DB::Synchronizer do
         database_model.create!(database_attributes.merge(salesforce_id: salesforce_id))
       end
 
-      before do
-        database_record
-        synchronizer.run(changes)
-      end
+      describe "when the changes are current" do
+        before do
+          database_record
+          synchronizer.run(changes)
+        end
 
-      it "updates the database record" do
-        record = database_record.reload
+        it "updates the database record" do
+          record = database_record.reload
 
-        expect(record.name).to_equal new_attributes["Name"]
-        expect(record.example).to_equal new_attributes["Example_Field__c"]
-      end
+          expect(record.name).to_equal new_attributes["Name"]
+          expect(record.example).to_equal new_attributes["Example_Field__c"]
+        end
 
-      it "updates the salesforce record" do
-        record = mapping.salesforce_record_type.find(salesforce_id).record
+        it "updates the salesforce record" do
+          record = mapping.salesforce_record_type.find(salesforce_id).record
 
-        expect(record.Name).to_equal new_attributes["Name"]
-        expect(record.Example_Field__c).to_equal new_attributes["Example_Field__c"]
+          expect(record.Name).to_equal new_attributes["Name"]
+          expect(record.Example_Field__c).to_equal new_attributes["Example_Field__c"]
+        end
       end
 
       describe "when the change timestamp is stale" do
         let(:timestamp) do
           mapping.salesforce_record_type.find(salesforce_id).last_update - 1
+        end
+
+        before do
+          database_record
+
+          Restforce::DB::Instances::ActiveRecord.stub_any_instance(:updated_internally?, false) do
+            Restforce::DB::Instances::Salesforce.stub_any_instance(:updated_internally?, false) do
+              synchronizer.run(changes)
+            end
+          end
         end
 
         it "does not update the database record" do

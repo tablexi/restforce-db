@@ -12,6 +12,7 @@ module Restforce
         INTERNAL_ATTRIBUTES = %w(
           Id
           SystemModstamp
+          LastModifiedById
         ).freeze
 
         # Public: Get a common identifier for this record.
@@ -51,6 +52,14 @@ module Restforce
         # Returns a Boolean.
         def synced?
           @mapping.database_model.exists?(@mapping.lookup_column => id)
+        end
+
+        # Public: Was this record most recently updated by Restforce::DB's
+        # workflow?
+        #
+        # Returns a Boolean.
+        def updated_internally?
+          @record.LastModifiedById == DB.user_id
         end
 
       end
