@@ -29,4 +29,27 @@ describe Restforce::DB::Instances::ActiveRecord do
       expect(record.reload.synchronized_at).to_not_be_nil
     end
   end
+
+  describe "#updated_internally?" do
+
+    describe "when updated_at exceeds synchronized_at" do
+      before do
+        record.update!(synchronized_at: Time.now - 2)
+      end
+
+      it "returns false" do
+        expect(instance).to_not_be :updated_internally?
+      end
+    end
+
+    describe "when synchronized_at meets or exceeds updated_at" do
+      before do
+        record.touch(:synchronized_at)
+      end
+
+      it "returns true" do
+        expect(instance).to_be :updated_internally?
+      end
+    end
+  end
 end
