@@ -34,6 +34,12 @@ module Restforce
           salesforce_instance = @mapping.salesforce_record_type.find(id)
           next unless database_instance && salesforce_instance
 
+          most_recent_timestamp = [
+            database_instance.last_update,
+            salesforce_instance.last_update,
+          ].max
+          next unless accumulator.up_to_date_for?(most_recent_timestamp)
+
           update(database_instance, accumulator)
           update(salesforce_instance, accumulator)
         end
