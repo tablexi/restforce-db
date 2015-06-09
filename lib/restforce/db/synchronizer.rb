@@ -32,13 +32,10 @@ module Restforce
 
           database_instance = @mapping.database_record_type.find(id)
           salesforce_instance = @mapping.salesforce_record_type.find(id)
-          next unless database_instance && salesforce_instance
 
-          most_recent_timestamp = [
-            database_instance.last_update,
-            salesforce_instance.last_update,
-          ].max
-          next unless accumulator.up_to_date_for?(most_recent_timestamp)
+          next unless database_instance && salesforce_instance
+          next unless up_to_date?(database_instance, accumulator)
+          next unless up_to_date?(salesforce_instance, accumulator)
 
           update(database_instance, accumulator)
           update(salesforce_instance, accumulator)
@@ -46,6 +43,15 @@ module Restforce
       end
 
       private
+
+      # Internal: Is the passed instance up-to-date with the passed accumulator?
+      # Defaults to true if the most recent change to the instance was by the
+      # Restforce::DB worker.
+      #
+      # Returns a Boolean.
+      def up_to_date?(instance, accumulator)
+        instance.updated_internally? || accumulator.up_to_date_for?(instance.last_update)
+      end
 
       # Internal: Update the passed instance with the accumulated attributes
       # from a synchronization run.

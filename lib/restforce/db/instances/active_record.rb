@@ -18,13 +18,6 @@ module Restforce
           @record.send(@mapping.lookup_column)
         end
 
-        # Public: Has this record been synced to a Salesforce record?
-        #
-        # Returns a Boolean.
-        def synced?
-          @record.send(:"#{@mapping.lookup_column}?")
-        end
-
         # Public: Get the time of the last update to this record.
         #
         # Returns a Time-compatible object.
@@ -38,6 +31,21 @@ module Restforce
         # Returns a Time-compatible object.
         def last_synchronize
           @record.synchronized_at
+        end
+
+        # Public: Has this record been synced to a Salesforce record?
+        #
+        # Returns a Boolean.
+        def synced?
+          @record.send(:"#{@mapping.lookup_column}?")
+        end
+
+        # Public: Was this record most recently updated by Restforce::DB's
+        # workflow?
+        #
+        # Returns a Boolean.
+        def updated_internally?
+          last_synchronize.to_i >= last_update.to_i
         end
 
         # Public: Bump the synchronization timestamp on the record.

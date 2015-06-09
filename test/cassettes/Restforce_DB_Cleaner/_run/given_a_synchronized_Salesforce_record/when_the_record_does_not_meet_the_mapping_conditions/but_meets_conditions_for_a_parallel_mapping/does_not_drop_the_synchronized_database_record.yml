@@ -21,10 +21,10 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Tue, 19 May 2015 23:34:06 GMT
+      - Mon, 08 Jun 2015 22:12:37 GMT
       Set-Cookie:
-      - BrowserId=_VzSmIBGQDSnHzsFd92wSw;Path=/;Domain=.salesforce.com;Expires=Sat,
-        18-Jul-2015 23:34:06 GMT
+      - BrowserId=H-Ao6JHQQN6MkLDwjcTfmA;Path=/;Domain=.salesforce.com;Expires=Fri,
+        07-Aug-2015 22:12:37 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Pragma:
@@ -37,9 +37,9 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1432078446774","token_type":"Bearer","instance_url":"https://<host>","signature":"48fp5x1JIofOq/1TfWCcVBdJ9avsYcASae3gNE0nvY8=","access_token":"00D1a000000H3O9!AQ4AQIsaMmpVY0MkRAqWjHsN6PVfiwFjj_vqrELuCJU8J.FPDa6glYHoGFCZl6CQZWwdOfR89R0VSsJBD9SUvJv1jfsIJGAB"}'
+      string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1433801557688","token_type":"Bearer","instance_url":"https://<host>","signature":"jR7J+a16rGTcPtjAswSguhNaDWTb4xe3hvgSUNbEPtw=","access_token":"00D1a000000H3O9!AQ4AQH0rZGqBVji7vO4sB8J1_YW.g5S2vIbe9IaUgwHpwLPEdpfIcj9Ngpc2CndFvJZMwVIIp15.yQQOil19Qc2MuedbnlQz"}'
     http_version: 
-  recorded_at: Tue, 19 May 2015 23:34:07 GMT
+  recorded_at: Mon, 08 Jun 2015 22:12:39 GMT
 - request:
     method: post
     uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c
@@ -53,7 +53,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQIsaMmpVY0MkRAqWjHsN6PVfiwFjj_vqrELuCJU8J.FPDa6glYHoGFCZl6CQZWwdOfR89R0VSsJBD9SUvJv1jfsIJGAB
+      - OAuth 00D1a000000H3O9!AQ4AQH0rZGqBVji7vO4sB8J1_YW.g5S2vIbe9IaUgwHpwLPEdpfIcj9Ngpc2CndFvJZMwVIIp15.yQQOil19Qc2MuedbnlQz
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -64,28 +64,28 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Tue, 19 May 2015 23:34:07 GMT
+      - Mon, 08 Jun 2015 22:12:37 GMT
       Set-Cookie:
-      - BrowserId=DkVjne2rRouMphjk0Sm1kQ;Path=/;Domain=.salesforce.com;Expires=Sat,
-        18-Jul-2015 23:34:07 GMT
+      - BrowserId=zUn0iRCJTIK0lwN9Uv2fmQ;Path=/;Domain=.salesforce.com;Expires=Fri,
+        07-Aug-2015 22:12:37 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=17/15000
+      - api-usage=12/15000
       Location:
-      - "/services/data/<api_version>/sobjects/CustomObject__c/a001a000001aBJtAAM"
+      - "/services/data/<api_version>/sobjects/CustomObject__c/a001a000001cF5UAAU"
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"a001a000001aBJtAAM","success":true,"errors":[]}'
+      string: '{"id":"a001a000001cF5UAAU","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Tue, 19 May 2015 23:34:08 GMT
+  recorded_at: Mon, 08 Jun 2015 22:12:39 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20LastModifiedById,%20Name,%20Example_Field__c%20from%20CustomObject__c
     body:
       encoding: US-ASCII
       string: ''
@@ -93,7 +93,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.1
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQIsaMmpVY0MkRAqWjHsN6PVfiwFjj_vqrELuCJU8J.FPDa6glYHoGFCZl6CQZWwdOfR89R0VSsJBD9SUvJv1jfsIJGAB
+      - OAuth 00D1a000000H3O9!AQ4AQH0rZGqBVji7vO4sB8J1_YW.g5S2vIbe9IaUgwHpwLPEdpfIcj9Ngpc2CndFvJZMwVIIp15.yQQOil19Qc2MuedbnlQz
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -104,28 +104,28 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Tue, 19 May 2015 23:34:08 GMT
+      - Mon, 08 Jun 2015 22:12:38 GMT
       Set-Cookie:
-      - BrowserId=mEliqh0IQs-g-XTscrAhQg;Path=/;Domain=.salesforce.com;Expires=Sat,
-        18-Jul-2015 23:34:08 GMT
+      - BrowserId=nmVPyn5tRL24WuQPP8_Czw;Path=/;Domain=.salesforce.com;Expires=Fri,
+        07-Aug-2015 22:12:38 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=17/15000
+      - api-usage=13/15000
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001a60JAAQ"},"Id":"a001a000001a60JAAQ","SystemModstamp":"2015-05-18T22:46:05.000+0000","Name":"SAMPLE","Example_Field__c":null},{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001aBJtAAM"},"Id":"a001a000001aBJtAAM","SystemModstamp":"2015-05-19T23:34:07.000+0000","Name":"Are
+      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001a60JAAQ"},"Id":"a001a000001a60JAAQ","SystemModstamp":"2015-05-18T22:46:05.000+0000","LastModifiedById":"0051a000000UGT8AAO","Name":"SAMPLE","Example_Field__c":null},{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001cF5UAAU"},"Id":"a001a000001cF5UAAU","SystemModstamp":"2015-06-08T22:12:37.000+0000","LastModifiedById":"0051a000000UGT8AAO","Name":"Are
         you going to Scarborough Fair?","Example_Field__c":"Parsley, Sage, Rosemary,
         and Thyme."}]}'
     http_version: 
-  recorded_at: Tue, 19 May 2015 23:34:09 GMT
+  recorded_at: Mon, 08 Jun 2015 22:12:39 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c%20where%20Name%20!=%20%27Are%20you%20going%20to%20Scarborough%20Fair?%27
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20LastModifiedById,%20Name,%20Example_Field__c%20from%20CustomObject__c%20where%20Name%20!=%20%27Are%20you%20going%20to%20Scarborough%20Fair?%27
     body:
       encoding: US-ASCII
       string: ''
@@ -133,7 +133,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.1
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQIsaMmpVY0MkRAqWjHsN6PVfiwFjj_vqrELuCJU8J.FPDa6glYHoGFCZl6CQZWwdOfR89R0VSsJBD9SUvJv1jfsIJGAB
+      - OAuth 00D1a000000H3O9!AQ4AQH0rZGqBVji7vO4sB8J1_YW.g5S2vIbe9IaUgwHpwLPEdpfIcj9Ngpc2CndFvJZMwVIIp15.yQQOil19Qc2MuedbnlQz
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -144,26 +144,26 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Tue, 19 May 2015 23:34:09 GMT
+      - Mon, 08 Jun 2015 22:12:38 GMT
       Set-Cookie:
-      - BrowserId=2pGvHX3ZRECV7rJT4dC3fA;Path=/;Domain=.salesforce.com;Expires=Sat,
-        18-Jul-2015 23:34:09 GMT
+      - BrowserId=WVVxZXLnQhusLHAO-uUtUg;Path=/;Domain=.salesforce.com;Expires=Fri,
+        07-Aug-2015 22:12:38 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=17/15000
+      - api-usage=18/15000
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001a60JAAQ"},"Id":"a001a000001a60JAAQ","SystemModstamp":"2015-05-18T22:46:05.000+0000","Name":"SAMPLE","Example_Field__c":null}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001a60JAAQ"},"Id":"a001a000001a60JAAQ","SystemModstamp":"2015-05-18T22:46:05.000+0000","LastModifiedById":"0051a000000UGT8AAO","Name":"SAMPLE","Example_Field__c":null}]}'
     http_version: 
-  recorded_at: Tue, 19 May 2015 23:34:10 GMT
+  recorded_at: Mon, 08 Jun 2015 22:12:39 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20Name,%20Example_Field__c%20from%20CustomObject__c%20where%20Name%20=%20%27Are%20you%20going%20to%20Scarborough%20Fair?%27
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20LastModifiedById%20from%20CustomObject__c%20where%20Name%20=%20%27Are%20you%20going%20to%20Scarborough%20Fair?%27
     body:
       encoding: US-ASCII
       string: ''
@@ -171,7 +171,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.1
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQIsaMmpVY0MkRAqWjHsN6PVfiwFjj_vqrELuCJU8J.FPDa6glYHoGFCZl6CQZWwdOfR89R0VSsJBD9SUvJv1jfsIJGAB
+      - OAuth 00D1a000000H3O9!AQ4AQH0rZGqBVji7vO4sB8J1_YW.g5S2vIbe9IaUgwHpwLPEdpfIcj9Ngpc2CndFvJZMwVIIp15.yQQOil19Qc2MuedbnlQz
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -182,28 +182,26 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Tue, 19 May 2015 23:34:10 GMT
+      - Mon, 08 Jun 2015 22:12:38 GMT
       Set-Cookie:
-      - BrowserId=uprM5FLJQDetuw1q9hKvwg;Path=/;Domain=.salesforce.com;Expires=Sat,
-        18-Jul-2015 23:34:10 GMT
+      - BrowserId=uhQTItfVTVy3xhNf31CV5g;Path=/;Domain=.salesforce.com;Expires=Fri,
+        07-Aug-2015 22:12:38 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=17/15000
+      - api-usage=18/15000
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001aBJtAAM"},"Id":"a001a000001aBJtAAM","SystemModstamp":"2015-05-19T23:34:07.000+0000","Name":"Are
-        you going to Scarborough Fair?","Example_Field__c":"Parsley, Sage, Rosemary,
-        and Thyme."}]}'
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001cF5UAAU"},"Id":"a001a000001cF5UAAU","SystemModstamp":"2015-06-08T22:12:37.000+0000","LastModifiedById":"0051a000000UGT8AAO"}]}'
     http_version: 
-  recorded_at: Tue, 19 May 2015 23:34:10 GMT
+  recorded_at: Mon, 08 Jun 2015 22:12:40 GMT
 - request:
     method: delete
-    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/a001a000001aBJtAAM
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/a001a000001cF5UAAU
     body:
       encoding: US-ASCII
       string: ''
@@ -211,7 +209,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.1
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQIsaMmpVY0MkRAqWjHsN6PVfiwFjj_vqrELuCJU8J.FPDa6glYHoGFCZl6CQZWwdOfR89R0VSsJBD9SUvJv1jfsIJGAB
+      - OAuth 00D1a000000H3O9!AQ4AQH0rZGqBVji7vO4sB8J1_YW.g5S2vIbe9IaUgwHpwLPEdpfIcj9Ngpc2CndFvJZMwVIIp15.yQQOil19Qc2MuedbnlQz
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -222,10 +220,10 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Tue, 19 May 2015 23:34:11 GMT
+      - Mon, 08 Jun 2015 22:12:38 GMT
       Set-Cookie:
-      - BrowserId=Zruo3pklQ_ub4MdPrZp_5Q;Path=/;Domain=.salesforce.com;Expires=Sat,
-        18-Jul-2015 23:34:11 GMT
+      - BrowserId=dZWfNi2_Qd-Ri3vyifVAsQ;Path=/;Domain=.salesforce.com;Expires=Fri,
+        07-Aug-2015 22:12:38 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
@@ -234,5 +232,5 @@ http_interactions:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Tue, 19 May 2015 23:34:12 GMT
+  recorded_at: Mon, 08 Jun 2015 22:12:40 GMT
 recorded_with: VCR 2.9.3
