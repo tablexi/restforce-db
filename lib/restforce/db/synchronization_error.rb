@@ -30,7 +30,13 @@ module Restforce
       #
       # Returns a String.
       def message
-        "[#{@instance.id}] #{base_exception.message}"
+        debug_info = [
+          @instance.mapping.database_model,
+          @instance.mapping.salesforce_model,
+          @instance.id,
+        ]
+
+        "[#{debug_info.join('|')}] #{base_exception.message}"
       end
 
     end
