@@ -43,7 +43,7 @@ module Restforce
         return unless @strategy.build?(instance)
         @mapping.database_record_type.create!(instance)
       rescue ActiveRecord::ActiveRecordError => e
-        DB.logger.error(e)
+        DB.logger.error(SynchronizationError.new(e, instance))
       end
 
       # Internal: Attempt to create a partner record in Salesforce for the
@@ -57,7 +57,7 @@ module Restforce
         return if instance.synced?
         @mapping.salesforce_record_type.create!(instance)
       rescue Faraday::Error::ClientError => e
-        DB.logger.error(e)
+        DB.logger.error(SynchronizationError.new(e, instance))
       end
 
     end

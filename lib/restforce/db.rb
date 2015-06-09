@@ -9,6 +9,7 @@ require "restforce/db/configuration"
 require "restforce/db/registry"
 require "restforce/db/strategy"
 require "restforce/db/dsl"
+require "restforce/db/synchronization_error"
 
 require "restforce/db/association_cache"
 require "restforce/db/associations/base"

@@ -19,8 +19,8 @@ module Restforce
       # record descriptors to attributes.
       #
       # NOTE: Synchronizer assumes that the propagation step has done its job
-      # correctly. If we can't locate a database record for a specific Salsforce
-      # ID, we assume it shouldn't be synchronized.
+      # correctly. If we can't locate a database record for a specific
+      # Salesforce ID, we assume it shouldn't be synchronized.
       #
       # changes - A Hash, with keys composed of a Salesforce ID and model name,
       #           with Restforce::DB::Accumulator objects as values.
@@ -62,7 +62,7 @@ module Restforce
 
         instance.update!(attributes)
       rescue ActiveRecord::ActiveRecordError, Faraday::Error::ClientError => e
-        DB.logger.error(e)
+        DB.logger.error(SynchronizationError.new(e, instance))
       end
 
     end

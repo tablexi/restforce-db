@@ -9,10 +9,12 @@ module Restforce
       # reconcile record attributes with Salesforce instances.
       class ActiveRecord < Base
 
-        # Public: Get a common identifier for this record.
+        # Public: Get a common identifier for this record. If the record is
+        # unsynchronized, returns a database-specific identifier.
         #
         # Returns a String.
         def id
+          return "#{@record_type}::#{@record.id}" unless synced?
           @record.send(@mapping.lookup_column)
         end
 
