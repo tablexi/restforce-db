@@ -85,5 +85,19 @@ describe Restforce::DB::Collector do
       end
     end
 
+    describe "when the record has not been updated outside of the system" do
+      subject do
+        Restforce::DB::Runner.stub_any_instance(:changed?, false) do
+          collector.run
+        end
+      end
+
+      before { salesforce_id }
+
+      it "does not collect any changes" do
+        expect(subject[key]).to_be :empty?
+      end
+    end
+
   end
 end

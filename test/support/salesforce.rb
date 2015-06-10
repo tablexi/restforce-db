@@ -36,7 +36,6 @@ class Salesforce
   #
   # Returns nothing.
   def self.clean!
-    # raise Salesforce.records.inspect unless Salesforce.records.empty?
     Salesforce.records.each do |entry|
       Restforce::DB.client.destroy entry[0], entry[1]
     end

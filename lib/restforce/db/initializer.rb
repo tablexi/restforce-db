@@ -42,6 +42,7 @@ module Restforce
       def create_in_database(instance)
         return unless @strategy.build?(instance)
         @mapping.database_record_type.create!(instance)
+        @runner.update instance
       rescue ActiveRecord::ActiveRecordError => e
         DB.logger.error(SynchronizationError.new(e, instance))
       end
@@ -56,6 +57,7 @@ module Restforce
       def create_in_salesforce(instance)
         return if instance.synced?
         @mapping.salesforce_record_type.create!(instance)
+        @runner.update instance
       rescue Faraday::Error::ClientError => e
         DB.logger.error(SynchronizationError.new(e, instance))
       end
