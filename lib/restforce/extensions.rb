@@ -10,8 +10,11 @@ module Restforce
     # Raises on update error.
     def update!(attributes)
       ensure_id
-      @client.update!(sobject_type, attributes.merge("Id" => self.Id))
+      response = @client.api_patch("sobjects/#{sobject_type}/#{self.Id}", attributes)
+      update_time = response.env.response_headers["date"]
+
       merge!(attributes)
+      merge!("SystemModstamp" => update_time)
     end
 
   end
