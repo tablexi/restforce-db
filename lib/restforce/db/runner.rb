@@ -10,6 +10,13 @@ module Restforce
       attr_reader :last_run
       attr_accessor :before, :after
 
+      extend Forwardable
+      def_delegators(
+        :@timestamp_cache,
+        :update,
+        :changed?,
+      )
+
       # Public: Initialize a new Restforce::DB::Runner.
       #
       # delay         - A Numeric offet to apply to all record lookups. Can be
@@ -20,6 +27,7 @@ module Restforce
         @delay = delay
         @last_run = last_run_time
         @record_cache = RecordCache.new
+        @timestamp_cache = TimestampCache.new
       end
 
       # Public: Indicate that a new phase of the run is beginning. Updates the
@@ -28,6 +36,8 @@ module Restforce
       # Returns the new run Time.
       def tick!
         @record_cache.reset
+        @timestamp_cache.reset
+
         run_time = Time.now
 
         @before = run_time - @delay

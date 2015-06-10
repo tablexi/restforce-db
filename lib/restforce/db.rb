@@ -32,6 +32,7 @@ require "restforce/db/strategies/associated"
 require "restforce/db/strategies/passive"
 
 require "restforce/db/record_cache"
+require "restforce/db/timestamp_cache"
 require "restforce/db/runner"
 
 require "restforce/db/accumulator"
