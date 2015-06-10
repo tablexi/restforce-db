@@ -19,7 +19,7 @@ module Restforce
       def initialize(delay = 0, last_run_time = DB.last_run)
         @delay = delay
         @last_run = last_run_time
-        @cache = RunnerCache.new
+        @record_cache = RecordCache.new
       end
 
       # Public: Indicate that a new phase of the run is beginning. Updates the
@@ -27,7 +27,7 @@ module Restforce
       #
       # Returns the new run Time.
       def tick!
-        @cache.reset
+        @record_cache.reset
         run_time = Time.now
 
         @before = run_time - @delay
@@ -54,7 +54,7 @@ module Restforce
       #
       # Returns an Enumerator yielding Restforce::DB::Instances::Salesforces.
       def salesforce_instances
-        @cache.collection(@mapping, :salesforce_record_type, options)
+        @record_cache.collection(@mapping, :salesforce_record_type, options)
       end
 
       # Public: Iterate through recently-updated records for the database model
@@ -62,7 +62,7 @@ module Restforce
       #
       # Returns an Enumerator yielding Restforce::DB::Instances::ActiveRecords.
       def database_instances
-        @cache.collection(@mapping, :database_record_type, options)
+        @record_cache.collection(@mapping, :database_record_type, options)
       end
 
       private

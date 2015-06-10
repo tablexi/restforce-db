@@ -31,7 +31,7 @@ require "restforce/db/strategies/always"
 require "restforce/db/strategies/associated"
 require "restforce/db/strategies/passive"
 
-require "restforce/db/runner_cache"
+require "restforce/db/record_cache"
 require "restforce/db/runner"
 
 require "restforce/db/accumulator"

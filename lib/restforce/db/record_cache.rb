@@ -2,14 +2,14 @@ module Restforce
 
   module DB
 
-    # Restforce::DB::RunnerCache serves as a means of caching the collections of
+    # Restforce::DB::RecordCache serves as a means of caching the collections of
     # recently-updated database and Salesforce instances for passed mappings.
     # The general goal is to avoid making repetitive Salesforce API calls or
     # database queries, and ensure a consistent list of objects during a
     # synchronization run.
-    class RunnerCache
+    class RecordCache
 
-      # Public: Initialize a new Restforce::DB::RunnerCache.
+      # Public: Initialize a new Restforce::DB::RecordCache.
       def initialize
         reset
       end
