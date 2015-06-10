@@ -117,6 +117,7 @@ module Restforce
     def self.reset
       @configuration = nil
       @client = nil
+      @user_id = nil
     end
 
   end
