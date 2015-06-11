@@ -40,6 +40,8 @@ module Restforce
       #
       # Returns nothing.
       def verify_associations(instance)
+        return unless instance.synced?
+
         database_instance, salesforce_instance =
           case instance
           when Restforce::DB::Instances::Salesforce
