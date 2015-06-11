@@ -11,8 +11,8 @@ describe Restforce::DB::TimestampCache do
   let(:instance_class) { Struct.new(:id, :last_update) }
   let(:instance) { instance_class.new(id, timestamp) }
 
-  describe "#update" do
-    before { cache.update instance }
+  describe "#cache_timestamp" do
+    before { cache.cache_timestamp instance }
 
     it "stores the update timestamp in the cache" do
       expect(cache.timestamp(instance)).to_equal timestamp
@@ -49,7 +49,7 @@ describe Restforce::DB::TimestampCache do
       end
 
       describe "and a recent timestamp is cached" do
-        before { cache.update instance }
+        before { cache.cache_timestamp instance }
 
         it "returns false" do
           expect(cache).to_not_be :changed?, new_instance
@@ -58,7 +58,7 @@ describe Restforce::DB::TimestampCache do
 
       describe "and a stale timestamp is cached" do
         let(:new_instance) { instance_class.new(id, timestamp + 1) }
-        before { cache.update instance }
+        before { cache.cache_timestamp instance }
 
         it "returns true" do
           expect(cache).to_be :changed?, new_instance
@@ -69,7 +69,7 @@ describe Restforce::DB::TimestampCache do
 
   describe "#reset" do
     before do
-      cache.update instance
+      cache.cache_timestamp instance
       cache.reset
     end
 
@@ -77,7 +77,7 @@ describe Restforce::DB::TimestampCache do
       expect(cache.timestamp(instance)).to_equal timestamp
     end
 
-    it "expires old timestamps" do
+    it "expires retired timestamps" do
       cache.reset
       expect(cache.timestamp(instance)).to_be_nil
     end

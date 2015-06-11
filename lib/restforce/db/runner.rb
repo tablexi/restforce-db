@@ -13,7 +13,7 @@ module Restforce
       extend Forwardable
       def_delegators(
         :@timestamp_cache,
-        :update,
+        :cache_timestamp,
         :changed?,
       )
 

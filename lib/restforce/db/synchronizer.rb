@@ -68,7 +68,7 @@ module Restforce
         attributes = @mapping.convert(instance.record_type, current_attributes)
 
         instance.update!(attributes)
-        @runner.update instance
+        @runner.cache_timestamp instance
       rescue ActiveRecord::ActiveRecordError, Faraday::Error::ClientError => e
         DB.logger.error(SynchronizationError.new(e, instance))
       end
