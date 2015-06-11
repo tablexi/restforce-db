@@ -1,11 +1,11 @@
 require_relative "../../../test_helper"
 
-describe Restforce::DB::RunnerCache do
+describe Restforce::DB::RecordCache do
 
   configure!
   mappings!
 
-  let(:cache) { Restforce::DB::RunnerCache.new }
+  let(:cache) { Restforce::DB::RecordCache.new }
 
   describe "#collection" do
     let(:object) { mapping.database_model.create! }

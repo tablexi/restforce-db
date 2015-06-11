@@ -11,8 +11,9 @@ module Restforce
       # Public: Initialize a new Restforce::DB::Synchronizer.
       #
       # mapping - A Restforce::DB::Mapping.
-      def initialize(mapping)
+      def initialize(mapping, runner = Runner.new)
         @mapping = mapping
+        @runner = runner
       end
 
       # Public: Synchronize records for the current mapping from a Hash of
@@ -67,6 +68,7 @@ module Restforce
         attributes = @mapping.convert(instance.record_type, current_attributes)
 
         instance.update!(attributes)
+        @runner.cache_timestamp instance
       rescue ActiveRecord::ActiveRecordError, Faraday::Error::ClientError => e
         DB.logger.error(SynchronizationError.new(e, instance))
       end
