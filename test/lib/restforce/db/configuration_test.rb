@@ -68,6 +68,14 @@ describe Restforce::DB::Configuration do
         expect(configuration.client_secret).to_equal secrets["client_secret"]
         expect(configuration.host).to_equal secrets["host"]
       end
+
+      it "defaults the API version to DEFAULT_API_VERSION" do
+        expect(configuration.api_version).to_equal Restforce::DB::Configuration::DEFAULT_API_VERSION
+      end
+
+      it "defaults the timeout to DEFAULT_TIMEOUT" do
+        expect(configuration.timeout).to_equal Restforce::DB::Configuration::DEFAULT_TIMEOUT
+      end
     end
 
     describe "when the loaded configuration is missing one or more keys" do

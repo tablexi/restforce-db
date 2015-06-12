@@ -9,6 +9,7 @@ module Restforce
     class Configuration
 
       DEFAULT_API_VERSION = "29.0".freeze
+      DEFAULT_TIMEOUT     = 5
 
       attr_accessor(*%i(
         username
@@ -17,6 +18,7 @@ module Restforce
         client_id
         client_secret
         host
+        timeout
         api_version
         logger
       ))
@@ -73,6 +75,7 @@ module Restforce
         # We want to default to 29.0 or later, so we can support the API
         # endpoint for recently deleted records.
         self.api_version    = configurations["api_version"] || DEFAULT_API_VERSION
+        self.timeout        = configurations["timeout"] || DEFAULT_TIMEOUT
       end
 
       private
