@@ -90,6 +90,7 @@ module Restforce
         client_secret:  configuration.client_secret,
         host:           configuration.host,
         api_version:    configuration.api_version,
+        timeout:        configuration.timeout,
       )
     end
 
