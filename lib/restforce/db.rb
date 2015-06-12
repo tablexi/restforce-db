@@ -91,6 +91,7 @@ module Restforce
         host:           configuration.host,
         api_version:    configuration.api_version,
         timeout:        configuration.timeout,
+        adapter:        :net_http_persistent,
       )
     end
 

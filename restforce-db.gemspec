@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "activerecord"
   spec.add_dependency "daemons"
+  spec.add_dependency "net-http-persistent"
   spec.add_dependency "restforce"
 
   spec.add_development_dependency "bundler"
