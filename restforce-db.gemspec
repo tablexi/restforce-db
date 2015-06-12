@@ -35,7 +35,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest-spec-expect"
   spec.add_development_dependency "minitest-vcr"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rubocop", ">= 0.30.0"
+
+  # We're locking rubocop at 0.31.0 until a trailing comma issue is resolved:
+  # https://github.com/bbatsov/rubocop/issues/1955
+  spec.add_development_dependency "rubocop", "~> 0.31.0"
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "webmock"
 end
