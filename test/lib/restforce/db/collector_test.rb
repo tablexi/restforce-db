@@ -22,15 +22,32 @@ describe Restforce::DB::Collector do
     describe "given an existing Salesforce record" do
       before { salesforce_id }
 
-      it "returns the attributes from the Salesforce record" do
-        record = mapping.salesforce_record_type.find(salesforce_id)
+      describe "which has not been synchronized" do
 
-        expect(subject[key]).to_equal(
-          record.last_update => {
-            "Name" => attributes["Name"],
-            "Example_Field__c" => attributes["Example_Field__c"],
-          },
-        )
+        it "does not store any attributes" do
+          expect(subject[key]).to_be :empty?
+        end
+      end
+
+      describe "which has been synchronized" do
+        let(:database_metadata) { { salesforce_id: salesforce_id, synchronized_at: Time.now + 1 } }
+        let(:database_record) do
+          database_attributes = mapping.convert(database_model, attributes)
+          database_model.create!(database_attributes.merge(database_metadata))
+        end
+
+        before { database_record }
+
+        it "returns the attributes from the Salesforce record" do
+          record = mapping.salesforce_record_type.find(salesforce_id)
+
+          expect(subject[key]).to_equal(
+            record.last_update => {
+              "Name" => attributes["Name"],
+              "Example_Field__c" => attributes["Example_Field__c"],
+            },
+          )
+        end
       end
     end
 
