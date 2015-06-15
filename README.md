@@ -44,14 +44,13 @@ The following key-value pairs _must_ be set in your configuration file:
 The following _can_ be set in your configuration file:
 
 - `api_version`:
-  Restforce::DB defaults to version 29.0 of the Salesforce API.If you need a more (or less, for whatever reason) recent version of the API for your use case, you can specify an `api_version` key in your restforce-db.yml configuration. Version 29.0 or above is required for full gem functionality.
+  Restforce::DB defaults to version 29.0 of the Salesforce API. If you need a more (or less, for whatever reason) recent version of the API for your use case, you can specify an `api_version` key in your restforce-db.yml configuration. Version 29.0 or above is required for full gem functionality.
 
 - `timeout`:
   The maximum amount of time a request to Salesforce can take before it will be interrupted. This defaults to 5 seconds.
 
 - `adapter`:
-  The HTTP adapter which should be used to make requests to Salesforce. By default, we use Net::HTTP (which is available by default in Ruby, and used
-  by default through Faraday), but something like `typhoeus` may give better, more consistent performance for your use case. If you modify the configured adapter, be sure the relevant gem is available for your application.
+  The HTTP adapter which should be used to make requests to Salesforce. By default, we use Net::HTTP (which is available by default in Ruby, and used by default through Faraday), but something like `typhoeus` may give better, more consistent performance for your use case. If you modify the configured adapter, be sure the relevant gem is available for your application.
 
 ### Update your model schema
 
