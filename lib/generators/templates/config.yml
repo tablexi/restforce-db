@@ -6,3 +6,8 @@ client:
   client_id:      "<your salesforce remote app client id>"
   client_secret:  "<your salesforce remote app client secret>"
   host:           "login.salesforce.com"
+
+  # The following are not required, but you may want to modify them:
+  api_version:    "29.0"
+  timeout:        5
+  adapter:        "net_http"
