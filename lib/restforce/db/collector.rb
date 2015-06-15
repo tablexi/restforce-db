@@ -54,7 +54,7 @@ module Restforce
       #
       # Returns nothing.
       def accumulate(instance)
-        return unless @runner.changed?(instance)
+        return unless instance.synced? && @runner.changed?(instance)
 
         accumulated_changes[key_for(instance)].store(
           instance.last_update,
