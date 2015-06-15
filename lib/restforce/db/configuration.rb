@@ -9,7 +9,8 @@ module Restforce
     class Configuration
 
       DEFAULT_API_VERSION = "29.0".freeze
-      DEFAULT_TIMEOUT     = 5
+      DEFAULT_TIMEOUT     = 5.freeze
+      DEFAULT_ADAPTER     = :net_http.freeze
 
       attr_accessor(*%i(
         username
@@ -19,6 +20,7 @@ module Restforce
         client_secret
         host
         timeout
+        adapter
         api_version
         logger
       ))
@@ -76,6 +78,7 @@ module Restforce
         # endpoint for recently deleted records.
         self.api_version    = configurations["api_version"] || DEFAULT_API_VERSION
         self.timeout        = configurations["timeout"] || DEFAULT_TIMEOUT
+        self.adapter        = (configurations["adapter"] || DEFAULT_ADAPTER).to_sym
       end
 
       private

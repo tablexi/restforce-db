@@ -17,4 +17,3 @@ test:
   override:
     - bundle exec rubocop
     - bundle exec rake test
-

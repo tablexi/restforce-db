@@ -22,6 +22,37 @@ First, you'll want to install the default bin and configuration files, which is 
 
 This gem assumes that you're running Rails 4 or greater, therefore the `bin` file should be checked into the repository with the rest of your code. The `config/restforce-db.yml` file should be managed the same way you manage your secrets files, and probably not checked into the repository.
 
+### Modify your configurations
+
+The following key-value pairs _must_ be set in your configuration file:
+
+- `username`:
+  Your Salesforce username. Note that sandbox users typically have the name of the sandbox appended to their email address, e.g. "ahorner@tablexi.com.mysandbox".
+
+- `password`:
+  Your Salesforce password.
+
+- `security_token`:
+  Your Salesforce Security Token. If you didn't receive one in your email during setup, you can find this by signing in, and visiting Setup > Personal Information > Reset your security token.
+
+- `client_id`, `client_secret`:
+  When signed in to Salesforce with the proper authorization level, navigate to Setup > App Setup > Create > Apps, and hit "New" for "Connected Apps" if no appropriate connected app has already been added. Enable OAuth settings for the app, and once it is created you should see the Consumer Key (Client ID) and Secret under the API settings for the app. If a connected app has already been created, you can simply grab the existing ID and Secret by clicking through.
+
+- `host`:
+  This hostname of the Salesforce instance. You can typically use a more generic environment URL, e.g., "login.salesforce.com".
+
+The following _can_ be set in your configuration file:
+
+- `api_version`:
+  Restforce::DB defaults to version 29.0 of the Salesforce API.If you need a more (or less, for whatever reason) recent version of the API for your use case, you can specify an `api_version` key in your restforce-db.yml configuration. Version 29.0 or above is required for full gem functionality.
+
+- `timeout`:
+  The maximum amount of time a request to Salesforce can take before it will be interrupted. This defaults to 5 seconds.
+
+- `adapter`:
+  The HTTP adapter which should be used to make requests to Salesforce. By default, we use Net::HTTP (which is available by default in Ruby, and used
+  by default through Faraday), but something like `typhoeus` may give better, more consistent performance for your use case. If you modify the configured adapter, be sure the relevant gem is available for your application.
+
 ### Update your model schema
 
 In order to keep your database records in sync with Salesforce, the table will need to store a reference to its associated Salesforce record. A generator is included to trivially add a generic `salesforce_id` column to your tables:
@@ -240,9 +271,6 @@ The example above would disable the default ActiveRecord logging specifically fo
 
 - **API Usage.** 
   This gem performs most of its functionality via the Salesforce API (by way of the [`restforce`](https://github.com/ejholmes/restforce) gem). If you're at risk of hitting your Salesforce API limits, this may not be the right approach for you.
-
-- **API Version.**
-  Restforce::DB defaults to version 29.0 of the Salesforce API. If you need a more (or less, for whatever reason) recent version of the API for your use case, you can specify an `api_version` key in your restforce-db.yml configuration. Version 29.0 or above is required for full gem functionality.
 
 - **Update Prioritization.**
   When synchronization occurs, the most recently updated record, Salesforce or database, gets to make the final call about the values of _all_ of the fields it observes. This means that race conditions can and probably will happen if both systems are updated within the same polling interval.
