@@ -8,8 +8,9 @@ describe Restforce::DB::TimestampCache do
 
   let(:timestamp) { Time.now }
   let(:id) { "some-id" }
-  let(:instance_class) { Struct.new(:id, :last_update) }
-  let(:instance) { instance_class.new(id, timestamp) }
+  let(:record_type) { "CustomObject__c" }
+  let(:instance_class) { Struct.new(:id, :record_type, :last_update) }
+  let(:instance) { instance_class.new(id, record_type, timestamp) }
 
   describe "#cache_timestamp" do
     before { cache.cache_timestamp instance }
@@ -20,7 +21,7 @@ describe Restforce::DB::TimestampCache do
   end
 
   describe "#changed?" do
-    let(:new_instance) { instance_class.new(id, timestamp) }
+    let(:new_instance) { instance_class.new(id, record_type, timestamp) }
 
     describe "when the passed instance was not internally updated" do
       before do
@@ -57,7 +58,7 @@ describe Restforce::DB::TimestampCache do
       end
 
       describe "and a stale timestamp is cached" do
-        let(:new_instance) { instance_class.new(id, timestamp + 1) }
+        let(:new_instance) { instance_class.new(id, record_type, timestamp + 1) }
         before { cache.cache_timestamp instance }
 
         it "returns true" do
