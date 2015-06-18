@@ -34,24 +34,36 @@ module Restforce
       private
 
       # Internal: Ensure integrity between the lookup columns in Salesforce and
-      # the synchronized records in the database.
+      # the synchronized records in the database. Skips records which have only
+      # been updated by Restforce::DB itself.
       #
       # instance - A Restforce::DB::Instances::Base.
       #
       # Returns nothing.
       def verify_associations(instance)
         return unless instance.synced?
+        return if instance.updated_internally?
 
-        database_instance, salesforce_instance =
-          case instance
-          when Restforce::DB::Instances::Salesforce
-            [@mapping.database_record_type.find(instance.id), instance]
-          when Restforce::DB::Instances::ActiveRecord
-            [instance, @mapping.salesforce_record_type.find(instance.id)]
-          end
-
+        database_instance, salesforce_instance = synchronized_instances(instance)
         return unless database_instance && salesforce_instance
+
         sync_associations(database_instance, salesforce_instance)
+      end
+
+      # Internal: Given an instance for one system, find its synchronized pair
+      # in the other system.
+      #
+      # instance - A Restforce::DB::Instances::Base.
+      #
+      # Returns an Array containing one Restforce::DB::Instances::ActiveRecord
+      #   and one Restforce::DB::Instances::Salesforce, in that order.
+      def synchronized_instances(instance)
+        case instance
+        when Restforce::DB::Instances::Salesforce
+          [@mapping.database_record_type.find(instance.id), instance]
+        when Restforce::DB::Instances::ActiveRecord
+          [instance, @mapping.salesforce_record_type.find(instance.id)]
+        end
       end
 
       # Internal: Given a database record and corresponding Salesforce data,
