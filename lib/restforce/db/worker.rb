@@ -20,6 +20,7 @@ module Restforce
       # options - A Hash of options to configure the worker's run. Currently
       #           supported options are:
       #           interval - The maximum polling loop rest time.
+      #           delay    - The amount of time by which to offset queries.
       #           config   - The path to a client configuration file.
       #           verbose  - Display command line output? Defaults to false.
       def initialize(options = {})
@@ -77,8 +78,7 @@ module Restforce
       # Returns nothing.
       def perform
         track do
-          runner.tick!
-          @changes = Hash.new { |h, k| h[k] = Accumulator.new }
+          reset!
 
           Restforce::DB::Registry.each do |mapping|
             task("CLEANING RECORDS", mapping) { clean mapping }
@@ -95,6 +95,15 @@ module Restforce
         end
       end
 
+      # Internal: Reset the internal state of the Worker in preparation for
+      # a new synchronization loop.
+      #
+      # Returns nothing.
+      def reset!
+        runner.tick!
+        @changes = Hash.new { |h, k| h[k] = Accumulator.new }
+      end
+
       # Internal: Run the passed block, updating the tracker with the time at
       # which the run was initiated.
       #
@@ -104,11 +113,7 @@ module Restforce
         if tracker
           runtime = Time.now
 
-          if tracker.last_run
-            log "SYNCHRONIZING from #{tracker.last_run.iso8601}"
-          else
-            log "SYNCHRONIZING"
-          end
+          log "SYNCHRONIZING#{" from #{tracker.last_run.iso8601}" if tracker.last_run}"
 
           yield
 
