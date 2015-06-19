@@ -5,8 +5,7 @@ describe Restforce::DB::Worker do
   configure!
   mappings!
 
-  let(:config_path) { File.expand_path("../../../../config/secrets.yml", __FILE__) }
-  let(:worker) { Restforce::DB::Worker.new(delay: 0, config: config_path) }
+  let(:worker) { Restforce::DB::Worker.new(delay: 0) }
   let(:runner) { worker.send(:runner) }
 
   describe "a race condition during synchronization", vcr: { match_requests_on: [:method, VCR.request_matchers.uri_without_param(:q)] } do

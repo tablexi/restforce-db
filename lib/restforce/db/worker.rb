@@ -24,12 +24,8 @@ module Restforce
       #           config   - The path to a client configuration file.
       #           verbose  - Display command line output? Defaults to false.
       def initialize(options = {})
-        @verbose = options.fetch(:verbose) { false }
-        @interval = options.fetch(:interval) { DEFAULT_INTERVAL }
-        @delay = options.fetch(:delay) { DEFAULT_DELAY }
-
-        DB.reset
-        DB.configure { |config| config.parse(options[:config]) }
+        @options = options
+        @interval = @options.fetch(:interval) { DEFAULT_INTERVAL }
       end
 
       # Public: Start the polling loop for this Worker. Synchronizes all
@@ -38,9 +34,13 @@ module Restforce
       #
       # Returns nothing.
       def start
-        DB.configure { |config| config.logger = logger }
+        DB.reset
+        DB.configure do |config|
+          config.parse(@options[:config])
+          config.logger = logger
+        end
 
-        trap_signals
+        %w(TERM INT).each { |signal| trap(signal) { stop } }
 
         loop do
           runtime = Benchmark.realtime { perform }
@@ -60,16 +60,6 @@ module Restforce
       end
 
       private
-
-      # Internal: Configure the main loop to trap specific signals, triggering
-      # an exit once the loop completes.
-      #
-      # Return nothing.
-      def trap_signals
-        %w(TERM INT).each do |signal|
-          trap(signal) { stop }
-        end
-      end
 
       # Internal: Perform the synchronization loop, recording the time that the
       # run is performed so that future runs can pick up where the last run
@@ -113,7 +103,11 @@ module Restforce
         if tracker
           runtime = Time.now
 
-          log "SYNCHRONIZING#{" from #{tracker.last_run.iso8601}" if tracker.last_run}"
+          if tracker.last_run
+            log "SYNCHRONIZING from #{tracker.last_run.iso8601}"
+          else
+            log "SYNCHRONIZING"
+          end
 
           yield
 
@@ -129,7 +123,7 @@ module Restforce
       #
       # Returns a Restforce::DB::Runner.
       def runner
-        @runner ||= Runner.new(@delay)
+        @runner ||= Runner.new(@options.fetch(:delay) { DEFAULT_DELAY })
       end
 
       # Internal: Propagate unsynchronized records between the two systems for
@@ -214,7 +208,7 @@ module Restforce
       #
       # Returns nothing.
       def log(text, level = :info)
-        puts text if @verbose
+        puts text if @options[:verbose]
 
         return unless logger
         logger.send(level, text)
