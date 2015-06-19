@@ -266,6 +266,20 @@ end
 
 The example above would disable the default ActiveRecord logging specifically for activity triggered by the Restforce::DB daemon.
 
+### Force-synchronizing records in your application code
+
+If you desire to force-synchronize records from within your code (for example, if you need to ensure that changes to certain records are acknowledged synchronously), `Restforce::DB::Model` exposes a `#force_sync!` method to do so.
+
+```ruby
+restaurant = Restaurant.create!(
+  name: "Chez Baloo-ey",
+  style: "Molecular Gastronomy",
+)
+restaurant.force_sync!
+```
+
+You'll need to ensure that Restforce::DB is properly configured for your application (an initializer is recommended).
+
 ## System Caveats
 
 - **API Usage.** 
@@ -273,6 +287,8 @@ The example above would disable the default ActiveRecord logging specifically fo
 
 - **Update Prioritization.**
   When synchronization occurs, the most recently updated record, Salesforce or database, gets to make the final call about the values of _all_ of the fields it observes. This means that race conditions can and probably will happen if both systems are updated within the same polling interval.
+
+  Restforce::DB attempts to mitigate this effect by tracking change timestamps for internal updates.
 
 ## Development
 

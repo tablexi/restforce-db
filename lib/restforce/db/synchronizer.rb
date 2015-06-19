@@ -43,18 +43,7 @@ module Restforce
         end
       end
 
-      private
-
-      # Internal: Is the passed instance up-to-date with the passed accumulator?
-      # Defaults to true if the most recent change to the instance was by the
-      # Restforce::DB worker.
-      #
-      # Returns a Boolean.
-      def up_to_date?(instance, accumulator)
-        instance.updated_internally? || accumulator.up_to_date_for?(instance.last_update)
-      end
-
-      # Internal: Update the passed instance with the accumulated attributes
+      # Public: Update the passed instance with the accumulated attributes
       # from a synchronization run.
       #
       # instance    - An instance of Restforce::DB::Instances::Base.
@@ -71,6 +60,17 @@ module Restforce
         @runner.cache_timestamp instance
       rescue ActiveRecord::ActiveRecordError, Faraday::Error::ClientError => e
         DB.logger.error(SynchronizationError.new(e, instance))
+      end
+
+      private
+
+      # Internal: Is the passed instance up-to-date with the passed accumulator?
+      # Defaults to true if the most recent change to the instance was by the
+      # Restforce::DB worker.
+      #
+      # Returns a Boolean.
+      def up_to_date?(instance, accumulator)
+        instance.updated_internally? || accumulator.up_to_date_for?(instance.last_update)
       end
 
     end
