@@ -79,7 +79,7 @@ module Restforce
       #
       # Returns an Object.
       def key_for(instance)
-        [instance.class, instance.id]
+        [instance.record_type, instance.id]
       end
 
     end
