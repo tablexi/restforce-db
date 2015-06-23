@@ -113,14 +113,31 @@ module Restforce
       configuration
     end
 
-    # Public: Eliminate all customizations to the current Restforce::DB
-    # configuration and client.
+    # Public: Clear all globally cached values for Restforce::DB.
+    #
+    # NOTE: This is an "idempotent" reset; following invocation, all functions
+    # should still work as before, but globally cached values will be
+    # repopulated.
     #
     # Returns nothing.
     def self.reset
-      @configuration = nil
-      @client = nil
+      FieldProcessor.reset
       @user_id = nil
+      @client = nil
+    end
+
+    # Public: Eliminate all customizations to the current Restforce::DB
+    # configuration and client.
+    #
+    # NOTE: This is a hard reset; following invocation, Restforce::DB will need
+    # to be reconfigured in order for functionality to be restored.
+    #
+    # Returns nothing.
+    def self.reset!
+      reset
+
+      @configuration = nil
+      @last_run = nil
     end
 
   end

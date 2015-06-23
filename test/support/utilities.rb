@@ -5,13 +5,11 @@ def configure!
   end
 
   after do
-    Restforce::DB::FieldProcessor.reset
-    Restforce::DB::Registry.clean!
-    Restforce::DB.last_run = nil
-    Restforce::DB.logger = nil
-
     DatabaseCleaner.clean
     Salesforce.clean!
+
+    Restforce::DB::Registry.clean!
+    Restforce::DB.reset!
   end
 end
 

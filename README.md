@@ -280,6 +280,10 @@ restaurant.force_sync!
 
 You'll need to ensure that Restforce::DB is properly configured for your application (an initializer is recommended).
 
+#### Testing
+
+If you're testing your integration, and using something like VCR to record your specs, you may run into some spec order dependency issues due to Restforce::DB's global request caching. To prevent these dependencies in your spec suite, you can clear all cached data by invoking `Restforce::DB.reset` somewhere in your spec setup or teardown.
+
 ## System Caveats
 
 - **API Usage.** 
