@@ -39,14 +39,6 @@ module Restforce
           Time.parse(@record.SystemModstamp)
         end
 
-        # Public: Get the time of the last synchronization update to this
-        # record.
-        #
-        # Returns a Time-compatible object.
-        def last_synchronize
-          last_update
-        end
-
         # Public: Has this record been synced with Salesforce?
         #
         # Returns a Boolean.

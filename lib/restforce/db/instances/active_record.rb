@@ -25,12 +25,11 @@ module Restforce
           @record.updated_at
         end
 
-        # Public: Get the time of the last synchronization update to this
-        # record.
+        # Public: Get the time of the last update to this record.
         #
         # Returns a Time-compatible object.
-        def last_synchronize
-          @record.synchronized_at
+        def last_update
+          @record.updated_at
         end
 
         # Public: Has this record been synced to a Salesforce record?
@@ -54,6 +53,16 @@ module Restforce
         def after_sync
           @record.touch(:synchronized_at)
           super
+        end
+
+        private
+
+        # Internal: Get the time of the last synchronization update to this
+        # record.
+        #
+        # Returns a Time-compatible object.
+        def last_synchronize
+          @record.synchronized_at
         end
 
       end
