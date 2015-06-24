@@ -14,15 +14,17 @@ module Restforce
         #
         # Returns a String.
         def id
-          return "#{@record_type}::#{@record.id}" unless synced?
+          return uuid unless synced?
           @record.send(@mapping.lookup_column)
         end
 
-        # Public: Get the time of the last update to this record.
+        # Public: Get a unique identifier for this record. This value should
+        # be consistent for the specific ActiveRecord object passed to this
+        # instance.
         #
-        # Returns a Time-compatible object.
-        def last_update
-          @record.updated_at
+        # Returns nothing.
+        def uuid
+          "#{@record_type}::#{@record.id}"
         end
 
         # Public: Get the time of the last update to this record.

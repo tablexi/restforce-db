@@ -14,8 +14,8 @@ describe Restforce::DB::Instances::ActiveRecord do
 
     describe "when the record has no synchronized Salesforce ID" do
 
-      it "returns the record's ID" do
-        expect(instance.id).to_equal "CustomObject::#{record.id}"
+      it "returns the record's UUID" do
+        expect(instance.id).to_equal instance.uuid
       end
     end
 
@@ -28,6 +28,13 @@ describe Restforce::DB::Instances::ActiveRecord do
       it "returns the Salesforce ID" do
         expect(instance.id).to_equal salesforce_id
       end
+    end
+  end
+
+  describe "#uuid" do
+
+    it "returns the record's ID" do
+      expect(instance.uuid).to_equal "CustomObject::#{record.id}"
     end
   end
 
