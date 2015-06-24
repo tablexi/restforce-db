@@ -225,6 +225,18 @@ In the above example, `Dish__c` is a Salesforce object type which references the
 
   You may want to consult [the ActiveRecord documentation](http://apidock.com/rails/ActiveRecord/Associations/ClassMethods) for your specific use case.
 
+### Add an external ID to your Salesforce objects
+
+If your application creates any objects that you want/need to propagate to Salesforce, you'll need to expose an external ID field named `SynchronizationId__c` on the Salesforce object.
+
+The `restforce-db` executable has a handy mechanism for automating this:
+
+    $ ruby bin/restforce-db meta Restaurant__c Dish__c
+    # => ADDING SynchronizationId__c to Restaurant__c... DONE
+    # => ADDING SynchronizationId__c to Dish__c... DONE
+
+NOTE: This script uses `bundler/inline` to get access to the `metaforce` gem at runtime. Due to some issues with Bundler's handling of inline gemfiles, the use of `ruby` versus `bundle exec` is intentional here.
+
 ### Seed your data
 
 To populate your database with existing information from Salesforce (or vice-versa), you _could_ manually update each of the records you care about, and expect the Restforce::DB daemon to automatically pick them up when it runs. However, for any record type you need/want to _fully_ synchronize, this can be a very tedious process. 
