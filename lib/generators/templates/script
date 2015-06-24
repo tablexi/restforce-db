@@ -1,6 +1,102 @@
 #!/usr/bin/env ruby
 
-require File.expand_path(File.join(File.dirname(__FILE__), "..", "config", "environment"))
-require "restforce/db/command"
+if ARGV[0] != "meta"
+  require File.expand_path(File.join(File.dirname(__FILE__), "..", "config", "environment"))
+  require "restforce/db/command"
 
-Restforce::DB::Command.new(ARGV).daemonize
+  Restforce::DB::Command.new(ARGV).daemonize
+elsif ARGV.length > 1 && !defined?(Bundler)
+
+  # MetadataInitializer exposes functionality to automatically add an
+  # external Synchronization ID to your Salesforce models.
+  class MetadataInitializer
+
+    # Public: Initialize a new MetadataInitializer.
+    #
+    # config_file - The path to a configuration file.
+    # models      - An Array of String Salesforce model names.
+    def initialize(config_file, *models)
+      @models = models
+      @config = YAML.load_file(config_file)
+    end
+
+    # Public: Set up an external Synchronization ID for each specified
+    # Salesforce model.
+    #
+    # Returns nothing.
+    def setup
+      @models.each do |model|
+        print "ADDING SynchronizationId__c to #{model}... "
+        job = client.create(
+          :custom_field,
+          full_name: "#{model}.SynchronizationId__c",
+          description: "External Synchronization ID",
+          label: "Synchronization ID",
+          type: "Text",
+          external_id: true,
+          unique: true,
+          length: ENV["UUID_LENGTH"] || 255,
+        )
+
+        begin
+          job.on_complete { |_| puts "DONE" }.on_error { |_| puts "FAILED" }.perform
+        rescue Savon::SOAP::Fault => e
+          puts "\n(#{e.class}) #{e.message}\n#{e.backtrace.join("\n")}"
+        end
+      end
+    end
+
+    # Internal: Get a Metaforce client to process the custom field CRUD
+    # requests.
+    #
+    # Returns a Metaforce::Metadata:Client.
+    def client
+      @client ||= begin
+        Metaforce.configure do |configuration|
+          configuration.host = @config["client"]["host"]
+          configuration.log = false
+        end
+
+        options = {
+          username: @config["client"]["username"],
+          password: @config["client"]["password"],
+          security_token: @config["client"]["security_token"],
+        }
+
+        # Verify the login credentials
+        Metaforce.login(options)
+        Metaforce.new(options)
+      end
+    end
+
+  end
+
+  # Suppress bundler output
+  require "stringio"
+  stdout, $stdout = $stdout, StringIO.new
+
+  # NOTE: For whatever reason, bundler/inline's "install" functionality seems
+  # busted. We can work around it by just installing the gem ourselves, as a
+  # convenience to users.
+  `gem install metaforce`
+
+  require "bundler/inline"
+  require "yaml"
+
+  gemfile(true) do
+    source "https://rubygems.org"
+
+    # NOTE: Necessary to deal with a bad require in Metaforce
+    gem "activesupport", require: "active_support"
+    gem "metaforce"
+  end
+
+  $stdout = stdout
+
+  config_file = ENV["CONFIG"] || Pathname.new(Dir.pwd).join("config", "restforce-db.yml")
+  MetadataInitializer.new(config_file, *ARGV[1..-1]).setup
+else
+  puts "The `meta` command doesn't work through `bundle exec`." if defined?(Bundler)
+  puts "You must supply at least one Salesforce model." if ARGV.length < 2
+  puts "Use the syntax `ruby bin/restforce-db meta <sobject> [<sobject>...]`"
+end
