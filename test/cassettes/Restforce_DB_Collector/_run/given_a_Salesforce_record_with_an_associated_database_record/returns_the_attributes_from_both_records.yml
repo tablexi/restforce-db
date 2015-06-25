@@ -21,10 +21,10 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 10 Jun 2015 20:32:44 GMT
+      - Thu, 25 Jun 2015 21:53:22 GMT
       Set-Cookie:
-      - BrowserId=9Hgb4W9BTOiz0oOQfDpBJQ;Path=/;Domain=.salesforce.com;Expires=Sun,
-        09-Aug-2015 20:32:44 GMT
+      - BrowserId=cq2G_UitRDuOMckAuE5pdg;Path=/;Domain=.salesforce.com;Expires=Mon,
+        24-Aug-2015 21:53:22 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Pragma:
@@ -37,9 +37,9 @@ http_interactions:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1433968364523","token_type":"Bearer","instance_url":"https://<host>","signature":"zcpougnZQ2racBXMLaAcuvkzZwe1/RR0A8tzoGprA3A=","access_token":"00D1a000000H3O9!AQ4AQGzO6cHltgvJmAqci.NyJL0_69pRzwnlpfIuBhSFZZ9eTNfL3boDM7Q1rZgxPeBiO43MEzeFl0F6uHCKElAgVLWxmICJ"}'
+      string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","issued_at":"1435269202367","token_type":"Bearer","instance_url":"https://<host>","signature":"453ZRS3j8dm/F31oOybxmf+dEHF22LtdjS+DzwF/qYE=","access_token":"00D1a000000H3O9!AQ4AQIEnz7RMa1N2z10U8y.cU3CAaZeOCxcDVSetug6psPcDYNjSbdC91y8MHqmZ.ZXE_zkQURv2YNCWYEsl0fcbZwb1MPEA"}'
     http_version: 
-  recorded_at: Wed, 10 Jun 2015 20:32:44 GMT
+  recorded_at: Thu, 25 Jun 2015 21:53:23 GMT
 - request:
     method: post
     uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c
@@ -52,7 +52,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQGzO6cHltgvJmAqci.NyJL0_69pRzwnlpfIuBhSFZZ9eTNfL3boDM7Q1rZgxPeBiO43MEzeFl0F6uHCKElAgVLWxmICJ
+      - OAuth 00D1a000000H3O9!AQ4AQIEnz7RMa1N2z10U8y.cU3CAaZeOCxcDVSetug6psPcDYNjSbdC91y8MHqmZ.ZXE_zkQURv2YNCWYEsl0fcbZwb1MPEA
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -63,28 +63,28 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Wed, 10 Jun 2015 20:32:45 GMT
+      - Thu, 25 Jun 2015 21:53:22 GMT
       Set-Cookie:
-      - BrowserId=6Kjpln3uTfWvUxegpDoqzg;Path=/;Domain=.salesforce.com;Expires=Sun,
-        09-Aug-2015 20:32:45 GMT
+      - BrowserId=O8fdPuPDQ_GkplB_WU7ooQ;Path=/;Domain=.salesforce.com;Expires=Mon,
+        24-Aug-2015 21:53:22 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=26/15000
+      - api-usage=8/15000
       Location:
-      - "/services/data/<api_version>/sobjects/CustomObject__c/a001a000001cNTxAAM"
+      - "/services/data/<api_version>/sobjects/CustomObject__c/a001a000002zhW6AAI"
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"a001a000001cNTxAAM","success":true,"errors":[]}'
+      string: '{"id":"a001a000002zhW6AAI","success":true,"errors":[]}'
     http_version: 
-  recorded_at: Wed, 10 Jun 2015 20:32:45 GMT
+  recorded_at: Thu, 25 Jun 2015 21:53:23 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20LastModifiedById,%20Name,%20Example_Field__c%20from%20CustomObject__c%20where%20Id%20=%20%27a001a000001cNTxAAM%27
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/describe
     body:
       encoding: US-ASCII
       string: ''
@@ -92,7 +92,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.1
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQGzO6cHltgvJmAqci.NyJL0_69pRzwnlpfIuBhSFZZ9eTNfL3boDM7Q1rZgxPeBiO43MEzeFl0F6uHCKElAgVLWxmICJ
+      - OAuth 00D1a000000H3O9!AQ4AQIEnz7RMa1N2z10U8y.cU3CAaZeOCxcDVSetug6psPcDYNjSbdC91y8MHqmZ.ZXE_zkQURv2YNCWYEsl0fcbZwb1MPEA
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -103,27 +103,41 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 10 Jun 2015 20:32:46 GMT
+      - Thu, 25 Jun 2015 21:53:22 GMT
       Set-Cookie:
-      - BrowserId=C41i4AOPQL2EQtrWf-LKkQ;Path=/;Domain=.salesforce.com;Expires=Sun,
-        09-Aug-2015 20:32:46 GMT
+      - BrowserId=pat15VYVR2GFRSwMeRuUfQ;Path=/;Domain=.salesforce.com;Expires=Mon,
+        24-Aug-2015 21:53:22 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=26/15000
+      - api-usage=8/15000
+      Org.eclipse.jetty.server.include.etag:
+      - aa7ee96f
+      Last-Modified:
+      - Wed, 24 Jun 2015 02:10:32 GMT
       Content-Type:
       - application/json;charset=UTF-8
+      Etag:
+      - aa7ee96-gzip"
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001cNTxAAM"},"Id":"a001a000001cNTxAAM","SystemModstamp":"2015-06-10T20:32:45.000+0000","LastModifiedById":"0051a000000UGT8AAO","Name":"Custom
-        object","Example_Field__c":"Some sample text"}]}'
+      string: '{"activateable":false,"childRelationships":[{"cascadeDelete":true,"childSObject":"AttachedContentDocument","deprecatedAndHidden":false,"field":"LinkedEntityId","relationshipName":"AttachedContentDocuments","restrictedDelete":false},{"cascadeDelete":true,"childSObject":"Attachment","deprecatedAndHidden":false,"field":"ParentId","relationshipName":"Attachments","restrictedDelete":false},{"cascadeDelete":true,"childSObject":"CollaborationGroupRecord","deprecatedAndHidden":false,"field":"RecordId","relationshipName":"RecordAssociatedGroups","restrictedDelete":false},{"cascadeDelete":true,"childSObject":"CombinedAttachment","deprecatedAndHidden":false,"field":"ParentId","relationshipName":"CombinedAttachments","restrictedDelete":false},{"cascadeDelete":true,"childSObject":"ContentDocumentLink","deprecatedAndHidden":false,"field":"LinkedEntityId","relationshipName":null,"restrictedDelete":false},{"cascadeDelete":false,"childSObject":"ContentVersion","deprecatedAndHidden":false,"field":"FirstPublishLocationId","relationshipName":null,"restrictedDelete":false},{"cascadeDelete":true,"childSObject":"CustomObjectDetail__c","deprecatedAndHidden":false,"field":"CustomObject__c","relationshipName":"CustomObjectDetails__r","restrictedDelete":false},{"cascadeDelete":true,"childSObject":"EntitySubscription","deprecatedAndHidden":false,"field":"ParentId","relationshipName":"FeedSubscriptionsForEntity","restrictedDelete":false},{"cascadeDelete":false,"childSObject":"FeedComment","deprecatedAndHidden":false,"field":"ParentId","relationshipName":null,"restrictedDelete":false},{"cascadeDelete":true,"childSObject":"FeedItem","deprecatedAndHidden":false,"field":"ParentId","relationshipName":null,"restrictedDelete":false},{"cascadeDelete":true,"childSObject":"Note","deprecatedAndHidden":false,"field":"ParentId","relationshipName":"Notes","restrictedDelete":false},{"cascadeDelete":true,"childSObject":"NoteAndAttachment","deprecatedAndHidden":false,"field":"ParentId","relationshipName":"NotesAndAttachments","restrictedDelete":false},{"cascadeDelete":true,"childSObject":"ProcessInstance","deprecatedAndHidden":false,"field":"TargetObjectId","relationshipName":"ProcessInstances","restrictedDelete":false},{"cascadeDelete":false,"childSObject":"ProcessInstanceHistory","deprecatedAndHidden":false,"field":"TargetObjectId","relationshipName":"ProcessSteps","restrictedDelete":false},{"cascadeDelete":true,"childSObject":"TopicAssignment","deprecatedAndHidden":false,"field":"EntityId","relationshipName":"TopicAssignments","restrictedDelete":false}],"compactLayoutable":true,"createable":true,"custom":true,"customSetting":false,"deletable":true,"deprecatedAndHidden":false,"feedEnabled":false,"fields":[{"autoNumber":false,"byteLength":18,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":false,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":true,"inlineHelpText":null,"label":"Record
+        ID","length":18,"name":"Id","nameField":false,"namePointing":false,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"tns:ID","sortable":true,"type":"id","unique":false,"updateable":false,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":18,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Owner
+        ID","length":18,"name":"OwnerId","nameField":false,"namePointing":true,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":["Group","User"],"relationshipName":"Owner","relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"tns:ID","sortable":true,"type":"reference","unique":false,"updateable":true,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":0,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":false,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Deleted","length":0,"name":"IsDeleted","nameField":false,"namePointing":false,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:boolean","sortable":true,"type":"boolean","unique":false,"updateable":false,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":240,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":true,"inlineHelpText":null,"label":"CustomObject
+        Name","length":80,"name":"Name","nameField":true,"namePointing":false,"nillable":true,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:string","sortable":true,"type":"string","unique":false,"updateable":true,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":0,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":false,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":false,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Created
+        Date","length":0,"name":"CreatedDate","nameField":false,"namePointing":false,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:dateTime","sortable":true,"type":"datetime","unique":false,"updateable":false,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":18,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":false,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Created
+        By ID","length":18,"name":"CreatedById","nameField":false,"namePointing":false,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":["User"],"relationshipName":"CreatedBy","relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"tns:ID","sortable":true,"type":"reference","unique":false,"updateable":false,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":0,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":false,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":false,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Last
+        Modified Date","length":0,"name":"LastModifiedDate","nameField":false,"namePointing":false,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:dateTime","sortable":true,"type":"datetime","unique":false,"updateable":false,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":18,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":false,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Last
+        Modified By ID","length":18,"name":"LastModifiedById","nameField":false,"namePointing":false,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":["User"],"relationshipName":"LastModifiedBy","relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"tns:ID","sortable":true,"type":"reference","unique":false,"updateable":false,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":0,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":false,"custom":false,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":false,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"System
+        Modstamp","length":0,"name":"SystemModstamp","nameField":false,"namePointing":false,"nillable":false,"permissionable":false,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:dateTime","sortable":true,"type":"datetime","unique":false,"updateable":false,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":765,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":true,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":false,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Example
+        Field","length":255,"name":"Example_Field__c","nameField":false,"namePointing":false,"nillable":true,"permissionable":true,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:string","sortable":true,"type":"string","unique":false,"updateable":true,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":18,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":true,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":false,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Friend","length":18,"name":"Friend__c","nameField":false,"namePointing":false,"nillable":true,"permissionable":true,"picklistValues":[],"precision":0,"referenceTo":["Contact"],"relationshipName":"Friend__r","relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"tns:ID","sortable":true,"type":"reference","unique":false,"updateable":true,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":0,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":true,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":true,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":false,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":false,"inlineHelpText":null,"label":"Visible","length":0,"name":"Visible__c","nameField":false,"namePointing":false,"nillable":false,"permissionable":true,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:boolean","sortable":true,"type":"boolean","unique":false,"updateable":true,"writeRequiresMasterRead":false},{"autoNumber":false,"byteLength":108,"calculated":false,"calculatedFormula":null,"cascadeDelete":false,"caseSensitive":false,"controllerName":null,"createable":true,"custom":true,"defaultValue":null,"defaultValueFormula":null,"defaultedOnCreate":false,"dependentPicklist":false,"deprecatedAndHidden":false,"digits":0,"displayLocationInDecimal":false,"externalId":true,"filterable":true,"groupable":true,"htmlFormatted":false,"idLookup":true,"inlineHelpText":null,"label":"SynchronizationID","length":36,"name":"SynchronizationId__c","nameField":false,"namePointing":false,"nillable":true,"permissionable":true,"picklistValues":[],"precision":0,"referenceTo":[],"relationshipName":null,"relationshipOrder":null,"restrictedDelete":false,"restrictedPicklist":false,"scale":0,"soapType":"xsd:string","sortable":true,"type":"string","unique":false,"updateable":true,"writeRequiresMasterRead":false}],"keyPrefix":"a00","label":"CustomObject","labelPlural":"CustomObjects","layoutable":true,"listviewable":null,"lookupLayoutable":null,"mergeable":false,"name":"CustomObject__c","queryable":true,"recordTypeInfos":[{"available":true,"defaultRecordTypeMapping":true,"name":"Master","recordTypeId":"012000000000000AAA","urls":{"layout":"/services/data/<api_version>/sobjects/CustomObject__c/describe/layouts/012000000000000AAA"}}],"replicateable":true,"retrieveable":true,"searchLayoutable":true,"searchable":true,"triggerable":true,"undeletable":true,"updateable":true,"urls":{"uiEditTemplate":"https://<host>/{ID}/e","sobject":"/services/data/<api_version>/sobjects/CustomObject__c","quickActions":"/services/data/<api_version>/sobjects/CustomObject__c/quickActions","uiDetailTemplate":"https://<host>/{ID}","describe":"/services/data/<api_version>/sobjects/CustomObject__c/describe","rowTemplate":"/services/data/<api_version>/sobjects/CustomObject__c/{ID}","layouts":"/services/data/<api_version>/sobjects/CustomObject__c/describe/layouts","compactLayouts":"/services/data/<api_version>/sobjects/CustomObject__c/describe/compactLayouts","uiNewRecord":"https://<host>/a00/e"}}'
     http_version: 
-  recorded_at: Wed, 10 Jun 2015 20:32:46 GMT
+  recorded_at: Thu, 25 Jun 2015 21:53:23 GMT
 - request:
     method: get
-    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SystemModstamp,%20LastModifiedById,%20Name,%20Example_Field__c%20from%20CustomObject__c
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SynchronizationId__c,%20SystemModstamp,%20LastModifiedById,%20Name,%20Example_Field__c%20from%20CustomObject__c%20where%20Id%20=%20%27a001a000002zhW6AAI%27
     body:
       encoding: US-ASCII
       string: ''
@@ -131,7 +145,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.1
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQGzO6cHltgvJmAqci.NyJL0_69pRzwnlpfIuBhSFZZ9eTNfL3boDM7Q1rZgxPeBiO43MEzeFl0F6uHCKElAgVLWxmICJ
+      - OAuth 00D1a000000H3O9!AQ4AQIEnz7RMa1N2z10U8y.cU3CAaZeOCxcDVSetug6psPcDYNjSbdC91y8MHqmZ.ZXE_zkQURv2YNCWYEsl0fcbZwb1MPEA
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -142,24 +156,63 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 10 Jun 2015 20:32:47 GMT
+      - Thu, 25 Jun 2015 21:53:23 GMT
       Set-Cookie:
-      - BrowserId=xpCMtB2bSyaAx3uzaOnq1A;Path=/;Domain=.salesforce.com;Expires=Sun,
-        09-Aug-2015 20:32:47 GMT
+      - BrowserId=JTlGfEJFTYqV0Yi774Zuvg;Path=/;Domain=.salesforce.com;Expires=Mon,
+        24-Aug-2015 21:53:23 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=26/15000
+      - api-usage=8/15000
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000001cNTxAAM"},"Id":"a001a000001cNTxAAM","SystemModstamp":"2015-06-10T20:32:45.000+0000","LastModifiedById":"0051a000000UGT8AAO","Name":"Custom
+      string: '{"totalSize":1,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000002zhW6AAI"},"Id":"a001a000002zhW6AAI","SynchronizationId__c":null,"SystemModstamp":"2015-06-25T21:53:22.000+0000","LastModifiedById":"0051a000000UGT8AAO","Name":"Custom
         object","Example_Field__c":"Some sample text"}]}'
     http_version: 
-  recorded_at: Wed, 10 Jun 2015 20:32:47 GMT
+  recorded_at: Thu, 25 Jun 2015 21:53:23 GMT
+- request:
+    method: get
+    uri: https://<host>/services/data/<api_version>/query?q=select%20Id,%20SynchronizationId__c,%20SystemModstamp,%20LastModifiedById,%20Name,%20Example_Field__c%20from%20CustomObject__c
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.1
+      Authorization:
+      - OAuth 00D1a000000H3O9!AQ4AQIEnz7RMa1N2z10U8y.cU3CAaZeOCxcDVSetug6psPcDYNjSbdC91y8MHqmZ.ZXE_zkQURv2YNCWYEsl0fcbZwb1MPEA
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 25 Jun 2015 21:53:23 GMT
+      Set-Cookie:
+      - BrowserId=JRR3RsaGRUeL2ZoSjWWNXA;Path=/;Domain=.salesforce.com;Expires=Mon,
+        24-Aug-2015 21:53:23 GMT
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Sforce-Limit-Info:
+      - api-usage=10/15000
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"totalSize":2,"done":true,"records":[{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000002zhW6AAI"},"Id":"a001a000002zhW6AAI","SynchronizationId__c":null,"SystemModstamp":"2015-06-25T21:53:22.000+0000","LastModifiedById":"0051a000000UGT8AAO","Name":"Custom
+        object","Example_Field__c":"Some sample text"},{"attributes":{"type":"CustomObject__c","url":"/services/data/<api_version>/sobjects/CustomObject__c/a001a000002ze8cAAA"},"Id":"a001a000002ze8cAAA","SynchronizationId__c":"someid","SystemModstamp":"2015-06-24T17:05:30.000+0000","LastModifiedById":"0051a000000UGT8AAO","Name":"Testing2","Example_Field__c":null}]}'
+    http_version: 
+  recorded_at: Thu, 25 Jun 2015 21:53:24 GMT
 - request:
     method: get
     uri: https://<host>/services/data/<api_version>/
@@ -170,7 +223,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.1
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQGzO6cHltgvJmAqci.NyJL0_69pRzwnlpfIuBhSFZZ9eTNfL3boDM7Q1rZgxPeBiO43MEzeFl0F6uHCKElAgVLWxmICJ
+      - OAuth 00D1a000000H3O9!AQ4AQIEnz7RMa1N2z10U8y.cU3CAaZeOCxcDVSetug6psPcDYNjSbdC91y8MHqmZ.ZXE_zkQURv2YNCWYEsl0fcbZwb1MPEA
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -181,23 +234,23 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 10 Jun 2015 20:32:48 GMT
+      - Thu, 25 Jun 2015 21:53:23 GMT
       Set-Cookie:
-      - BrowserId=QD5WY6z2Qiq-7x6swz6Uhg;Path=/;Domain=.salesforce.com;Expires=Sun,
-        09-Aug-2015 20:32:48 GMT
+      - BrowserId=TiIg83dYRWOqNybc6VTySg;Path=/;Domain=.salesforce.com;Expires=Mon,
+        24-Aug-2015 21:53:23 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=26/15000
+      - api-usage=9/15000
       Content-Type:
       - application/json;charset=UTF-8
       Transfer-Encoding:
       - chunked
     body:
       encoding: ASCII-8BIT
-      string: '{"limits":"/services/data/<api_version>/limits","sobjects":"/services/data/<api_version>/sobjects","connect":"/services/data/<api_version>/connect","query":"/services/data/<api_version>/query","theme":"/services/data/<api_version>/theme","queryAll":"/services/data/<api_version>/queryAll","tooling":"/services/data/<api_version>/tooling","chatter":"/services/data/<api_version>/chatter","analytics":"/services/data/<api_version>/analytics","recent":"/services/data/<api_version>/recent","commerce":"/services/data/<api_version>/commerce","licensing":"/services/data/<api_version>/licensing","identity":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","flexiPage":"/services/data/<api_version>/flexiPage","search":"/services/data/<api_version>/search","quickActions":"/services/data/<api_version>/quickActions","appMenu":"/services/data/<api_version>/appMenu"}'
+      string: '{"limits":"/services/data/<api_version>/limits","sobjects":"/services/data/<api_version>/sobjects","connect":"/services/data/<api_version>/connect","query":"/services/data/<api_version>/query","theme":"/services/data/<api_version>/theme","queryAll":"/services/data/<api_version>/queryAll","tooling":"/services/data/<api_version>/tooling","chatter":"/services/data/<api_version>/chatter","analytics":"/services/data/<api_version>/analytics","recent":"/services/data/<api_version>/recent","commerce":"/services/data/<api_version>/commerce","licensing":"/services/data/<api_version>/licensing","identity":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","flexiPage":"/services/data/<api_version>/flexiPage","search":"/services/data/<api_version>/search","quickActions":"/services/data/<api_version>/quickActions","wave":"/services/data/<api_version>/wave","appMenu":"/services/data/<api_version>/appMenu"}'
     http_version: 
-  recorded_at: Wed, 10 Jun 2015 20:32:48 GMT
+  recorded_at: Thu, 25 Jun 2015 21:53:24 GMT
 - request:
     method: get
     uri: https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO
@@ -208,7 +261,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.1
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQGzO6cHltgvJmAqci.NyJL0_69pRzwnlpfIuBhSFZZ9eTNfL3boDM7Q1rZgxPeBiO43MEzeFl0F6uHCKElAgVLWxmICJ
+      - OAuth 00D1a000000H3O9!AQ4AQIEnz7RMa1N2z10U8y.cU3CAaZeOCxcDVSetug6psPcDYNjSbdC91y8MHqmZ.ZXE_zkQURv2YNCWYEsl0fcbZwb1MPEA
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -219,11 +272,11 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 10 Jun 2015 20:32:48 GMT
-      - Wed, 10 Jun 2015 20:32:48 GMT
+      - Thu, 25 Jun 2015 21:53:23 GMT
+      - Thu, 25 Jun 2015 21:53:23 GMT
       Set-Cookie:
-      - BrowserId=rzInOdn_Sj-cfQNluztySw;Path=/;Domain=.salesforce.com;Expires=Sun,
-        09-Aug-2015 20:32:48 GMT
+      - BrowserId=cqRHWKF_S7-db9Z1L-Ex5A;Path=/;Domain=.salesforce.com;Expires=Mon,
+        24-Aug-2015 21:53:23 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Content-Type:
@@ -235,10 +288,10 @@ http_interactions:
       string: '{"id":"https://login.salesforce.com/id/00D1a000000H3O9EAK/0051a000000UGT8AAO","asserted_user":true,"user_id":"0051a000000UGT8AAO","organization_id":"00D1a000000H3O9EAK","username":"andrew+salesforce@tablexi.com","nick_name":"andrew+salesforce1.42656567106328E12","display_name":"Andrew
         Horner","email":"andrew@tablexi.com","email_verified":true,"first_name":"Andrew","last_name":"Horner","timezone":"America/Los_Angeles","photos":{"picture":"https://c.na24.content.force.com/profilephoto/005/F","thumbnail":"https://c.na24.content.force.com/profilephoto/005/T"},"addr_street":null,"addr_city":null,"addr_state":null,"addr_country":"US","addr_zip":"60661","mobile_phone":null,"mobile_phone_verified":false,"status":{"created_date":null,"body":null},"urls":{"enterprise":"https://<host>/services/Soap/c/{version}/00D1a000000H3O9","metadata":"https://<host>/services/Soap/m/{version}/00D1a000000H3O9","partner":"https://<host>/services/Soap/u/{version}/00D1a000000H3O9","rest":"https://<host>/services/data/v{version}/","sobjects":"https://<host>/services/data/v{version}/sobjects/","search":"https://<host>/services/data/v{version}/search/","query":"https://<host>/services/data/v{version}/query/","recent":"https://<host>/services/data/v{version}/recent/","profile":"https://<host>/0051a000000UGT8AAO","feeds":"https://<host>/services/data/v{version}/chatter/feeds","groups":"https://<host>/services/data/v{version}/chatter/groups","users":"https://<host>/services/data/v{version}/chatter/users","feed_items":"https://<host>/services/data/v{version}/chatter/feed-items"},"active":true,"user_type":"STANDARD","language":"en_US","locale":"en_US","utcOffset":-28800000,"last_modified_date":"2015-03-17T04:14:23.000+0000","is_app_installed":true}'
     http_version: 
-  recorded_at: Wed, 10 Jun 2015 20:32:48 GMT
+  recorded_at: Thu, 25 Jun 2015 21:53:24 GMT
 - request:
     method: delete
-    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/a001a000001cNTxAAM
+    uri: https://<host>/services/data/<api_version>/sobjects/CustomObject__c/a001a000002zhW6AAI
     body:
       encoding: US-ASCII
       string: ''
@@ -246,7 +299,7 @@ http_interactions:
       User-Agent:
       - Faraday v0.9.1
       Authorization:
-      - OAuth 00D1a000000H3O9!AQ4AQGzO6cHltgvJmAqci.NyJL0_69pRzwnlpfIuBhSFZZ9eTNfL3boDM7Q1rZgxPeBiO43MEzeFl0F6uHCKElAgVLWxmICJ
+      - OAuth 00D1a000000H3O9!AQ4AQIEnz7RMa1N2z10U8y.cU3CAaZeOCxcDVSetug6psPcDYNjSbdC91y8MHqmZ.ZXE_zkQURv2YNCWYEsl0fcbZwb1MPEA
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -257,17 +310,17 @@ http_interactions:
       message: No Content
     headers:
       Date:
-      - Wed, 10 Jun 2015 20:32:49 GMT
+      - Thu, 25 Jun 2015 21:53:24 GMT
       Set-Cookie:
-      - BrowserId=-imEDwZ0TCanwP026i4teQ;Path=/;Domain=.salesforce.com;Expires=Sun,
-        09-Aug-2015 20:32:49 GMT
+      - BrowserId=mayXy-5nSaSsVaMZlEzIgA;Path=/;Domain=.salesforce.com;Expires=Mon,
+        24-Aug-2015 21:53:24 GMT
       Expires:
       - Thu, 01 Jan 1970 00:00:00 GMT
       Sforce-Limit-Info:
-      - api-usage=26/15000
+      - api-usage=10/15000
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Wed, 10 Jun 2015 20:32:49 GMT
+  recorded_at: Thu, 25 Jun 2015 21:53:24 GMT
 recorded_with: VCR 2.9.3

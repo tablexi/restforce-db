@@ -84,13 +84,16 @@ module Restforce
 
         private
 
-        # Internal: Get a String of values to look up when the record is
+        # Internal: Get a list of fields to look up when the record is
         # fetched from Salesforce. Includes all configured mappings and a
         # handful of attributes for internal use.
         #
-        # Returns a String.
+        # Returns an Array of Strings.
         def lookups
-          (Instances::Salesforce::INTERNAL_ATTRIBUTES + @mapping.salesforce_fields).uniq.join(", ")
+          FieldProcessor.new.available_fields(
+            @record_type,
+            (Instances::Salesforce::INTERNAL_ATTRIBUTES + @mapping.salesforce_fields).uniq,
+          )
         end
 
         # Internal: Attempt to create a record in Salesforce from the passed
@@ -139,7 +142,7 @@ module Restforce
           filters = (conditions + @mapping.conditions).compact.join(" and ")
           filters = " where #{filters}" unless filters.empty?
 
-          "select #{lookups} from #{@record_type}#{filters}"
+          "select #{lookups.join(', ')} from #{@record_type}#{filters}"
         end
 
       end

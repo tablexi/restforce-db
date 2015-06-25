@@ -30,13 +30,14 @@ describe Restforce::DB::FieldProcessor do
         Updateable
         Both
         Neither
+        Relationship__r.Relateable
       )
     end
 
-    it "filters the passed fields to only readable fields" do
+    it "filters the passed fields to only existing fields for an object" do
       Restforce::DB.stub(:client, dummy_client) do
         excessive_fields = fields + ["NonExistent"]
-        expect(processor.available_fields("CustomObject__c", excessive_fields, :read)).to_equal(fields)
+        expect(processor.available_fields("CustomObject__c", excessive_fields)).to_equal(fields)
       end
     end
 

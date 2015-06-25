@@ -11,6 +11,7 @@ module Restforce
 
         INTERNAL_ATTRIBUTES = %w(
           Id
+          SynchronizationId__c
           SystemModstamp
           LastModifiedById
         ).freeze
