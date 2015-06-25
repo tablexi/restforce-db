@@ -21,20 +21,30 @@ module Restforce
         @field_cache = {}
       end
 
+      # Public: Get a list of valid fields for a specific action from the passed
+      # list of proposed fields.
+      #
+      # sobject_type - A String name of an SObject Type in Salesforce.
+      # attributes   - A Hash with keys corresponding to Salesforce field names.
+      # action       - A Symbol reflecting the action to perform. Accepted
+      #                values are :read, :create, and :update.
+      #
+      # Returns a Hash.
+      def available_fields(sobject_type, fields, action)
+        fields.select { |field| available?(sobject_type, field, action) }
+      end
+
       # Public: Get a restricted version of the passed attributes Hash, with
       # unwritable fields stripped out.
       #
       # sobject_type - A String name of an SObject Type in Salesforce.
       # attributes   - A Hash with keys corresponding to Salesforce field names.
-      # write_type   - A Symbol reflecting the type of write operation. Accepted
-      #                values are :create and :update. Defaults to :update.
+      # action       - A Symbol reflecting the action to perform. Accepted
+      #                values are :create and :update.
       #
       # Returns a Hash.
-      def process(sobject_type, attributes, write_type = :update)
-        attributes.each_with_object({}) do |(field, value), processed|
-          next unless writable?(sobject_type, field, write_type)
-          processed[field] = value
-        end
+      def process(sobject_type, attributes, action)
+        attributes.select { |field, _| available?(sobject_type, field, action) }
       end
 
       private
@@ -43,20 +53,20 @@ module Restforce
       #
       # sobject_type - A String name of an SObject Type in Salesforce.
       # field        - A String Salesforce field API name.
-      # write_type   - A Symbol reflecting the type of write operation. Accepted
-      #                values are :create and :update.
+      # write_type   - A Symbol reflecting the action to perform. Accepted
+      #                values are :read, :create, and :update.
       #
       # Returns a Boolean.
-      def writable?(sobject_type, field, write_type)
+      def available?(sobject_type, field, action)
         permissions = field_permissions(sobject_type)[field]
         return false unless permissions
 
-        permissions[write_type]
+        permissions[action]
       end
 
       # Internal: Get a collection of all fields for the passed Salesforce
-      # SObject Type, with an indication of whether or not they are writable for
-      # both create and update actions.
+      # SObject Type, with an indication of whether or not they are readable and
+      # writable for both create and update actions.
       #
       # sobject_type - A String name of an SObject Type in Salesforce.
       #
@@ -67,6 +77,7 @@ module Restforce
 
           fields.each_with_object({}) do |field, permissions|
             permissions[field["name"]] = {
+              read:   true,
               create: field["createable"],
               update: field["updateable"],
             }
