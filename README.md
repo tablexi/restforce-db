@@ -227,7 +227,7 @@ In the above example, `Dish__c` is a Salesforce object type which references the
 
 ### Add an external ID to your Salesforce objects
 
-If your application creates any objects that you want/need to propagate to Salesforce, you'll need to expose an external ID field named `SynchronizationId__c` on the Salesforce object.
+If your application creates any objects that you want/need to propagate to Salesforce, you'll need to expose an external ID field named `SynchronizationId__c` on the Salesforce object. This external ID is used as a key for Salesforce's [upsert](https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_upsert.htm) API interaction, which allows Restforce::DB to avoid accidentally duplicating records via a less-safe non-idempotent POST to Salesforce.
 
 The `restforce-db` executable has a handy mechanism for automating this:
 
