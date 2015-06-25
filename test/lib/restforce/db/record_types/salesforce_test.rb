@@ -17,17 +17,27 @@ describe Restforce::DB::RecordTypes::Salesforce do
     let(:sync_from) { Restforce::DB::Instances::ActiveRecord.new(database_model, database_record, mapping) }
     let(:instance) { record_type.create!(sync_from).record }
 
-    before do
-      Salesforce.records << [salesforce_model, instance.Id]
-    end
-
     it "creates a record in Salesforce from the passed database record's attributes" do
+      Salesforce.records << [salesforce_model, instance.Id]
       expect(instance.Name).to_equal database_record.name
       expect(instance.Example_Field__c).to_equal database_record.example
     end
 
     it "updates the database record with the Salesforce record's ID" do
+      Salesforce.records << [salesforce_model, instance.Id]
       expect(sync_from.synced?).to_equal(true)
+    end
+
+    describe "when a Salesforce record already exists for the database instance" do
+
+      it "uses the existing record" do
+        salesforce_id = Salesforce.create!(
+          salesforce_model,
+          "SynchronizationId__c" => sync_from.uuid,
+        )
+
+        expect(instance.Id).to_equal salesforce_id
+      end
     end
   end
 

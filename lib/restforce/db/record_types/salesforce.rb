@@ -18,11 +18,23 @@ module Restforce
         # Raises on any error from Salesforce.
         def create!(from_record)
           from_attributes = FieldProcessor.new.process(@record_type, from_record.attributes, :create)
-          record_id = DB.client.create!(@record_type, from_attributes)
+          record_id = DB.client.upsert!(
+            @record_type,
+            "SynchronizationId__c",
+            from_attributes.merge("SynchronizationId__c" => from_record.uuid),
+          )
 
-          from_record.update!(@mapping.lookup_column => record_id).after_sync
-
-          find(record_id)
+          # NOTE: #upsert! returns a String Salesforce ID when a record is
+          # created, or returns `true` when an existing record was found and
+          # updated.
+          if record_id.is_a?(String)
+            from_record.update!(@mapping.lookup_column => record_id).after_sync
+            find(record_id)
+          else
+            instance = first("SynchronizationId__c = '#{from_record.uuid}'")
+            from_record.update!(@mapping.lookup_column => instance.id).after_sync
+            instance
+          end
         end
 
         # Public: Find the first Salesforce record which meets the passed
