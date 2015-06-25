@@ -6,23 +6,14 @@ module Restforce
     # associations have been updated to point to a new Salesforce/database
     # record, and propagate the modification to the opposite system when this
     # occurs.
-    class Associator
-
-      # Public: Initialize a new Restforce::DB::Associator.
-      #
-      # mapping - A Restforce::DB::Mapping instance.
-      # runner  - A Restforce::DB::Runner instance.
-      def initialize(mapping, runner = Runner.new)
-        @mapping = mapping
-        @runner = runner
-      end
+    class Associator < Task
 
       # Public: Run the re-association process, pulling in records from
       # Salesforce and the database to determine the most recently attached
       # association, then propagating the change between systems.
       #
       # Returns nothing.
-      def run
+      def run(*_)
         return if belongs_to_associations.empty?
 
         @runner.run(@mapping) do |run|

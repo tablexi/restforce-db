@@ -35,6 +35,7 @@ require "restforce/db/record_cache"
 require "restforce/db/timestamp_cache"
 require "restforce/db/runner"
 
+require "restforce/db/task"
 require "restforce/db/accumulator"
 require "restforce/db/adapter"
 require "restforce/db/associator"

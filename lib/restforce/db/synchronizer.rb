@@ -6,15 +6,7 @@ module Restforce
     # in Salesforce with the records in the database. It relies on the mappings
     # configured in instances of Restforce::DB::RecordTypes::Base to create and
     # update records with the appropriate values.
-    class Synchronizer
-
-      # Public: Initialize a new Restforce::DB::Synchronizer.
-      #
-      # mapping - A Restforce::DB::Mapping.
-      def initialize(mapping, runner = Runner.new)
-        @mapping = mapping
-        @runner = runner
-      end
+    class Synchronizer < Task
 
       # Public: Synchronize records for the current mapping from a Hash of
       # record descriptors to attributes.

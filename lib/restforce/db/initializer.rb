@@ -6,23 +6,13 @@ module Restforce
     # are populated with the same records at the root level. It iterates through
     # recently added or updated records in each system for a mapping, and
     # creates a matching record in the other system, when necessary.
-    class Initializer
-
-      # Public: Initialize a Restforce::DB::Initializer.
-      #
-      # mapping - A Restforce::DB::Mapping.
-      # runner  - A Restforce::DB::Runner.
-      def initialize(mapping, runner = Runner.new)
-        @mapping = mapping
-        @strategy = mapping.strategy
-        @runner = runner
-      end
+    class Initializer < Task
 
       # Public: Run the initialization loop for this mapping.
       #
       # Returns nothing.
-      def run
-        return if @strategy.passive?
+      def run(*_)
+        return if @mapping.strategy.passive?
 
         @runner.run(@mapping) do |run|
           run.salesforce_instances.each { |instance| create_in_database(instance) }
@@ -40,7 +30,8 @@ module Restforce
       #
       # Returns nothing.
       def create_in_database(instance)
-        return unless @strategy.build?(instance)
+        return unless @mapping.strategy.build?(instance)
+
         created = @mapping.database_record_type.create!(instance)
         @runner.cache_timestamp created
       rescue ActiveRecord::ActiveRecordError => e
@@ -56,6 +47,7 @@ module Restforce
       # Returns nothing.
       def create_in_salesforce(instance)
         return if instance.synced?
+
         created = @mapping.salesforce_record_type.create!(instance)
         @runner.cache_timestamp created
       rescue Faraday::Error::ClientError => e

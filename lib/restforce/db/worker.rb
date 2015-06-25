@@ -71,16 +71,16 @@ module Restforce
           reset!
 
           Restforce::DB::Registry.each do |mapping|
-            task("CLEANING RECORDS", mapping) { clean mapping }
-            task("PROPAGATING RECORDS", mapping) { propagate mapping }
-            task("COLLECTING CHANGES", mapping) { collect mapping }
-            task("UPDATING ASSOCIATIONS", mapping) { associate mapping }
+            run("CLEANING RECORDS", Cleaner, mapping)
+            run("PROPAGATING RECORDS", Initializer, mapping)
+            run("COLLECTING CHANGES", Collector, mapping)
+            run("UPDATING ASSOCIATIONS", Associator, mapping)
           end
 
           # NOTE: We can only perform the synchronization after all record
           # changes have been aggregated, so this second loop is necessary.
           Restforce::DB::Registry.each do |mapping|
-            task("APPLYING CHANGES", mapping) { synchronize mapping }
+            run("APPLYING CHANGES", Synchronizer, mapping)
           end
         end
       end
@@ -126,65 +126,16 @@ module Restforce
         @runner ||= Runner.new(@options.fetch(:delay) { DEFAULT_DELAY })
       end
 
-      # Internal: Propagate unsynchronized records between the two systems for
-      # the passed mapping.
-      #
-      # mapping - A Restforce::DB::Mapping.
-      #
-      # Returns nothing.
-      def propagate(mapping)
-        Initializer.new(mapping, runner).run
-      end
-
-      # Internal: Remove synchronized records from the database when the
-      # Salesforce record no longer meets the mapping's conditions.
-      #
-      # mapping - A Restforce::DB::Mapping.
-      #
-      # Returns nothing.
-      def clean(mapping)
-        Cleaner.new(mapping, runner).run
-      end
-
-      # Internal: Collect a list of changes from recently-updated records for
-      # the passed mapping.
-      #
-      # mapping - A Restforce::DB::Mapping.
-      #
-      # Returns nothing.
-      def collect(mapping)
-        Collector.new(mapping, runner).run(@changes)
-      end
-
-      # Internal: Update the associated records and Salesforce lookups for
-      # records belonging to the passed mapping.
-      #
-      # mapping - A Restforce::DB::Mapping.
-      #
-      # Returns nothing.
-      def associate(mapping)
-        Associator.new(mapping, runner).run
-      end
-
-      # Internal: Apply the aggregated changes to the objects in both systems,
-      # according to the defined mappings.
-      #
-      # mapping - A Restforce::DB::Mapping.
-      #
-      # Returns nothing.
-      def synchronize(mapping)
-        Synchronizer.new(mapping).run(@changes)
-      end
-
       # Internal: Log a description and response time for a specific named task.
       #
-      # name    - A String task name.
-      # mapping - A Restforce::DB::Mapping.
+      # name       - A String task name.
+      # task_class - A Restforce::DB::Task subclass.
+      # mapping    - A Restforce::DB::Mapping.
       #
       # Returns a Boolean.
-      def task(name, mapping)
+      def run(name, task_class, mapping)
         log "  #{name} between #{mapping.database_model.name} and #{mapping.salesforce_model}"
-        runtime = Benchmark.realtime { yield }
+        runtime = Benchmark.realtime { task task_class, mapping }
         log format("  COMPLETE after %.4f", runtime)
 
         true
@@ -192,6 +143,16 @@ module Restforce
         error(e)
 
         false
+      end
+
+      # Internal: Run the passed mapping through the supplied Task class.
+      #
+      # task_class - A Restforce::DB::Task subclass.
+      # mapping    - A Restforce::DB::Mapping.
+      #
+      # Returns nothing.
+      def task(task_class, mapping)
+        task_class.new(mapping, runner).run(@changes)
       end
 
       # Internal: Has this worker been instructed to stop?
