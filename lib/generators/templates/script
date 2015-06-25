@@ -71,14 +71,17 @@ elsif ARGV.length > 1 && !defined?(Bundler)
 
   end
 
-  # Suppress bundler output
-  require "stringio"
-  stdout, $stdout = $stdout, StringIO.new
-
   # NOTE: For whatever reason, bundler/inline's "install" functionality seems
   # busted. We can work around it by just installing the gem ourselves, as a
   # convenience to users.
-  `gem install metaforce`
+  unless `gem list metaforce -i` == "true\n"
+    system "gem install metaforce"
+    puts
+  end
+
+  # Suppress bundler output
+  require "stringio"
+  stdout, $stdout = $stdout, StringIO.new
 
   require "bundler/inline"
   require "yaml"
