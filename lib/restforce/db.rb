@@ -37,6 +37,7 @@ require "restforce/db/runner"
 
 require "restforce/db/task"
 require "restforce/db/accumulator"
+require "restforce/db/attacher"
 require "restforce/db/adapter"
 require "restforce/db/associator"
 require "restforce/db/attribute_map"

@@ -72,6 +72,7 @@ module Restforce
 
           Restforce::DB::Registry.each do |mapping|
             run("CLEANING RECORDS", Cleaner, mapping)
+            run("ATTACHING RECORDS", Attacher, mapping)
             run("PROPAGATING RECORDS", Initializer, mapping)
             run("COLLECTING CHANGES", Collector, mapping)
             run("UPDATING ASSOCIATIONS", Associator, mapping)
