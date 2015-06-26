@@ -51,7 +51,7 @@ module Restforce
 
         if record
           attach_to = Instances::ActiveRecord.new(@mapping.database_model, record, @mapping)
-          attach_to.update!(@mapping.lookup_column => instance.id).after_sync
+          attach_to.update!(@mapping.lookup_column => instance.id)
         end
 
         instance.update!("SynchronizationId__c" => nil)

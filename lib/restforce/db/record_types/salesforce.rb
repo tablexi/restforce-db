@@ -23,14 +23,15 @@ module Restforce
 
           # NOTE: #upsert! returns a String Salesforce ID when a record is
           # created, and returns `true` when an existing record was found.
-          if record_id.is_a?(String)
-            from_record.update!(@mapping.lookup_column => record_id).after_sync
-            find(record_id)
-          else
-            instance = first("SynchronizationId__c = '#{from_record.uuid}'")
-            from_record.update!(@mapping.lookup_column => instance.id).after_sync
-            instance
-          end
+          instance =
+            if record_id.is_a?(String)
+              find(record_id)
+            else
+              first("SynchronizationId__c = '#{from_record.uuid}'")
+            end
+
+          from_record.update!(@mapping.lookup_column => instance.id)
+          instance.update!("SynchronizationId__c" => nil)
         end
 
         # Public: Find the first Salesforce record which meets the passed
