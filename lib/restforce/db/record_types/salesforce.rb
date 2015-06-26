@@ -9,6 +9,8 @@ module Restforce
       # attribute mappings.
       class Salesforce < Base
 
+        ALREADY_EXISTS_MESSAGE = /INVALID_FIELD_FOR_INSERT_UPDATE|DUPLICATE_VALUE/.freeze
+
         # Public: Create an instance of this Salesforce model for the passed
         # database record.
         #
@@ -17,16 +19,10 @@ module Restforce
         # Returns a Restforce::DB::Instances::Salesforce instance.
         # Raises on any error from Salesforce.
         def create!(from_record)
-          from_attributes = FieldProcessor.new.process(@record_type, from_record.attributes, :create)
-          record_id = DB.client.upsert!(
-            @record_type,
-            "SynchronizationId__c",
-            from_attributes.merge("SynchronizationId__c" => from_record.uuid),
-          )
+          record_id = upsert!(from_record)
 
           # NOTE: #upsert! returns a String Salesforce ID when a record is
-          # created, or returns `true` when an existing record was found and
-          # updated.
+          # created, and returns `true` when an existing record was found.
           if record_id.is_a?(String)
             from_record.update!(@mapping.lookup_column => record_id).after_sync
             find(record_id)
@@ -95,6 +91,33 @@ module Restforce
         # Returns a String.
         def lookups
           (Instances::Salesforce::INTERNAL_ATTRIBUTES + @mapping.salesforce_fields).uniq.join(", ")
+        end
+
+        # Internal: Attempt to create a record in Salesforce from the passed
+        # database instance.
+        #
+        # Returns a String or Boolean.
+        def upsert!(from_record)
+          from_attributes = FieldProcessor.new.process(
+            @record_type,
+            from_record.attributes,
+            :create,
+          )
+
+          DB.client.upsert!(
+            @record_type,
+            "SynchronizationId__c",
+            from_attributes.merge("SynchronizationId__c" => from_record.uuid),
+          )
+        rescue Faraday::Error::ClientError => e
+          # If the error is complaining about attempting to update create-only
+          # fields, we've confirmed that the record already exists, and can
+          # safely resolve our object creation.
+          if e.message =~ ALREADY_EXISTS_MESSAGE
+            true
+          else
+            raise e
+          end
         end
 
         # Internal: Has this database record already been linked to a Salesforce
