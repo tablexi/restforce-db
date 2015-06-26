@@ -9,7 +9,7 @@ module Restforce
       # attribute mappings.
       class Salesforce < Base
 
-        ALREADY_EXISTS_MESSAGE = /INVALID_FIELD_FOR_INSERT_UPDATE/.freeze
+        ALREADY_EXISTS_MESSAGE = /INVALID_FIELD_FOR_INSERT_UPDATE|DUPLICATE_VALUE/.freeze
 
         # Public: Create an instance of this Salesforce model for the passed
         # database record.
