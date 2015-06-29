@@ -10,7 +10,7 @@ describe Restforce::DB::Attacher do
   describe "#run", vcr: { match_requests_on: [:method, VCR.request_matchers.uri_without_param(:q)] } do
     let(:attributes) do
       {
-        "SynchronizationID__c" => "CustomObject::#{database_record.id}",
+        "SynchronizationId__c" => "CustomObject::#{database_record.id}",
       }
     end
     let(:database_record) { database_model.create! }
@@ -42,7 +42,7 @@ describe Restforce::DB::Attacher do
           expect(database_record.reload).to_be :salesforce_id?
         end
 
-        it "wipes the SynchronizationID__c on the Salesforce record" do
+        it "wipes the SynchronizationId__c" do
           salesforce_record = mapping.salesforce_record_type.find(salesforce_id).record
           expect(salesforce_record.SynchronizationId__c).to_be_nil
         end
@@ -55,7 +55,7 @@ describe Restforce::DB::Attacher do
             expect(database_record.reload.salesforce_id).to_equal old_id
           end
 
-          it "wipes the SynchronizationID__c on the Salesforce record" do
+          it "wipes the SynchronizationId__c" do
             salesforce_record = mapping.salesforce_record_type.find(salesforce_id).record
             expect(salesforce_record.SynchronizationId__c).to_be_nil
           end
@@ -65,11 +65,11 @@ describe Restforce::DB::Attacher do
           let(:database_record) { nil }
           let(:attributes) do
             {
-              "SynchronizationID__c" => "CustomObject::1",
+              "SynchronizationId__c" => "CustomObject::1",
             }
           end
 
-          it "wipes the SynchronizationID__c on the Salesforce record" do
+          it "wipes the SynchronizationId__c" do
             salesforce_record = mapping.salesforce_record_type.find(salesforce_id).record
             expect(salesforce_record.SynchronizationId__c).to_be_nil
           end
@@ -78,11 +78,11 @@ describe Restforce::DB::Attacher do
         describe "when the upsert ID is for another database model" do
           let(:attributes) do
             {
-              "SynchronizationID__c" => "User::1",
+              "SynchronizationId__c" => "User::1",
             }
           end
 
-          it "does not wipe the SynchronizationID__c on the Salesforce record" do
+          it "does not wipe the SynchronizationId__c" do
             salesforce_record = mapping.salesforce_record_type.find(salesforce_id).record
             expect(salesforce_record.SynchronizationId__c).to_not_be_nil
           end
