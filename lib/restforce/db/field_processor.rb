@@ -37,14 +37,15 @@ module Restforce
       # Returns a Hash.
       def available_fields(sobject_type, fields, action = :read)
         fields.select do |field|
-          available?(sobject_type, field, action) || (
-            action == :read && relationship?(field)
-          )
+          known_field = available?(sobject_type, field, action)
+          relationship = action == :read && relationship?(field)
+
+          known_field || relationship
         end
       end
 
       # Public: Get a restricted version of the passed attributes Hash, with
-      # unwritable fields stripped out.
+      # inaccessible fields for the specified action stripped out.
       #
       # sobject_type - A String name of an SObject Type in Salesforce.
       # attributes   - A Hash with keys corresponding to Salesforce field names.
@@ -58,12 +59,13 @@ module Restforce
 
       private
 
-      # Internal: Is the passed attribute writable for the passed SObject Type?
+      # Internal: Is the passed attribute available for the specified action on
+      # the passed SObject Type?
       #
       # sobject_type - A String name of an SObject Type in Salesforce.
       # field        - A String Salesforce field API name.
-      # write_type   - A Symbol reflecting the action to perform. Accepted
-      #                values are :read, :create, and :update.
+      # action       - A Symbol reflecting the requested action. Accepted values
+      #                are :read, :create, and :update.
       #
       # Returns a Boolean.
       def available?(sobject_type, field, action)
