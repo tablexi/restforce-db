@@ -32,9 +32,10 @@ module Restforce
       # Returns nothing.
       def attach(instance)
         synchronization_id = instance.record.SynchronizationId__c
-
         return unless synchronization_id
-        return unless valid_model?(synchronization_id)
+
+        database_model, record_id = parsed_uuid(synchronization_id)
+        return unless valid_model?(database_model)
 
         # If the instance is already synchronized, then we just want to wipe the
         # Synchronization ID and proceed to the next instance.
@@ -43,7 +44,6 @@ module Restforce
           return
         end
 
-        record_id = synchronization_id.split("::").last
         record = @mapping.database_model.find_by(
           id: record_id,
           @mapping.lookup_column => nil,
@@ -59,14 +59,29 @@ module Restforce
         DB.logger.error(SynchronizationError.new(e, instance))
       end
 
-      # Internal: Does the synchronization UUID correspond to a valid record for
-      # the database model on the mapping?
+      # Internal: Does the passed database model correspond to the model defined
+      # on the mapping?
       #
-      # synchronization_id - A String in the format "<Model>::<ID>"
+      # database_model - A String name of an ActiveRecord::Base subclass.
       #
       # Returns a Boolean.
-      def valid_model?(synchronization_id)
-        synchronization_id.split("::").first == @mapping.database_model.to_s
+      def valid_model?(database_model)
+        database_model == @mapping.database_model.to_s
+      end
+
+      # Internal: Parse a UUID into a database model and corresponding record
+      # identifier.
+      #
+      # uuid - A String UUID, in the format "<Model>::<Id>"
+      #
+      # Returns an Array of two Strings.
+      def parsed_uuid(uuid)
+        components = uuid.split("::")
+
+        database_model = components[0..-2].join("::")
+        id = components.last
+
+        [database_model, id]
       end
 
     end
