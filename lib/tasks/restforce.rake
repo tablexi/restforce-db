@@ -17,4 +17,27 @@ namespace :restforce do
       puts "DONE"
     end
   end
+
+  desc "Get the 18-character version of a 15-character Salesforce ID"
+  task :convertid, [:salesforce_id] do |_, args|
+    sfid = args[:salesforce_id]
+
+    raise ArgumentError, "Provide a Salesforce ID (restforce:convertid[<salesforce_id>])" if sfid.nil?
+    raise ArgumentError, "The passed Salesforce ID must be 15 characters" unless sfid.length == 15
+
+    suffixes = sfid.scan(/.{5}/).map do |chunk|
+      flag = 0
+      chunk.split("").each_with_index do |char, idx|
+        flag += (1 << idx) if char.upcase == char && char >= "A" && char <= "Z"
+      end
+
+      if flag <= 25
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[flag]
+      else
+        "012345"[flag - 25]
+      end
+    end
+
+    puts sfid + suffixes.join
+  end
 end
