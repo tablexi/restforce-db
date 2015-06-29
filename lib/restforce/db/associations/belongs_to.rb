@@ -29,6 +29,11 @@ module Restforce
           for_mappings(database_record) do |mapping, lookup|
             lookup_id = deep_lookup(salesforce_record, lookup)
             lookups[mapping.lookup_column] = lookup_id
+
+            # If the referenced database record already exists, we can short-
+            # circuit the accumulation of attributes here.
+            next if mapping.database_model.exists?(mapping.lookup_column => lookup_id)
+
             instance = mapping.salesforce_record_type.find(lookup_id)
 
             # If any of the mappings are invalid, short-circuit the creation of
