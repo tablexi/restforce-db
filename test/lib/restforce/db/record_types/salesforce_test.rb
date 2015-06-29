@@ -28,6 +28,11 @@ describe Restforce::DB::RecordTypes::Salesforce do
       expect(sync_from.synced?).to_equal(true)
     end
 
+    it "wipes the temporary SynchronizationId__c value used for upsert" do
+      Salesforce.records << [salesforce_model, instance.Id]
+      expect(instance.SynchronizationId__c).to_be_nil
+    end
+
     describe "when a Salesforce record already exists for the database instance" do
 
       it "uses the existing record" do

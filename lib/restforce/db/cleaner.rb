@@ -5,27 +5,17 @@ module Restforce
     # Restforce::DB::Cleaner is responsible for culling the matching database
     # records when a Salesforce record is no longer available to synchronize
     # for a specific mapping.
-    class Cleaner
+    class Cleaner < Task
 
       # Salesforce can take a few minutes to register record deletion. This
       # buffer gives us a window of time (in seconds) to look back and see
       # records which may not have been visible in previous runs.
       DELETION_READ_BUFFER = 3 * 60
 
-      # Public: Initialize a Restforce::DB::Cleaner.
-      #
-      # mapping - A Restforce::DB::Mapping.
-      # runner  - A Restforce::DB::Runner.
-      def initialize(mapping, runner = Runner.new)
-        @mapping = mapping
-        @strategy = mapping.strategy
-        @runner = runner
-      end
-
       # Public: Run the database culling loop for this mapping.
       #
       # Returns nothing.
-      def run
+      def run(*_)
         @mapping.database_record_type.destroy_all(dropped_salesforce_ids)
       end
 
@@ -61,7 +51,7 @@ module Restforce
       #
       # Returns an Array of IDs.
       def invalid_salesforce_ids
-        return [] if @mapping.conditions.empty? || @strategy.passive?
+        return [] if @mapping.conditions.empty? || @mapping.strategy.passive?
 
         all_salesforce_ids - valid_salesforce_ids
       end

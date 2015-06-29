@@ -23,14 +23,15 @@ module Restforce
 
           # NOTE: #upsert! returns a String Salesforce ID when a record is
           # created, and returns `true` when an existing record was found.
-          if record_id.is_a?(String)
-            from_record.update!(@mapping.lookup_column => record_id).after_sync
-            find(record_id)
-          else
-            instance = first("SynchronizationId__c = '#{from_record.uuid}'")
-            from_record.update!(@mapping.lookup_column => instance.id).after_sync
-            instance
-          end
+          instance =
+            if record_id.is_a?(String)
+              find(record_id)
+            else
+              first("SynchronizationId__c = '#{from_record.uuid}'")
+            end
+
+          from_record.update!(@mapping.lookup_column => instance.id)
+          instance.update!("SynchronizationId__c" => nil)
         end
 
         # Public: Find the first Salesforce record which meets the passed
@@ -84,13 +85,16 @@ module Restforce
 
         private
 
-        # Internal: Get a String of values to look up when the record is
+        # Internal: Get a list of fields to look up when the record is
         # fetched from Salesforce. Includes all configured mappings and a
         # handful of attributes for internal use.
         #
-        # Returns a String.
+        # Returns an Array of Strings.
         def lookups
-          (Instances::Salesforce::INTERNAL_ATTRIBUTES + @mapping.salesforce_fields).uniq.join(", ")
+          FieldProcessor.new.available_fields(
+            @record_type,
+            (Instances::Salesforce::INTERNAL_ATTRIBUTES + @mapping.salesforce_fields).uniq,
+          )
         end
 
         # Internal: Attempt to create a record in Salesforce from the passed
@@ -139,7 +143,7 @@ module Restforce
           filters = (conditions + @mapping.conditions).compact.join(" and ")
           filters = " where #{filters}" unless filters.empty?
 
-          "select #{lookups} from #{@record_type}#{filters}"
+          "select #{lookups.join(', ')} from #{@record_type}#{filters}"
         end
 
       end

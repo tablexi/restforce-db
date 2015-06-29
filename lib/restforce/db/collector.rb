@@ -6,16 +6,7 @@ module Restforce
     # recently-updated records for purposes of synchronization. It relies on the
     # mappings configured in instances of Restforce::DB::RecordTypes::Base to
     # locate recently-updated records and fetch their attributes.
-    class Collector
-
-      # Public: Initialize a new Restforce::DB::Collector.
-      #
-      # mapping - A Restforce::DB::Mapping instance.
-      # runner  - A Restforce::DB::Runner instance.
-      def initialize(mapping, runner = Runner.new)
-        @mapping = mapping
-        @runner = runner
-      end
+    class Collector < Task
 
       # Public: Run the collection process, pulling in records from Salesforce
       # and the database to determine the lists of attributes to apply to all
