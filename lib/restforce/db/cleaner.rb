@@ -80,7 +80,7 @@ module Restforce
         all_ids = all_salesforce_ids
 
         updated_ids = valid_ids - all_ids
-        DB.logger.error(RecordsChanged.new(@mapping.salesforce_model, updated_ids)) if updated_ids
+        DB.logger.error(RecordsChanged.new(@mapping.salesforce_model, updated_ids)) unless updated_ids.empty?
 
         all_ids - valid_ids
       end
