@@ -7,6 +7,23 @@ module Restforce
     # for a specific mapping.
     class Cleaner < Task
 
+      # RecordsChanged is an exception which reports IDs for Salesforce records
+      # that were updated externally during the cleaning process.
+      class RecordsChanged < RuntimeError
+
+        # Public: Initialize a new RecordsChanged exception.
+        #
+        # salesforce_model - A String name of a Salesforce object type.
+        # ids              - An Array of String Salesforce IDs.
+        def initialize(salesforce_model, ids)
+          super <<-MESSAGE
+            The following #{salesforce_model} records were updated externally
+            during the cleaning phase of synchronization: #{ids.join(', ')}
+          MESSAGE
+        end
+
+      end
+
       # Salesforce can take a few minutes to register record deletion. This
       # buffer gives us a window of time (in seconds) to look back and see
       # records which may not have been visible in previous runs.
@@ -53,7 +70,19 @@ module Restforce
       def invalid_salesforce_ids
         return [] if @mapping.conditions.empty? || @mapping.strategy.passive?
 
-        all_salesforce_ids - valid_salesforce_ids
+        # NOTE: We need to query for _valid_ records first, because, in the
+        # scenario where a record is updated _between_ the two queries running,
+        # the change to the SystemModstamp will prevent the record from being
+        # picked up in the second query. In this situation, it's safer to omit
+        # the ID from the list of aggregate IDs than it is to omit it from the
+        # list of valid IDs.
+        valid_ids = valid_salesforce_ids
+        all_ids = all_salesforce_ids
+
+        updated_ids = valid_ids - all_ids
+        DB.logger.error(RecordsChanged.new(@mapping.salesforce_model, updated_ids)) if updated_ids
+
+        all_ids - valid_ids
       end
 
       # Internal: Get the IDs of all recently-modified Salesforce records
@@ -89,7 +118,7 @@ module Restforce
       # removing records which belong to a parallel mapping on the same
       # ActiveRecord class.
       #
-      # Rturns an Array of Mappings.
+      # Returns an Array of Mappings.
       def parallel_mappings
         Registry[@mapping.database_model].select do |mapping|
           mapping.salesforce_model == @mapping.salesforce_model
