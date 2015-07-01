@@ -13,12 +13,18 @@ module Restforce
 
         # Public: Initialize a new RecordsChanged exception.
         #
+        # database_model   - A String name of an ActiveRecord class.
         # salesforce_model - A String name of a Salesforce object type.
-        # ids              - An Array of String Salesforce IDs.
-        def initialize(salesforce_model, ids)
-          super <<-MESSAGE
+        # starts           - A Time for the startpoint of the run.
+        # ends             - A Time for the endpoint of the run.
+        # ids              - A List of Strings representing Salesforce IDs.
+        def initialize(database_model, salesforce_model, starts, ends, *ids)
+          super <<-MESSAGE.sub(/\A\s+/, "").gsub(/\s+/, " ")
+            [#{database_model}|#{salesforce_model}]
+            (#{starts.utc.iso8601} to #{ends.utc.iso8601})
+
             The following #{salesforce_model} records were updated externally
-            during the cleaning phase of synchronization: #{ids.join(', ')}
+            during the cleaning phase of synchronization: #{ids.join(' ')}
           MESSAGE
         end
 
@@ -80,7 +86,20 @@ module Restforce
         all_ids = all_salesforce_ids
 
         updated_ids = valid_ids - all_ids
-        DB.logger.error(RecordsChanged.new(@mapping.salesforce_model, updated_ids)) unless updated_ids.empty?
+
+        unless updated_ids.empty?
+          exception = RecordsChanged.new(
+            @mapping.database_model,
+            @mapping.salesforce_model,
+            @runner.after,
+            @runner.before,
+            "CHANGED: #{updated_ids}",
+            "VALID: #{valid_ids}",
+            "ALL: #{all_ids}",
+          )
+
+          DB.logger.error(exception)
+        end
 
         all_ids - valid_ids
       end
