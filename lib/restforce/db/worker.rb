@@ -75,12 +75,12 @@ module Restforce
             run("ATTACHING RECORDS", Attacher, mapping)
             run("PROPAGATING RECORDS", Initializer, mapping)
             run("COLLECTING CHANGES", Collector, mapping)
-            run("UPDATING ASSOCIATIONS", Associator, mapping)
           end
 
           # NOTE: We can only perform the synchronization after all record
           # changes have been aggregated, so this second loop is necessary.
           Restforce::DB::Registry.each do |mapping|
+            run("UPDATING ASSOCIATIONS", Associator, mapping)
             run("APPLYING CHANGES", Synchronizer, mapping)
           end
         end
