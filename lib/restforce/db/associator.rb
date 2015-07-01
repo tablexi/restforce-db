@@ -95,12 +95,13 @@ module Restforce
       end
 
       # Internal: Get a list of the BelongsTo associations defined for the
-      # target mapping.
+      # target mapping. Ignores associations where the foreign key is Id, as
+      # a record's Id will never change.
       #
       # Returns an Array of Restforce::DB::Association::BelongsTo objects.
       def belongs_to_associations
         @belongs_to_associations ||= @mapping.associations.select do |association|
-          association.is_a?(Restforce::DB::Associations::BelongsTo)
+          association.is_a?(Restforce::DB::Associations::BelongsTo) && association.lookup != "Id"
         end
       end
 

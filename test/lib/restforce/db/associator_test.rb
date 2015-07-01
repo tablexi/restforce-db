@@ -39,6 +39,14 @@ describe Restforce::DB::Associator do
         mapping.associations << association
       end
 
+      describe "when the association lookup is through Id" do
+        let(:association) { Restforce::DB::Associations::BelongsTo.new(:user, through: "Id") }
+
+        it "ignores the association" do
+          expect(associator.send(:belongs_to_associations)).to_be :empty?
+        end
+      end
+
       describe "given another record for association" do
         let(:new_user_salesforce_id) do
           Salesforce.create!(
