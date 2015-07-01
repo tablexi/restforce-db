@@ -33,6 +33,8 @@ module Restforce
         return unless @mapping.strategy.build?(instance)
 
         created = @mapping.database_record_type.create!(instance)
+
+        @runner.cache_timestamp instance
         @runner.cache_timestamp created
       rescue ActiveRecord::ActiveRecordError => e
         DB.logger.error(SynchronizationError.new(e, instance))
@@ -49,6 +51,8 @@ module Restforce
         return if instance.synced?
 
         created = @mapping.salesforce_record_type.create!(instance)
+
+        @runner.cache_timestamp instance
         @runner.cache_timestamp created
       rescue Faraday::Error::ClientError => e
         DB.logger.error(SynchronizationError.new(e, instance))
