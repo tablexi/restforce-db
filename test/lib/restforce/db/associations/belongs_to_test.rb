@@ -57,8 +57,8 @@ describe Restforce::DB::Associations::BelongsTo do
         let(:object_salesforce_id) { Salesforce.create!(mapping.salesforce_model) }
         let(:object) { mapping.database_model.create!(salesforce_id: object_salesforce_id) }
 
-        it "returns a nil lookup value in the hash" do
-          expect(association.lookups(object)).to_equal("Friend__c" => nil)
+        it "returns no value in the hash" do
+          expect(association.lookups(object)).to_be :empty?
         end
 
         describe "and the underlying association is one-to-many" do
@@ -73,8 +73,8 @@ describe Restforce::DB::Associations::BelongsTo do
             end
           end
 
-          it "still returns a nil lookup value in the hash" do
-            expect(association.lookups(object)).to_equal("Friend__c" => nil)
+          it "still returns no value in the hash" do
+            expect(association.lookups(object)).to_be :empty?
           end
         end
       end

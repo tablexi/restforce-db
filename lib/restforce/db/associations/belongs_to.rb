@@ -66,7 +66,7 @@ module Restforce
             # for what is actually a one-to-many association on the
             # ActiveRecord object, so we always treat the result as an Array.
             associated = Array(database_record.association(name).reader)
-            ids[lookup] = associated.empty? ? nil : associated.first.send(mapping.lookup_column)
+            ids[lookup] = associated.first.send(mapping.lookup_column) unless associated.empty?
           end
 
           ids
