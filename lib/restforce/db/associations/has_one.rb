@@ -22,12 +22,17 @@ module Restforce
 
           @cache = cache
 
-          target = target_mapping(database_record)
+          targets = target_mappings(database_record)
           reflection = target_reflection(database_record)
-          query = "#{lookup_field(target, reflection)} = '#{salesforce_record.Id}'"
 
-          instance = target.salesforce_record_type.first(query)
-          instance ? construct_for(database_record, instance) : []
+          records = targets.detect do |target|
+            query = "#{lookup_field(target, reflection)} = '#{salesforce_record.Id}'"
+            instance = target.salesforce_record_type.first(query)
+
+            break construct_for(database_record, instance) if instance
+          end
+
+          records || []
         ensure
           @cache = nil
         end

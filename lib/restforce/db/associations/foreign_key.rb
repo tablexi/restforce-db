@@ -26,9 +26,9 @@ module Restforce
         # database_record - An instance of an ActiveRecord::Base subclass.
         #
         # Returns a Restforce::DB::Mapping.
-        def target_mapping(database_record)
+        def target_mappings(database_record)
           inverse = inverse_association_name(target_reflection(database_record))
-          Registry[target_class(database_record)].detect do |mapping|
+          Registry[target_class(database_record)].select do |mapping|
             mapping.associations.any? { |a| a.name == inverse }
           end
         end
@@ -62,11 +62,12 @@ module Restforce
         # Returns a String.
         def associated_salesforce_id(instance)
           reflection = instance.mapping.database_model.reflect_on_association(name)
-          inverse_mapping = mapping_for(reflection)
 
-          query = "#{lookup_field(inverse_mapping, reflection)} = '#{instance.id}'"
-          salesforce_instance = inverse_mapping.salesforce_record_type.first(query)
-          salesforce_instance.id if salesforce_instance
+          mappings_for(reflection).detect do |inverse_mapping|
+            query = "#{lookup_field(inverse_mapping, reflection)} = '#{instance.id}'"
+            salesforce_instance = inverse_mapping.salesforce_record_type.first(query)
+            break salesforce_instance.id if salesforce_instance
+          end
         end
 
       end
