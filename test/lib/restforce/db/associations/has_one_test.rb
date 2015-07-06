@@ -104,6 +104,25 @@ describe Restforce::DB::Associations::HasOne do
         end
       end
 
+      describe "when multiple mutually-exclusive mappings exist" do
+        let(:other_mapping) do
+          Restforce::DB::Mapping.new(mapping.database_model, mapping.salesforce_model).tap do |map|
+            map.conditions << "Friend__r.Email = 'somebody@example.com'"
+            map.associations << inverse_association
+          end
+        end
+
+        before do
+          mapping.conditions << "Friend__r.Email != 'somebody@example.com'"
+          Restforce::DB::Registry << other_mapping
+        end
+
+        it "associates through the proper mapping" do
+          object = associated.first
+          expect(object).to_not_be_nil
+        end
+      end
+
       describe "when the associated record has been cached" do
         let(:object) { CustomObject.new(salesforce_id: object_salesforce_id) }
         let(:cache) { Restforce::DB::AssociationCache.new }

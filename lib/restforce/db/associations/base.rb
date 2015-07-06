@@ -51,9 +51,10 @@ module Restforce
 
           base_class = instance.mapping.database_model
           reflection = base_class.reflect_on_association(name)
-          reflection.klass.exists?(
-            mapping_for(reflection).lookup_column => association_id,
-          )
+
+          mappings_for(reflection).any? do |mapping|
+            reflection.klass.exists?(mapping.lookup_column => association_id)
+          end
         end
 
         private
@@ -158,9 +159,9 @@ module Restforce
         # reflection - An ActiveRecord::AssociationReflection.
         #
         # Returns a Restforce::DB::Mapping.
-        def mapping_for(reflection)
+        def mappings_for(reflection)
           inverse = inverse_association_name(reflection)
-          Registry[reflection.klass].detect do |mapping|
+          Registry[reflection.klass].select do |mapping|
             mapping.associations.any? { |a| a.name == inverse }
           end
         end
