@@ -32,7 +32,7 @@ module Restforce
 
             # If the referenced database record already exists, we can short-
             # circuit the accumulation of attributes here.
-            next if mapping.database_model.exists?(mapping.lookup_column => lookup_id)
+            next if cache.find(mapping.database_model, mapping.lookup_column => lookup_id)
 
             instance = mapping.salesforce_record_type.find(lookup_id)
 
