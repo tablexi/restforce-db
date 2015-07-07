@@ -1,7 +1,3 @@
-checkout:
-  post:
-    - mkdir -p test/config
-    - cp lib/generators/templates/config.yml test/config/secrets.yml
 machine:
   ruby:
     version: 2.2.2

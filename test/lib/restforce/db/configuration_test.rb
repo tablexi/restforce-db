@@ -5,7 +5,7 @@ describe Restforce::DB::Configuration do
   configure!
 
   let(:secrets) { Secrets["client"] }
-  let(:secrets_file) { File.expand_path("../../../../config/secrets.yml", __FILE__) }
+  let(:secrets_file) { File.expand_path("../../../../../lib/generators/templates/config.yml", __FILE__) }
   let(:configuration) { Restforce::DB::Configuration.new }
 
   describe "#before" do
