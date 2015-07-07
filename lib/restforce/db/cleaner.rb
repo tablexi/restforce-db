@@ -7,29 +7,6 @@ module Restforce
     # for a specific mapping.
     class Cleaner < Task
 
-      # RecordsChanged is an exception which reports IDs for Salesforce records
-      # that were updated externally during the cleaning process.
-      class RecordsChanged < RuntimeError
-
-        # Public: Initialize a new RecordsChanged exception.
-        #
-        # database_model   - A String name of an ActiveRecord class.
-        # salesforce_model - A String name of a Salesforce object type.
-        # starts           - A Time for the startpoint of the run.
-        # ends             - A Time for the endpoint of the run.
-        # ids              - A List of Strings representing Salesforce IDs.
-        def initialize(database_model, salesforce_model, starts, ends, *ids)
-          super <<-MESSAGE.sub(/\A\s+/, "").gsub(/\s+/, " ")
-            [#{database_model}|#{salesforce_model}]
-            (#{starts.utc.iso8601} to #{ends.utc.iso8601})
-
-            The following #{salesforce_model} records were updated externally
-            during the cleaning phase of synchronization: #{ids.join(' ')}
-          MESSAGE
-        end
-
-      end
-
       # Salesforce can take a few minutes to register record deletion. This
       # buffer gives us a window of time (in seconds) to look back and see
       # records which may not have been visible in previous runs.
@@ -84,22 +61,6 @@ module Restforce
         # list of valid IDs.
         valid_ids = valid_salesforce_ids
         all_ids = all_salesforce_ids
-
-        updated_ids = valid_ids - all_ids
-
-        unless updated_ids.empty?
-          exception = RecordsChanged.new(
-            @mapping.database_model,
-            @mapping.salesforce_model,
-            @runner.after,
-            @runner.before,
-            "CHANGED: #{updated_ids}",
-            "VALID: #{valid_ids}",
-            "ALL: #{all_ids}",
-          )
-
-          DB.logger.error(exception)
-        end
 
         all_ids - valid_ids
       end
