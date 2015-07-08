@@ -31,11 +31,7 @@ namespace :restforce do
         flag += (1 << idx) if char.upcase == char && char >= "A" && char <= "Z"
       end
 
-      if flag <= 25
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[flag]
-      else
-        "012345"[flag - 25]
-      end
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"[flag]
     end
 
     puts sfid + suffixes.join
