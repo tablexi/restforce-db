@@ -41,8 +41,7 @@ namespace :restforce do
       next unless salesforce_instance
 
       attributes = mapping.convert(model, salesforce_instance.attributes)
-      record.update!(field => attributes[field])
-      record.touch(:synchronized_at)
+      record.update_columns field => attributes[field]
     end
   end
 
