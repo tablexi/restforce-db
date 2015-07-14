@@ -84,17 +84,29 @@ module Restforce
     #
     # Returns a Restforce::Data::Client instance.
     def self.client
-      @client ||= DB::Client.new(
-        username:       configuration.username,
-        password:       configuration.password,
-        security_token: configuration.security_token,
-        client_id:      configuration.client_id,
-        client_secret:  configuration.client_secret,
-        host:           configuration.host,
-        api_version:    configuration.api_version,
-        timeout:        configuration.timeout,
-        adapter:        configuration.adapter,
-      )
+      @client ||= begin
+        client = DB::Client.new(
+          username:       configuration.username,
+          password:       configuration.password,
+          security_token: configuration.security_token,
+          client_id:      configuration.client_id,
+          client_secret:  configuration.client_secret,
+          host:           configuration.host,
+          api_version:    configuration.api_version,
+          timeout:        configuration.timeout,
+          adapter:        configuration.adapter,
+        )
+
+        # NOTE: By default, the Retry middleware will catch timeout exceptions,
+        # and retry up to two times. For more information, see:
+        # https://github.com/lostisland/faraday/blob/master/lib/faraday/request/retry.rb
+        client.middleware.request(
+          :retry,
+          methods: [:get, :head, :options, :put, :patch, :delete],
+        )
+
+        client
+      end
     end
 
     # Public: Get the ID of the Salesforce user which is being used to access
