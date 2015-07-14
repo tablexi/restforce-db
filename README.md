@@ -252,6 +252,19 @@ The task takes several arguments, most of which are optional:
 - `end_time` (optional): The latest point in time for which records should be gathered.
 - `config` (optional): The path to the file containing your Restforce::DB credentials. If not explicitly provided, the default installation file path (see above) will be used.
 
+### Pull down missing fields
+
+To populate existing synchronized records with data from newly-mapped fields, you can run the `populate` rake task. This will iterate through _all_ records in your database for the specified model, and populate the specified field on each record. This could potentially take a while if you have a large number of
+records.
+
+    $ bundle exec rake restforce:populate[<model>,<salesforce_model>,<field>]
+
+This task takes a handful of required arguments:
+
+- `model`: The name of the ActiveRecord model you wish to sync. This can be any model you've defined a mapping for in your application.
+- `salesforce_model`: The name of the specfic Salesforce model to which the desired field is mapped. This object type will be used as the data source.
+- `field`: The name of the attribute to populate on your ActiveRecord model. Will usually correspond to a database column name.
+
 ### Run the daemon
 
 To actually perform this system synchronization, you'll want to run the binstub installed through the generator (see above). This will daemonize a process which loops repeatedly to continuously synchronize your database and your Salesforce account, according to the established mappings.
