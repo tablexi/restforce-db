@@ -36,7 +36,7 @@ module Restforce
 
         @runner.cache_timestamp instance
         @runner.cache_timestamp created
-      rescue ActiveRecord::ActiveRecordError => e
+      rescue ActiveRecord::ActiveRecordError, Faraday::Error::ClientError => e
         DB.logger.error(SynchronizationError.new(e, instance))
       end
 

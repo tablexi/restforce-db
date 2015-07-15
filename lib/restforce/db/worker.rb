@@ -2,7 +2,12 @@ require "file_daemon"
 
 module Restforce
 
+  # :nodoc:
   module DB
+
+    # TaskMapping is a small data structure used to pass top-level task
+    # information through to a SynchronizationError when necessary.
+    TaskMapping = Struct.new(:id, :mapping)
 
     # Restforce::DB::Worker represents the primary polling loop through which
     # all record synchronization occurs.
@@ -154,6 +159,9 @@ module Restforce
       # Returns nothing.
       def task(task_class, mapping)
         task_class.new(mapping, runner).run(@changes)
+      rescue Faraday::Error::ClientError => e
+        task_mapping = TaskMapping.new(task_class, mapping)
+        error SynchronizationError.new(e, task_mapping)
       end
 
       # Internal: Has this worker been instructed to stop?

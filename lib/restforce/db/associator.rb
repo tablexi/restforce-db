@@ -39,6 +39,10 @@ module Restforce
         return unless database_instance && salesforce_instance
 
         sync_associations(database_instance, salesforce_instance)
+      rescue Faraday::Error::ClientError => e
+        # This should only be tripped if `synchronized_instances` makes a
+        # request to fetch the Salesforce instance.
+        DB.logger.error(SynchronizationError.new(e, database_instance))
       end
 
       # Internal: Given an instance for one system, find its synchronized pair
