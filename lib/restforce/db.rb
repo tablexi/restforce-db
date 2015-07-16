@@ -100,8 +100,9 @@ module Restforce
         # NOTE: By default, the Retry middleware will catch timeout exceptions,
         # and retry up to two times. For more information, see:
         # https://github.com/lostisland/faraday/blob/master/lib/faraday/request/retry.rb
-        client.middleware.request(
-          :retry,
+        client.middleware.insert(
+          -2,
+          Faraday::Request::Retry,
           methods: [:get, :head, :options, :put, :patch, :delete],
         )
 
