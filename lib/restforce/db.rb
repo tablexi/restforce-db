@@ -97,29 +97,34 @@ module Restforce
           timeout:        configuration.timeout,
           adapter:        configuration.adapter,
         )
-
-        # NOTE: By default, the Retry middleware will catch timeout exceptions,
-        # and retry up to two times. For more information, see:
-        # https://github.com/lostisland/faraday/blob/master/lib/faraday/request/retry.rb
-        client.middleware.insert(
-          -2,
-          Faraday::Request::Retry,
-          methods: [:get, :head, :options, :put, :patch, :delete],
-        )
-
-        client.middleware.insert_after(
-          Restforce::Middleware::InstanceURL,
-          FaradayMiddleware::Instrumentation,
-          name: "request.restforce_db",
-        )
-
-        client.middleware.insert_before(
-          FaradayMiddleware::Instrumentation,
-          Restforce::DB::Middleware::StoreRequestBody,
-        )
-
+        setup_middleware(client)
         client
       end
+    end
+
+    # Internal: Sets up the Restforce client's middleware handlers.
+    #
+    # Returns nothing.
+    def self.setup_middleware(client)
+      # NOTE: By default, the Retry middleware will catch timeout exceptions,
+      # and retry up to two times. For more information, see:
+      # https://github.com/lostisland/faraday/blob/master/lib/faraday/request/retry.rb
+      client.middleware.insert(
+        -2,
+        Faraday::Request::Retry,
+        methods: [:get, :head, :options, :put, :patch, :delete],
+      )
+
+      client.middleware.insert_after(
+        Restforce::Middleware::InstanceURL,
+        FaradayMiddleware::Instrumentation,
+        name: "request.restforce_db",
+      )
+
+      client.middleware.insert_before(
+        FaradayMiddleware::Instrumentation,
+        Restforce::DB::Middleware::StoreRequestBody,
+      )
     end
 
     # Public: Get the ID of the Salesforce user which is being used to access
