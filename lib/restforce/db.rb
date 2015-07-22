@@ -52,6 +52,24 @@ require "restforce/db/worker"
 
 require "restforce/db/railtie" if defined?(Rails)
 
+# Public: A Faraday middleware to store the request body in the environment.
+#
+# This works around an issue with Faraday where the request body is squashed by
+# the response body, once a request has been made.
+#
+# See also:
+# - https://github.com/lostisland/faraday/issues/163
+# - https://github.com/lostisland/faraday/issues/297
+class StoreRequestBody < Faraday::Middleware
+
+  def call(request_env)
+    request_env[:request_body] = request_env[:body]
+    puts request_env[:request_body] if request_env[:method] != :get
+    @app.call(request_env)
+  end
+
+end
+
 module Restforce
 
   # Restforce::DB exposes basic Restforce client configuration methods for use
@@ -110,6 +128,11 @@ module Restforce
           Restforce::Middleware::InstanceURL,
           FaradayMiddleware::Instrumentation,
           name: 'request.restforce_db',
+        )
+
+        client.middleware.insert_before(
+          FaradayMiddleware::Instrumentation,
+          StoreRequestBody,
         )
 
         client
