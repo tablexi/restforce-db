@@ -106,6 +106,12 @@ module Restforce
           methods: [:get, :head, :options, :put, :patch, :delete],
         )
 
+        client.middleware.insert_after(
+          Restforce::Middleware::InstanceURL,
+          FaradayMiddleware::Instrumentation,
+          name: 'request.restforce_db',
+        )
+
         client
       end
     end
