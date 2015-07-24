@@ -319,6 +319,10 @@ If you're testing your integration, and using something like VCR to record your 
 
   Restforce::DB attempts to mitigate this effect by tracking change timestamps for internal updates.
 
+## Instrumentation
+
+Restforce::DB uses a [Faraday](https://github.com/lostisland/faraday) middleware to add API interaction [instrumentation](https://github.com/lostisland/faraday_middleware/blob/master/lib/faraday_middleware/instrumentation.rb), as described in [Restforce's documentation](https://github.com/ejholmes/restforce#loggingdebugginginstrumenting) through [Active Support notifications](http://guides.rubyonrails.org/active_support_instrumentation.html).
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
