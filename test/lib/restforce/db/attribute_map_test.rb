@@ -23,23 +23,19 @@ describe Restforce::DB::AttributeMap do
     end
 
     it "builds a normalized Hash of database attribute values" do
-      attributes = attribute_map.attributes(database_model) do |attribute|
-        expect(mapping.database_fields.include?(attribute)).to_equal true
-        attribute
-      end
+      record = Hashie::Mash.new(column_one: "Eenie", column_two: "Meenie")
+      attributes = attribute_map.attributes(database_model, record)
 
       expect(attributes.keys).to_equal(mapping.salesforce_fields)
-      expect(attributes.values).to_equal(mapping.database_fields)
+      expect(attributes.values).to_equal(%w(Eenie Meenie))
     end
 
     it "builds a normalized Hash of Salesforce field values" do
-      attributes = attribute_map.attributes(salesforce_model) do |attribute|
-        expect(mapping.salesforce_fields.include?(attribute)).to_equal true
-        attribute
-      end
+      record = Hashie::Mash.new("SF_Field_One__c" => "Minie", "SF_Field_Two__c" => "Moe")
+      attributes = attribute_map.attributes(salesforce_model, record)
 
       expect(attributes.keys).to_equal(mapping.salesforce_fields)
-      expect(attributes.values).to_equal(mapping.salesforce_fields)
+      expect(attributes.values).to_equal(%w(Minie Moe))
     end
   end
 
@@ -54,19 +50,6 @@ describe Restforce::DB::AttributeMap do
       expect(attribute_map.convert(database_model, attributes)).to_equal(
         fields.key(attributes.keys.first) => attributes.values.first,
       )
-    end
-
-    describe "when an adapter has been specified" do
-      let(:adapter) { boolean_adapter }
-
-      it "uses the adapter to convert attributes to a database-compatible form" do
-        expect(attribute_map.convert(database_model, "SF_Field_One__c" => "Yes")).to_equal(
-          column_one: true,
-        )
-        expect(attribute_map.convert(database_model, "SF_Field_One__c" => "No")).to_equal(
-          column_one: false,
-        )
-      end
     end
   end
 

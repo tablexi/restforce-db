@@ -19,14 +19,9 @@ module Restforce
       # adapter          - An adapter object which should be used to convert
       #                    between data formats.
       def initialize(database_model, salesforce_model, fields = {}, adapter = Adapter.new)
-        @database_model = database_model
-        @salesforce_model = salesforce_model
-        @fields = fields
-        @adapter = adapter
-
-        @types = {
-          database_model   => :database,
-          salesforce_model => :salesforce,
+        @field_maps = {
+          database_model   => AttributeMaps::Database.new(fields, adapter),
+          salesforce_model => AttributeMaps::Salesforce.new(fields),
         }
       end
 
@@ -36,27 +31,12 @@ module Restforce
       #
       # from_format - A String or Class reflecting the record type from which
       #               the attribute Hash is being compiled.
+      # record      - The underlying record for which attributes should be
+      #               collected.
       #
-      # Yields a series of attribute names.
       # Returns a Hash.
-      def attributes(from_format)
-        case @types[from_format]
-        when :salesforce
-          @fields.values.each_with_object({}) do |mapping, values|
-            values[mapping] = yield(mapping)
-          end
-        when :database
-          attributes = @fields.keys.each_with_object({}) do |attribute, values|
-            values[attribute] = yield(attribute)
-          end
-          attributes = @adapter.from_database(attributes)
-
-          @fields.each_with_object({}) do |(attribute, mapping), final|
-            final[mapping] = attributes[attribute]
-          end
-        else
-          raise ArgumentError
-        end
+      def attributes(from_format, record)
+        @field_maps[from_format].attributes(record)
       end
 
       # Public: Convert a Hash of normalized attributes to a format compatible
@@ -83,19 +63,7 @@ module Restforce
       #
       # Returns a Hash.
       def convert(to_format, attributes)
-        case @types[to_format]
-        when :database
-          attributes = @fields.each_with_object({}) do |(attribute, mapping), converted|
-            next unless attributes.key?(mapping)
-            converted[attribute] = attributes[mapping]
-          end
-
-          @adapter.to_database(attributes)
-        when :salesforce
-          attributes.dup
-        else
-          raise ArgumentError
-        end
+        @field_maps[to_format].convert(attributes)
       end
 
     end

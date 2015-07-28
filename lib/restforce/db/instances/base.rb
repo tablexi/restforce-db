@@ -37,7 +37,7 @@ module Restforce
         #
         # Returns a Hash.
         def attributes
-          @mapping.attributes(@record_type) { |attribute| record.send(attribute) }
+          @mapping.attributes(@record_type, record)
         end
 
         # Public: Has this record been synced with Salesforce?
