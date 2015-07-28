@@ -19,6 +19,9 @@ require "restforce/db/associations/foreign_key"
 require "restforce/db/associations/has_many"
 require "restforce/db/associations/has_one"
 
+require "restforce/db/attribute_maps/database"
+require "restforce/db/attribute_maps/salesforce"
+
 require "restforce/db/field_processor"
 require "restforce/db/instances/base"
 require "restforce/db/instances/active_record"
