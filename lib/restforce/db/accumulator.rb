@@ -26,7 +26,7 @@ module Restforce
       #
       # Returns a Hash.
       def attributes
-        sort.reverse.inject({}) do |final, (_, changeset)|
+        @attributes ||= sort.reverse.inject({}) do |final, (_, changeset)|
           changeset.merge(final)
         end
       end
