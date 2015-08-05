@@ -24,11 +24,10 @@ module Restforce
           next unless salesforce_model == @mapping.salesforce_model
 
           database_instance = @mapping.database_record_type.find(id)
-          salesforce_instance = @mapping.salesforce_record_type.find(id)
+          next unless database_instance && up_to_date?(database_instance, accumulator)
 
-          next unless database_instance && salesforce_instance
-          next unless up_to_date?(database_instance, accumulator)
-          next unless up_to_date?(salesforce_instance, accumulator)
+          salesforce_instance = @mapping.salesforce_record_type.find(id)
+          next unless salesforce_instance && up_to_date?(salesforce_instance, accumulator)
 
           update(database_instance, accumulator)
           update(salesforce_instance, accumulator)
