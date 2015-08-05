@@ -28,6 +28,8 @@ module Restforce
         # Returns self.
         # Raises if the update fails for any reason.
         def update!(attributes)
+          return self if attributes.empty?
+
           record.update!(attributes)
           after_sync
         end

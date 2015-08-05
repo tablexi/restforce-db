@@ -27,6 +27,19 @@ module Restforce
           "#{@record_type}::#{@record.id}"
         end
 
+        # Public: Update the instance with the passed attributes.
+        #
+        # attributes - A Hash mapping attribute names to values.
+        #
+        # Returns self.
+        # Raises if the update fails for any reason.
+        def update!(attributes)
+          record.assign_attributes(attributes)
+          return self unless record.changed?
+
+          super attributes
+        end
+
         # Public: Get the time of the last update to this record.
         #
         # Returns a Time-compatible object.
