@@ -56,6 +56,14 @@ describe Restforce::DB::Instances::ActiveRecord do
     it "bumps the record's synchronized_at timestamp" do
       expect(record.reload.synchronized_at).to_not_be_nil
     end
+
+    describe "when the passed attributes match the current values" do
+      let(:text) { record.example }
+
+      it "does not bump the record's synchronized_at timestamp" do
+        expect(record.reload.synchronized_at).to_be_nil
+      end
+    end
   end
 
   describe "#updated_internally?" do
