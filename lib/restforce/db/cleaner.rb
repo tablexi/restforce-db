@@ -63,7 +63,12 @@ module Restforce
         all_ids = all_salesforce_ids
 
         invalid_ids = all_ids - valid_ids
-        confirmed_invalid_salesforce_ids(invalid_ids)
+        DB.logger.debug "(REPORTED INVALID) #{@mapping.salesforce_model} #{invalid_ids.inspect}" if invalid_ids.any?
+
+        invalid_ids = confirmed_invalid_salesforce_ids(invalid_ids)
+        DB.logger.debug "(CONFIRMED INVALID) #{@mapping.salesforce_model} #{invalid_ids.inspect}" if invalid_ids.any?
+
+        invalid_ids
       end
 
       # In order to ensure that we don't generate any SOQL queries which are too
