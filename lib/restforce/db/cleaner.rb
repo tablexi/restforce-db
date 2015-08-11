@@ -36,7 +36,7 @@ module Restforce
       def deleted_salesforce_ids
         return [] unless @runner.after
 
-        response = Restforce::DB.client.get_deleted_between(
+        response = DB.client.get_deleted_between(
           @mapping.salesforce_model,
           @runner.after - DELETION_READ_BUFFER,
           @runner.before,
