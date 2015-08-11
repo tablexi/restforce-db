@@ -7,11 +7,6 @@ module Restforce
     # for a specific mapping.
     class Cleaner < Task
 
-      # Salesforce can take a few minutes to register record deletion. This
-      # buffer gives us a window of time (in seconds) to look back and see
-      # records which may not have been visible in previous runs.
-      DELETION_READ_BUFFER = 3 * 60
-
       # Public: Run the database culling loop for this mapping.
       #
       # Returns nothing.
@@ -29,6 +24,11 @@ module Restforce
         deleted_salesforce_ids + invalid_salesforce_ids
       end
 
+      # Salesforce can take a few minutes to register record deletion. This
+      # buffer gives us a window of time (in seconds) to look back and see
+      # records which may not have been visible in previous runs.
+      DELETION_READ_BUFFER = 3 * 60
+
       # Internal: Get the IDs of records which have been removed from Salesforce
       # for this mapping within the DELETION_BUFFER for this run.
       #
@@ -36,7 +36,7 @@ module Restforce
       def deleted_salesforce_ids
         return [] unless @runner.after
 
-        response = Restforce::DB.client.get_deleted_between(
+        response = DB.client.get_deleted_between(
           @mapping.salesforce_model,
           @runner.after - DELETION_READ_BUFFER,
           @runner.before,
@@ -62,7 +62,50 @@ module Restforce
         valid_ids = valid_salesforce_ids
         all_ids = all_salesforce_ids
 
-        all_ids - valid_ids
+        invalid_ids = all_ids - valid_ids
+        DB.logger.debug "(REPORTED INVALID) #{@mapping.salesforce_model} #{invalid_ids.inspect}" if invalid_ids.any?
+
+        invalid_ids = confirmed_invalid_salesforce_ids(invalid_ids)
+        DB.logger.debug "(CONFIRMED INVALID) #{@mapping.salesforce_model} #{invalid_ids.inspect}" if invalid_ids.any?
+
+        invalid_ids
+      end
+
+      # In order to ensure that we don't generate any SOQL queries which are too
+      # long to send across the wire to Salesforce, we need to batch IDs for our
+      # queries. For a conservative cap of 8,000 characters per GET query, at 27
+      # encoded characters per supplied ID (18 characters and 3 three-character
+      # entities), 250 IDs gives us a buffer of around 1250 spare characters to
+      # work with for the rest of the URL and query string.
+      #
+      # In practice, there should rarely/never be this many invalidated records
+      # at once during a single worker run.
+      MAXIMUM_IDS_PER_QUERY = 250
+
+      # Internal: Get the IDs of records which have been proposed as invalid and
+      # do not in fact appear in response to a time-insensitive query with the
+      # requisite conditions applied.
+      #
+      # NOTE: This double-check step is necessary to prevent an inaccurate
+      # Salesforce server clock from sending records back in time and forcing
+      # them to show up in a query running after-the-fact.
+      #
+      # proposed_invalid_ids - An Array of String Salesforce IDs to test against
+      #                        the Salesforce server.
+      #
+      # Returns an Array of IDs.
+      def confirmed_invalid_salesforce_ids(proposed_invalid_ids)
+        proposed_invalid_ids.each_slice(MAXIMUM_IDS_PER_QUERY).inject([]) do |invalid_ids, ids|
+          # Get a subset of the proposed list of IDs that corresponds to
+          # records which are still valid for any parallel mapping.
+          valid_ids = parallel_mappings.flat_map do |mapping|
+            mapping.salesforce_record_type.all(
+              conditions: "Id in ('#{ids.join("','")}')",
+            ).map(&:id)
+          end
+
+          invalid_ids + (ids - valid_ids)
+        end
       end
 
       # Internal: Get the IDs of all recently-modified Salesforce records
