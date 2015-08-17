@@ -20,7 +20,8 @@ describe Restforce::DB::Worker do
 
       ## 1b. The record is synced to Salesforce.
       worker.send :reset!
-      worker.send :task, Restforce::DB::Initializer, mapping
+      manager = worker.send(:task_manager)
+      manager.send :task, Restforce::DB::Initializer, mapping
 
       expect(database_record.reload).to_be :salesforce_id?
       Salesforce.records << [salesforce_model, database_record.salesforce_id]
@@ -44,8 +45,9 @@ describe Restforce::DB::Worker do
         # We sleep here to ensure we pick up our manual changes.
         sleep 1 if VCR.current_cassette.recording?
         worker.send :reset!
-        worker.send :task, Restforce::DB::Collector, mapping
-        worker.send :task, Restforce::DB::Synchronizer, mapping
+        manager = worker.send(:task_manager)
+        manager.send :task, Restforce::DB::Collector, mapping
+        manager.send :task, Restforce::DB::Synchronizer, mapping
       end
     end
 

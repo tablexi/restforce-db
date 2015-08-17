@@ -15,7 +15,6 @@ module Restforce
       # args - A set of command line arguments to pass to the OptionParser.
       def initialize(args)
         @options = {
-          verbose: false,
           pid_dir: Rails.root.join("tmp", "pids"),
           config:  Rails.root.join("config", "restforce-db.yml"),
           tracker: Rails.root.join("config", ".restforce"),
@@ -103,9 +102,6 @@ module Restforce
           end
           opt.on("-t FILE", "--tracker FILE", "The file where run characteristics should be logged.") do |file|
             @options[:tracker] = file
-          end
-          opt.on("-v", "--verbose", "Turn on noisy logging.") do
-            @options[:verbose] = true
           end
         end
       end

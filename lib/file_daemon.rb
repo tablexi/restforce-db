@@ -20,7 +20,7 @@ module FileDaemon
     #
     # Returns nothing.
     def before_fork
-      @files_to_reopen ||= ObjectSpace.each_object(File).reject(&:closed?)
+      @files_to_reopen = ObjectSpace.each_object(File).reject(&:closed?)
     end
 
     # Public: Reopen all file descriptors that have been stored through the

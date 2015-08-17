@@ -39,18 +39,10 @@ require "restforce/db/record_cache"
 require "restforce/db/timestamp_cache"
 require "restforce/db/runner"
 
-require "restforce/db/task"
-require "restforce/db/accumulator"
-require "restforce/db/attacher"
 require "restforce/db/adapter"
-require "restforce/db/associator"
 require "restforce/db/attribute_map"
-require "restforce/db/cleaner"
-require "restforce/db/collector"
-require "restforce/db/initializer"
 require "restforce/db/mapping"
 require "restforce/db/model"
-require "restforce/db/synchronizer"
 require "restforce/db/tracker"
 require "restforce/db/worker"
 
@@ -89,7 +81,7 @@ module Restforce
     # Returns a Restforce::Data::Client instance.
     def self.client
       @client ||= begin
-        client = DB::Client.new(
+        DB::Client.new(
           username:       configuration.username,
           password:       configuration.password,
           security_token: configuration.security_token,
@@ -100,34 +92,7 @@ module Restforce
           timeout:        configuration.timeout,
           adapter:        configuration.adapter,
         )
-        setup_middleware(client)
-        client
       end
-    end
-
-    # Internal: Sets up the Restforce client's middleware handlers.
-    #
-    # Returns nothing.
-    def self.setup_middleware(client)
-      # NOTE: By default, the Retry middleware will catch timeout exceptions,
-      # and retry up to two times. For more information, see:
-      # https://github.com/lostisland/faraday/blob/master/lib/faraday/request/retry.rb
-      client.middleware.insert(
-        -2,
-        Faraday::Request::Retry,
-        methods: [:get, :head, :options, :put, :patch, :delete],
-      )
-
-      client.middleware.insert_after(
-        Restforce::Middleware::InstanceURL,
-        FaradayMiddleware::Instrumentation,
-        name: "request.restforce_db",
-      )
-
-      client.middleware.insert_before(
-        FaradayMiddleware::Instrumentation,
-        Restforce::DB::Middleware::StoreRequestBody,
-      )
     end
 
     # Public: Get the ID of the Salesforce user which is being used to access
