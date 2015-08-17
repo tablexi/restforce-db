@@ -10,19 +10,54 @@ module Restforce
       # specific field.
       RELATIONSHIP_MATCHER = /(.+)__r\./.freeze
 
-      # Internal: Get a global cache with which to store/fetch the writable
-      # fields for each Salesforce SObject Type.
-      #
-      # Returns a Hash.
-      def self.field_cache
-        @field_cache ||= {}
-      end
+      class << self
 
-      # Internal: Clear out the global field cache.
-      #
-      # Returns nothing.
-      def self.reset
-        @field_cache = {}
+        # Public: Fetch the field metadata for all Salesforce models registered
+        # through mappings in the system. Useful to ensure that forked worker
+        # processes have access to all of the field metadata without the need
+        # for additional querying.
+        #
+        # Returns nothing.
+        def preload
+          Registry.each { |mapping| fetch(mapping.salesforce_model) }
+        end
+
+        # Public: Get a global cache with which to store/fetch the field
+        # metadata for each Salesforce Object Type.
+        #
+        # Returns a Hash.
+        def field_cache
+          @field_cache ||= {}
+        end
+
+        # Public: Get a collection of all fields for the passed Salesforce
+        # Object Type, with an indication of whether or not they are readable
+        # and writable for both create and update actions.
+        #
+        # sobject_type - A String name of an Object Type in Salesforce.
+        #
+        # Returns a Hash.
+        def fetch(sobject_type)
+          field_cache[sobject_type] ||= begin
+            fields = DB.client.describe(sobject_type).fields
+
+            fields.each_with_object({}) do |field, permissions|
+              permissions[field["name"]] = {
+                read:   true,
+                create: field["createable"],
+                update: field["updateable"],
+              }
+            end
+          end
+        end
+
+        # Public: Clear out the global field cache.
+        #
+        # Returns nothing.
+        def reset
+          @field_cache = {}
+        end
+
       end
 
       # Public: Get a list of valid fields for a specific action from the passed
@@ -69,7 +104,7 @@ module Restforce
       #
       # Returns a Boolean.
       def available?(sobject_type, field, action)
-        permissions = field_metadata(sobject_type)[field]
+        permissions = self.class.fetch(sobject_type)[field]
         return false unless permissions
 
         permissions[action]
@@ -87,27 +122,6 @@ module Restforce
       # Rturns a Boolean.
       def relationship?(field)
         field =~ RELATIONSHIP_MATCHER
-      end
-
-      # Internal: Get a collection of all fields for the passed Salesforce
-      # SObject Type, with an indication of whether or not they are readable and
-      # writable for both create and update actions.
-      #
-      # sobject_type - A String name of an SObject Type in Salesforce.
-      #
-      # Returns a Hash.
-      def field_metadata(sobject_type)
-        self.class.field_cache[sobject_type] ||= begin
-          fields = Restforce::DB.client.describe(sobject_type).fields
-
-          fields.each_with_object({}) do |field, permissions|
-            permissions[field["name"]] = {
-              read:   true,
-              create: field["createable"],
-              update: field["updateable"],
-            }
-          end
-        end
       end
 
     end

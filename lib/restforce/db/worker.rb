@@ -52,6 +52,8 @@ module Restforce
         GRACEFUL_SHUTDOWN_SIGNALS.each { |signal| trap(signal) { stop } }
         ROTATION_SIGNALS.each { |signal| trap(signal) { Worker.reopen_files } }
 
+        preload
+
         loop do
           runtime = Benchmark.realtime { perform }
           sleep(@interval - runtime) if runtime < @interval && !stop?
@@ -71,9 +73,40 @@ module Restforce
 
       private
 
+      # Internal: Populate the field cache for each Salesforce object in the
+      # defined mappings.
+      #
+      # NOTE: To work around thread-safety issues with Typheous (and possibly
+      # some other HTTP adapters, we need to fork our preloading to prevent
+      # intialization of our Client object in the context of the master Worker
+      # process.
+      #
+      # Returns a Hash.
+      def preload
+        read, write = IO.pipe
+
+        pid = fork do
+          read.close
+
+          FieldProcessor.preload
+          YAML.dump(FieldProcessor.field_cache, write)
+          exit!(0)
+        end
+
+        write.close
+        cache = read.read
+
+        Process.wait(pid)
+        FieldProcessor.field_cache.merge!(YAML.load(cache))
+      end
+
       # Internal: Perform the synchronization loop, recording the time that the
       # run is performed so that future runs can pick up where the last run
       # left off.
+      #
+      # NOTE: In order to keep our long-term memory usage in check, we fork a
+      # task manager to process the tasks for each synchronization loop. Once
+      # the subprocess dies, its memory can be reclaimed by the OS.
       #
       # Returns nothing.
       def perform
@@ -85,7 +118,7 @@ module Restforce
             task_manager.perform
           end
 
-          Process.waitpid(pid)
+          Process.wait(pid)
         end
       end
 
@@ -121,9 +154,9 @@ module Restforce
             log "SYNCHRONIZING"
           end
 
-          yield
+          duration = Benchmark.realtime { yield }
+          log format("DONE after %.4f", duration)
 
-          log "DONE"
           tracker.track(runtime)
         else
           yield
