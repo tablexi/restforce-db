@@ -16,6 +16,13 @@ module Restforce
       DEFAULT_INTERVAL = 5
       DEFAULT_DELAY = 1
 
+      # TERM and INT signals should trigger a graceful shutdown.
+      GRACEFUL_SHUTDOWN_SIGNALS = %w(TERM INT).freeze
+
+      # HUP and USR1 will reopen all files at their original paths, to
+      # accommodate log rotation.
+      ROTATION_SIGNALS = %w(HUP USR1).freeze
+
       attr_accessor :logger, :tracker
 
       # Public: Initialize a new Restforce::DB::Worker.
@@ -42,14 +49,8 @@ module Restforce
           config.logger = logger
         end
 
-        # TERM and INT signals should trigger a graceful shutdown.
-        %w(TERM INT).each { |signal| trap(signal) { stop } }
-
-        # USR1 reopens any currently open files to accommodate log rotation.
-        trap "USR1" do
-          Worker.before_fork
-          Worker.after_fork
-        end
+        GRACEFUL_SHUTDOWN_SIGNALS.each { |signal| trap(signal) { stop } }
+        ROTATION_SIGNALS.each { |signal| trap(signal) { Worker.reopen_files } }
 
         loop do
           runtime = Benchmark.realtime { perform }
