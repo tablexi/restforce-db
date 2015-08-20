@@ -15,6 +15,8 @@ module Restforce
         :@timestamp_cache,
         :cache_timestamp,
         :changed?,
+        :dump_timestamps,
+        :load_timestamps,
       )
 
       # Public: Initialize a new Restforce::DB::Runner.

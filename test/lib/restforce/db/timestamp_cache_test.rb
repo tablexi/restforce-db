@@ -84,4 +84,34 @@ describe Restforce::DB::TimestampCache do
     end
   end
 
+  describe "I/O operations" do
+    let(:io) { IO.pipe }
+    let(:reader) { io.first }
+    let(:writer) { io.last }
+
+    describe "#dump_timestamps" do
+      before do
+        cache.cache_timestamp instance
+        cache.dump_timestamps(writer)
+        writer.close
+      end
+
+      it "writes a YAML dump of the cache to the passed I/O object" do
+        expect(YAML.load(reader.read)).to_equal [record_type, id] => timestamp
+      end
+    end
+
+    describe "#load_timestamps" do
+      before do
+        YAML.dump({ [record_type, id] => timestamp }, writer)
+        writer.close
+        cache.load_timestamps(reader)
+      end
+
+      it "reloads its internal cache from the passed I/O object" do
+        expect(cache.timestamp(instance)).to_equal timestamp
+      end
+    end
+  end
+
 end

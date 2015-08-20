@@ -1,4 +1,5 @@
 require "file_daemon"
+require "forked_process"
 require "restforce/db/task_manager"
 require "restforce/db/loggable"
 
@@ -83,21 +84,19 @@ module Restforce
       #
       # Returns a Hash.
       def preload
-        read, write = IO.pipe
+        forked = ForkedProcess.new
 
-        pid = fork do
-          read.close
-
+        forked.write do |writer|
+          log "INITIALIZING..."
           FieldProcessor.preload
-          YAML.dump(FieldProcessor.field_cache, write)
-          exit!(0)
+          YAML.dump(FieldProcessor.field_cache, writer)
         end
 
-        write.close
-        cache = read.read
+        forked.read do |reader|
+          FieldProcessor.field_cache.merge!(YAML.load(reader.read))
+        end
 
-        Process.wait(pid)
-        FieldProcessor.field_cache.merge!(YAML.load(cache))
+        forked.run
       end
 
       # Internal: Perform the synchronization loop, recording the time that the
@@ -113,12 +112,20 @@ module Restforce
         reset!
 
         track do
-          pid = fork do
+          forked = ForkedProcess.new
+
+          forked.write do |writer|
             Worker.after_fork
             task_manager.perform
+
+            runner.dump_timestamps(writer)
           end
 
-          Process.wait(pid)
+          forked.read do |reader|
+            runner.load_timestamps(reader)
+          end
+
+          forked.run
         end
       end
 
