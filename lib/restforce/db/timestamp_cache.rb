@@ -71,6 +71,26 @@ module Restforce
         @cache = {}
       end
 
+      # Public: Load the previous collection of cached timestamps from the
+      # passed readable object.
+      #
+      # io - An IO object opened for reading.
+      #
+      # Returns nothing.
+      def load_timestamps(io)
+        @cache = YAML.load(io.read) || {}
+      end
+
+      # Public: Dump the currently cached timestamps into the specified
+      # writable object.
+      #
+      # io - An IO object opened for writing.
+      #
+      # Returns nothing.
+      def dump_timestamps(io)
+        io.write(YAML.dump(@cache))
+      end
+
       private
 
       # Internal: Get a unique cache key for the passed instance.

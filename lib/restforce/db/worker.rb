@@ -1,22 +1,28 @@
 require "file_daemon"
+require "forked_process"
+require "restforce/db/task_manager"
+require "restforce/db/loggable"
 
 module Restforce
 
-  # :nodoc:
   module DB
-
-    # TaskMapping is a small data structure used to pass top-level task
-    # information through to a SynchronizationError when necessary.
-    TaskMapping = Struct.new(:id, :mapping)
 
     # Restforce::DB::Worker represents the primary polling loop through which
     # all record synchronization occurs.
     class Worker
 
       include FileDaemon
+      include Loggable
 
       DEFAULT_INTERVAL = 5
       DEFAULT_DELAY = 1
+
+      # TERM and INT signals should trigger a graceful shutdown.
+      GRACEFUL_SHUTDOWN_SIGNALS = %w(TERM INT).freeze
+
+      # HUP and USR1 will reopen all files at their original paths, to
+      # accommodate log rotation.
+      ROTATION_SIGNALS = %w(HUP USR1).freeze
 
       attr_accessor :logger, :tracker
 
@@ -27,7 +33,6 @@ module Restforce
       #           interval - The maximum polling loop rest time.
       #           delay    - The amount of time by which to offset queries.
       #           config   - The path to a client configuration file.
-      #           verbose  - Display command line output? Defaults to false.
       def initialize(options = {})
         @options = options
         @interval = @options.fetch(:interval) { DEFAULT_INTERVAL }
@@ -45,7 +50,10 @@ module Restforce
           config.logger = logger
         end
 
-        %w(TERM INT).each { |signal| trap(signal) { stop } }
+        GRACEFUL_SHUTDOWN_SIGNALS.each { |signal| trap(signal) { stop } }
+        ROTATION_SIGNALS.each { |signal| trap(signal) { Worker.reopen_files } }
+
+        preload
 
         loop do
           runtime = Benchmark.realtime { perform }
@@ -66,28 +74,58 @@ module Restforce
 
       private
 
+      # Internal: Populate the field cache for each Salesforce object in the
+      # defined mappings.
+      #
+      # NOTE: To work around thread-safety issues with Typheous (and possibly
+      # some other HTTP adapters, we need to fork our preloading to prevent
+      # intialization of our Client object in the context of the master Worker
+      # process.
+      #
+      # Returns a Hash.
+      def preload
+        forked = ForkedProcess.new
+
+        forked.write do |writer|
+          log "INITIALIZING..."
+          FieldProcessor.preload
+          YAML.dump(FieldProcessor.field_cache, writer)
+        end
+
+        forked.read do |reader|
+          FieldProcessor.field_cache.merge!(YAML.load(reader.read))
+        end
+
+        forked.run
+      end
+
       # Internal: Perform the synchronization loop, recording the time that the
       # run is performed so that future runs can pick up where the last run
       # left off.
       #
+      # NOTE: In order to keep our long-term memory usage in check, we fork a
+      # task manager to process the tasks for each synchronization loop. Once
+      # the subprocess dies, its memory can be reclaimed by the OS.
+      #
       # Returns nothing.
       def perform
+        reset!
+
         track do
-          reset!
+          forked = ForkedProcess.new
 
-          Restforce::DB::Registry.each do |mapping|
-            run("CLEANING RECORDS", Cleaner, mapping)
-            run("ATTACHING RECORDS", Attacher, mapping)
-            run("PROPAGATING RECORDS", Initializer, mapping)
-            run("COLLECTING CHANGES", Collector, mapping)
+          forked.write do |writer|
+            Worker.after_fork
+            task_manager.perform
+
+            runner.dump_timestamps(writer)
           end
 
-          # NOTE: We can only perform the synchronization after all record
-          # changes have been aggregated, so this second loop is necessary.
-          Restforce::DB::Registry.each do |mapping|
-            run("UPDATING ASSOCIATIONS", Associator, mapping)
-            run("APPLYING CHANGES", Synchronizer, mapping)
+          forked.read do |reader|
+            runner.load_timestamps(reader)
           end
+
+          forked.run
         end
       end
 
@@ -97,7 +135,15 @@ module Restforce
       # Returns nothing.
       def reset!
         runner.tick!
-        @changes = Hash.new { |h, k| h[k] = Accumulator.new }
+        Worker.before_fork
+      end
+
+      # Internal: Get a new TaskManager instance, which reflects the current
+      # runner state.
+      #
+      # Returns a Restforce::DB::TaskManager.
+      def task_manager
+        TaskManager.new(runner, logger: logger)
       end
 
       # Internal: Run the passed block, updating the tracker with the time at
@@ -115,9 +161,9 @@ module Restforce
             log "SYNCHRONIZING"
           end
 
-          yield
+          duration = Benchmark.realtime { yield }
+          log format("DONE after %.4f", duration)
 
-          log "DONE"
           tracker.track(runtime)
         else
           yield
@@ -132,66 +178,11 @@ module Restforce
         @runner ||= Runner.new(@options.fetch(:delay) { DEFAULT_DELAY })
       end
 
-      # Internal: Log a description and response time for a specific named task.
-      #
-      # name       - A String task name.
-      # task_class - A Restforce::DB::Task subclass.
-      # mapping    - A Restforce::DB::Mapping.
-      #
-      # Returns a Boolean.
-      def run(name, task_class, mapping)
-        log "  #{name} between #{mapping.database_model.name} and #{mapping.salesforce_model}"
-        runtime = Benchmark.realtime { task task_class, mapping }
-        log format("  COMPLETE after %.4f", runtime)
-
-        true
-      rescue => e
-        error(e)
-
-        false
-      end
-
-      # Internal: Run the passed mapping through the supplied Task class.
-      #
-      # task_class - A Restforce::DB::Task subclass.
-      # mapping    - A Restforce::DB::Mapping.
-      #
-      # Returns nothing.
-      def task(task_class, mapping)
-        task_class.new(mapping, runner).run(@changes)
-      rescue Faraday::Error::ClientError => e
-        task_mapping = TaskMapping.new(task_class, mapping)
-        error SynchronizationError.new(e, task_mapping)
-      end
-
       # Internal: Has this worker been instructed to stop?
       #
       # Returns a boolean.
       def stop?
         @exit == true
-      end
-
-      # Internal: Log the passed text at the specified level.
-      #
-      # text  - The piece of text which should be logged for this worker.
-      # level - The level at which the text should be logged. Defaults to :info.
-      #
-      # Returns nothing.
-      def log(text, level = :info)
-        puts text if @options[:verbose]
-
-        return unless logger
-        logger.send(level, text)
-      end
-
-      # Internal: Log an error for the worker, outputting the entire error
-      # stacktrace and applying the appropriate log level.
-      #
-      # exception - An Exception object.
-      #
-      # Returns nothing.
-      def error(exception)
-        logger.error(exception)
       end
 
     end

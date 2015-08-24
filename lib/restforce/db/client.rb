@@ -7,6 +7,33 @@ module Restforce
     # not yet supported by the base gem.
     class Client < ::Restforce::Data::Client
 
+      # Public: Instantiate a new Restforce::DB::Client. Updates the middleware
+      # stack to account for some additional instrumentation and automatically
+      # retry timed out requests.
+      def initialize(**_)
+        super
+
+        # NOTE: By default, the Retry middleware will catch timeout exceptions,
+        # and retry up to two times. For more information, see:
+        # https://github.com/lostisland/faraday/blob/master/lib/faraday/request/retry.rb
+        middleware.insert(
+          -2,
+          Faraday::Request::Retry,
+          methods: [:get, :head, :options, :put, :patch, :delete],
+        )
+
+        middleware.insert_after(
+          Restforce::Middleware::InstanceURL,
+          FaradayMiddleware::Instrumentation,
+          name: "request.restforce_db",
+        )
+
+        middleware.insert_before(
+          FaradayMiddleware::Instrumentation,
+          Restforce::DB::Middleware::StoreRequestBody,
+        )
+      end
+
       # Public: Get a list of Salesforce records which have been deleted between
       # the specified times.
       #

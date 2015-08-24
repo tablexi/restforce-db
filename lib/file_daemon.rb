@@ -15,12 +15,21 @@ module FileDaemon
   # :nodoc:
   module ClassMethods
 
+    # Public: Force-reopen all files at their current paths. Allows for rotation
+    # of log files outside of the context of an actual process fork.
+    #
+    # Returns nothing.
+    def reopen_files
+      before_fork
+      after_fork
+    end
+
     # Public: Store the list of currently open file descriptors so that they
     # may be reopened when a new process is spawned.
     #
     # Returns nothing.
     def before_fork
-      @files_to_reopen ||= ObjectSpace.each_object(File).reject(&:closed?)
+      @files_to_reopen = ObjectSpace.each_object(File).reject(&:closed?)
     end
 
     # Public: Reopen all file descriptors that have been stored through the
