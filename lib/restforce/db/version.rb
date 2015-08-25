@@ -3,7 +3,7 @@ module Restforce
   # :nodoc:
   module DB
 
-    VERSION = "3.5.0"
+    VERSION = "4.0.0"
 
   end
 
