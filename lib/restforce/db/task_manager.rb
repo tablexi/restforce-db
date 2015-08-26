@@ -72,8 +72,10 @@ module Restforce
         true
       rescue => e
         error(e)
-
         false
+      rescue Exception => e # rubocop:disable Lint/RescueException
+        error(e)
+        raise e
       end
 
       # Internal: Run the passed mapping through the supplied Task class.
