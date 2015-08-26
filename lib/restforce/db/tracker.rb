@@ -14,9 +14,9 @@ module Restforce
       #
       # file_path - The Path to the tracking file.
       def initialize(file_path)
-        @file = File.open(file_path, "a+")
+        @file_path = file_path
 
-        timestamp = @file.read
+        timestamp = File.open(@file_path, "a+") { |file| file.read }
         return if timestamp.empty?
 
         @last_run = Time.parse(timestamp)
@@ -30,11 +30,7 @@ module Restforce
       # Returns nothing.
       def track(time)
         @last_run = time
-
-        @file.truncate(0)
-        @file.print(time.utc.iso8601)
-        @file.flush
-        @file.rewind
+        File.open(@file_path, "w") { |file| file.write(time.utc.iso8601) }
       end
 
     end
