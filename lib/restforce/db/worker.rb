@@ -125,7 +125,22 @@ module Restforce
             runner.load_timestamps(reader)
           end
 
-          forked.run
+          begin
+            forked.run
+          rescue => e
+            # NOTE: Due to thread-safety issues in any of a number of libraries
+            # included in the host application (even ActiveSupport itself), our
+            # forked processes may occasionally encounter LoadErrors.
+            #
+            # Retrying here is our way of handling that. It's not great, but
+            # it's the best we can do for now without sacrificing the benefits
+            # of forking our task manager runs.
+            #
+            # In the event that the master process has received a kill signal,
+            # we can safely crash instead of attempting a retry -- we don't want
+            # to fight with intentional user actions.
+            stop? ? raise(e) : retry
+          end
         end
       end
 
