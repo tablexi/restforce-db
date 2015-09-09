@@ -64,17 +64,31 @@ module Restforce
       # Public: Iterate through recently-updated records for the Salesforce
       # record type defined by the current mapping.
       #
+      # cached - A Boolean reflecting whether or not the collection should be
+      #          fetched through this runner's RecordCache.
+      #
       # Returns an Enumerator yielding Restforce::DB::Instances::Salesforces.
-      def salesforce_instances
-        @record_cache.collection(@mapping, :salesforce_record_type, options)
+      def salesforce_instances(cached = true)
+        if cached
+          @record_cache.collection(@mapping, :salesforce_record_type, options)
+        else
+          @mapping.salesforce_record_type.all(options)
+        end
       end
 
       # Public: Iterate through recently-updated records for the database model
       # record type defined by the current mapping.
       #
+      # cached - A Boolean reflecting whether or not the collection should be
+      #          fetched through this runner's RecordCache.
+      #
       # Returns an Enumerator yielding Restforce::DB::Instances::ActiveRecords.
-      def database_instances
-        @record_cache.collection(@mapping, :database_record_type, options)
+      def database_instances(cached = true)
+        if cached
+          @record_cache.collection(@mapping, :database_record_type, options)
+        else
+          @mapping.database_record_type.all(options)
+        end
       end
 
       private
