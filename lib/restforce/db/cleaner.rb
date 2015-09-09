@@ -113,7 +113,7 @@ module Restforce
       #
       # Returns an Array of IDs.
       def all_salesforce_ids
-        @mapping.unscoped { salesforce_ids(@mapping) }
+        @mapping.unscoped { salesforce_ids(@mapping, false) }
       end
 
       # Internal: Get the IDs of the recently-modified Salesforce records for
@@ -128,11 +128,13 @@ module Restforce
       # meet the conditions for this mapping.
       #
       # mapping - A Restforce::DB::Mapping.
+      # cached  - A Boolean reflecting whether or not the collection should
+      #           be cached.
       #
       # Returns an Array of IDs.
-      def salesforce_ids(mapping)
+      def salesforce_ids(mapping, cached = true)
         @runner.run(mapping) do |run|
-          run.salesforce_instances.map(&:id)
+          run.salesforce_instances(cached).map(&:id)
         end
       end
 
