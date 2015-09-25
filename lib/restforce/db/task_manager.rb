@@ -59,6 +59,11 @@ module Restforce
 
       # Internal: Log a description and response time for a specific named task.
       #
+      # NOTE: AuthenticationErrors from Restforce's middleware seem to be linked
+      # to thread-safety issues, so we want to error out the entire processing
+      # loop in the event that we run into one of these. This is the reason for
+      # the fairly convoluted `rescue` chain below.
+      #
       # name       - A String task name.
       # task_class - A Restforce::DB::Task subclass.
       # mapping    - A Restforce::DB::Mapping.
@@ -70,6 +75,9 @@ module Restforce
         log format("  FINISHED #{name} after %.4f", runtime)
 
         true
+      rescue Restforce::AuthenticationError => e
+        error(e)
+        raise e
       rescue => e
         error(e)
         false
