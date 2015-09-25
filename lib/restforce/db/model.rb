@@ -51,6 +51,7 @@ module Restforce
 
           if instance.synced?
             salesforce_instance = salesforce_record_type.find(instance.id)
+            next unless salesforce_instance
 
             accumulator = Restforce::DB::Accumulator.new
             accumulator.store(instance.last_update, instance.attributes)

@@ -94,6 +94,28 @@ describe Restforce::DB::Model do
           salesforce_record = mapping.salesforce_record_type.find(salesforce_id).record
           expect(salesforce_record.Name).to_equal record.name
         end
+
+        describe "and a mutually exclusive mapping" do
+          let(:other_mapping) do
+            Restforce::DB::Mapping.new(database_model, salesforce_model).tap do |map|
+              map.conditions = [
+                "Example_Field__c != '#{attributes[:example]}'",
+              ]
+            end
+          end
+
+          before do
+            Restforce::DB::Registry << other_mapping
+          end
+
+          it "ignores the problematic mapping" do
+            record.update!(name: "Sarah's Seagulls")
+            expect(record.force_sync!).to_equal true
+
+            salesforce_record = mapping.salesforce_record_type.find(salesforce_id).record
+            expect(salesforce_record.Name).to_equal record.name
+          end
+        end
       end
     end
   end
