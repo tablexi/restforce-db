@@ -127,10 +127,11 @@ module Restforce
 
           begin
             forked.run
-          rescue => e
+          rescue ForkedProcess::UnsuccessfulExit => e
             # NOTE: Due to thread-safety issues in any of a number of libraries
-            # included in the host application (even ActiveSupport itself), our
-            # forked processes may occasionally encounter LoadErrors.
+            # included in the host application (even in ActiveSupport itself),
+            # our forked processes may occasionally encounter various annoying
+            # and intermittent errors.
             #
             # Retrying here is our way of handling that. It's not great, but
             # it's the best we can do for now without sacrificing the benefits
