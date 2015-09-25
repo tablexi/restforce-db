@@ -4,6 +4,8 @@ require "English"
 # forked process, and relaying its output to another block.
 class ForkedProcess
 
+  class UnsuccessfulExit < RuntimeError; end
+
   # Public: Define a callback which will be run in a forked process.
   #
   # Yields an IO object opened for writing when `run` is invoked.
@@ -39,7 +41,7 @@ class ForkedProcess
     @read_block.call(reader)
     Process.wait(pid)
 
-    raise "Forked process did not exit successfully" unless $CHILD_STATUS.success?
+    raise UnsuccessfulExit unless $CHILD_STATUS.success?
   end
 
 end

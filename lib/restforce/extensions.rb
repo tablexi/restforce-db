@@ -1,6 +1,24 @@
 module Restforce
 
   # :nodoc:
+  class Middleware::Authentication < Restforce::Middleware # rubocop:disable Style/ClassAndModuleChildren
+
+    # Internal: Get an error message for the passed response. Overrides the
+    # default behavior of the middleware to correctly handle broken responses
+    # from Faraday.
+    #
+    # Returns a String.
+    def error_message(response)
+      if response.status == 0
+        "Request was closed prematurely"
+      else
+        "#{response.body['error']}: #{response.body['error_description']}"
+      end
+    end
+
+  end
+
+  # :nodoc:
   class SObject
 
     # Public: Update the Salesforce record with the passed attributes.
