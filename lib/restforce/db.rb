@@ -54,6 +54,10 @@ module Restforce
   # by the other classes in this library.
   module DB
 
+    # Internal: A String containing the valid suffix Hash values for a
+    # Salesforce ID.
+    HASH_DICTIONARY = "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345".freeze
+
     class << self
 
       attr_accessor :last_run
@@ -138,6 +142,28 @@ module Restforce
 
       @configuration = nil
       @last_run = nil
+    end
+
+    # Public: Get the hashed version of the passed salesforce ID. This will
+    # converts 15-digit Salesforce IDs to their corresponding 18-digit version.
+    # Returns any passed 18-digit IDs back, untouched.
+    #
+    # Returns a String.
+    # Raises an ArgumentError if the passed String is not 15 characters.
+    def self.hashed_id(salesforce_id)
+      return salesforce_id if salesforce_id.length == 18
+      raise ArgumentError, "The passed Salesforce ID must be 15 or 18 characters" unless salesforce_id.length == 15
+
+      suffixes = salesforce_id.scan(/.{5}/).map do |chunk|
+        flag = 0
+        chunk.split("").each_with_index do |char, idx|
+          flag += (1 << idx) if char >= "A" && char <= "Z"
+        end
+
+        HASH_DICTIONARY[flag]
+      end
+
+      salesforce_id + suffixes.join
     end
 
   end
