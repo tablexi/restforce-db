@@ -76,7 +76,7 @@ module Restforce
 
         true
       rescue Restforce::AuthenticationError => e
-        error(e)
+        log e, :warn
         raise e
       rescue => e
         error(e)
