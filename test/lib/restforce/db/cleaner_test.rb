@@ -78,9 +78,9 @@ describe Restforce::DB::Cleaner do
         let(:runner) { Restforce::DB::Runner.new(0, Time.now - 300) }
         let(:cleaner) { Restforce::DB::Cleaner.new(mapping, runner) }
         let(:dummy_response) do
-          Struct.new(:deletedRecords).new([
+          [
             Restforce::Mash.new(id: salesforce_id),
-          ])
+          ]
         end
 
         before do
