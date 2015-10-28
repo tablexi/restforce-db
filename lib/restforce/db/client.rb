@@ -52,24 +52,22 @@ module Restforce
       #     Time.now,
       #   )
       #
-      #   #=> #<Restforce::Mash
-      #          latestDateCovered="2015-05-18T22:31:00.000+0000"
-      #          earliestDateAvailable="2015-04-11T06:44:00.000+0000"
-      #          deletedRecords=[
-      #            #<Restforce::Mash
-      #              deletedDate="2015-05-18T22:31:17.000+0000"
-      #              id="a001a000001a5vOAAQ"
-      #            >
-      #          ]
-      #        >
+      #   #=> [
+      #         #<Restforce::Mash
+      #           deletedDate="2015-05-18T22:31:17.000+0000"
+      #           id="a001a000001a5vOAAQ"
+      #          >,
+      #       ]
       #
       # Returns a Restforce::Mash with a `deletedRecords` key.
       def get_deleted_between(sobject, start_time, end_time = Time.now)
-        api_get(
+        response = api_get(
           "sobjects/#{sobject}/deleted",
           start: start_time.utc.iso8601,
           end: end_time.utc.iso8601,
-        ).body
+        )
+
+        Array(response.body["deletedRecords"])
       end
 
     end

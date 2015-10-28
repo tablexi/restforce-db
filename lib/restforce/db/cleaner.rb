@@ -42,7 +42,7 @@ module Restforce
           @runner.before,
         )
 
-        response.deletedRecords.map(&:id)
+        response.map(&:id)
       end
 
       # Internal: Get the IDs of records which are in the larger collection
