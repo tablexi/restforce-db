@@ -59,7 +59,7 @@ module Restforce
       #          >,
       #       ]
       #
-      # Returns a Restforce::Mash with a `deletedRecords` key.
+      # Returns an Array of Restforce::Mash objects.
       def get_deleted_between(sobject, start_time, end_time = Time.now)
         response = api_get(
           "sobjects/#{sobject}/deleted",
