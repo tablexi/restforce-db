@@ -279,6 +279,14 @@ For additional information and a full set of options, you can run:
 
     $ bundle exec bin/restforce-db -h
 
+#### Enabling eager-loading for your environment
+
+Rails sets `config.eager_load = true` by default in production, but eager-loading is disabled by default in development. Restforce::DB relies on this feature of Rails to ensure that all of your `sync_with` blocks are evaluated before the daemon begins forking and looping over your registered mappings.
+
+Thus, to test your synchronization setup locally (e.g., against a sandbox environment in Salesforce), you'll want to set `config.eager_load = true` in your `config/environments/development.rb`.
+
+If enabling full eager-loading isn't an option for your development environment, there are ways to target the loading more precisely. You can learn more about the available configuration options in [the Rails documentation](http://edgeguides.rubyonrails.org/configuring.html#rails-general-configuration).
+
 #### Configuring the daemon's runtime environment
 
 Restforce::DB allows you to configure a block of code which will execute before the daemon process's polling loop initiates. In an initializer (or any other piece of code which will run as your application spins up), you can use `config.before` to set up this hook:
