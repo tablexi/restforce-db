@@ -299,6 +299,35 @@ end
 
 The example above would disable the default ActiveRecord logging specifically for activity triggered by the Restforce::DB daemon.
 
+#### Add daemon's to capistrano3 deploy task.
+
+Append below code to your `config/deploy.rb` will restart the Restforce::DB daemon in each deploy, the sync period is set to 30 seconds.
+
+```ruby
+after 'deploy:updated', 'restforcedb:stop'
+after 'deploy:reverted', 'restforcedb:stop'
+after 'deploy:published', 'restforcedb:start'
+namespace :restforcedb do
+  desc 'Stop restforcedb'
+  task :stop do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      within release_path do
+        execute './bin/restforce-db', 'stop', "RAILS_ENV=#{fetch(:rails_env)}"
+      end
+    end
+  end
+
+  desc 'Start restforcedb'
+  task :start do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      within release_path do
+        execute './bin/restforce-db', '-i 30 start', "RAILS_ENV=#{fetch(:rails_env)}"
+      end
+    end
+  end
+end
+```
+
 ### Force-synchronizing records in your application code
 
 If you desire to force-synchronize records from within your code (for example, if you need to ensure that changes to certain records are acknowledged synchronously), `Restforce::DB::Model` exposes a `#force_sync!` method to do so.
