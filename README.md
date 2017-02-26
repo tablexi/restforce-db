@@ -1,5 +1,7 @@
 # Restforce::DB
 
+[![Code Climate](https://codeclimate.com/github/tablexi/restforce-db/badges/gpa.svg)](https://codeclimate.com/github/tablexi/restforce-db)
+
 Restforce::DB is an attempt at simplifying data integrations between a Salesforce setup and a Rails application. It provides a background worker which continuously polls for updated records both in Salesforce and in the database, and updates both systems with that data according to user-defined attribute mappings.
 
 ## Installation
@@ -121,7 +123,7 @@ class Chef < ActiveRecord::Base
 end
 
 class Dish < ActiveRecord::Base
-  
+
   include Restforce::DB::Model
   belongs_to :restaurant, inverse_of: :dishes
 
@@ -129,7 +131,7 @@ class Dish < ActiveRecord::Base
     belongs_to :restaurant, through: "Restaurant__c"
     maps name: "Name"
   end
-  
+
 end
 ```
 
@@ -171,7 +173,7 @@ Your ActiveRecord class _must_ expose readers for each attribute in the mapping,
 
 #### Field Conversions
 
-`converts_with` defines a mapping conversion adapter. The only requirement for an adapter is that it respond to the methods `#to_database` and `#from_database`. 
+`converts_with` defines a mapping conversion adapter. The only requirement for an adapter is that it respond to the methods `#to_database` and `#from_database`.
 
 - `#to_database` will be handed a "normalized" Hash, with the standard Symbol mapped attributes as keys, and the values as they are stored in Salesforce. It should return a modified version of the Hash which can be passed to `assign_attributes` for a record.
 
@@ -193,7 +195,7 @@ This defines an association type in which the Lookup (i.e., foreign key) _is on 
 
 - `Chef__c`, which corresponds to the `Contact` object type, and
 - `Cuisine__c`, which corresponds to the `Cuisine__c` object type
- 
+
 Thus, the `Restaurant__c` mapping declares a `belongs_to` relationship to `:chef`, with a `:through` argument referencing both of the Lookups used by the mappings on the associated `Chef` class.
 
 As shown above, the `:through` option may contain _an array of Lookup field names_, which may be useful if more than one mapping on the associated ActiveRecord model refers to a Lookup on the same Salesforce record.
@@ -214,11 +216,11 @@ In the above example, `Dish__c` is a Salesforce object type which references the
 
 - **Lookups.**
   If one side of an association has multiple possible lookup fields, the other side of the association is expected to declare a _single_ lookup field, which will be treated as the canonical lookup for that relationship. The Lookup is assumed to always refer to the `Id` of the object declaring the `has_many`/`has_one` side of the association.
-  
+
 - **Record Construction.**
   By default, _all_ associated records will be recursively constructed when a single record is synchronized into the system. This can result in a lot of unwanted/time-consuming record creation, particularly if your Salesforce account has a lot of irrelevant legacy data. You can turn off this behavior for specific associations by passing `build: false` when declaring the association in the DSL.
 
-- **Record Persistence.** 
+- **Record Persistence.**
   See the `autosave: true` option declared for the `has_one` relationship on `Restaurant`? `Restforce::DB` requires your ActiveRecord models to handle persistence propagation.
 
   When inserting new records, `save!` will only be invoked on the _entry point_ record (typically a mapping with an `:always` synchronization strategy), so the persistence of any associated records must be chained through this "root" object.
@@ -239,7 +241,7 @@ NOTE: This script uses `bundler/inline` to get access to the `metaforce` gem at 
 
 ### Seed your data
 
-To populate your database with existing information from Salesforce (or vice-versa), you _could_ manually update each of the records you care about, and expect the Restforce::DB daemon to automatically pick them up when it runs. However, for any record type you need/want to _fully_ synchronize, this can be a very tedious process. 
+To populate your database with existing information from Salesforce (or vice-versa), you _could_ manually update each of the records you care about, and expect the Restforce::DB daemon to automatically pick them up when it runs. However, for any record type you need/want to _fully_ synchronize, this can be a very tedious process.
 
 In these cases, you can run the `seed` rake task to synchronize the initial records between both systems.
 
@@ -319,7 +321,7 @@ If you're testing your integration, and using something like VCR to record your 
 
 ## System Caveats
 
-- **API Usage.** 
+- **API Usage.**
   This gem performs most of its functionality via the Salesforce API (by way of the [`restforce`](https://github.com/ejholmes/restforce) gem). If you're at risk of hitting your Salesforce API limits, this may not be the right approach for you.
 
 - **Update Prioritization.**
